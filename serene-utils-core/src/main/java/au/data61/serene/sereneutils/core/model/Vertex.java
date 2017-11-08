@@ -9,7 +9,7 @@ public class Vertex extends Element implements Serializable {
     private List<String> graphs;
 
     private Vertex(final String id,
-                   final Map<String,Object> properties,
+                   final Map<String,String> properties,
                    final String label,
                    final List<String> graphs) {
         super(id, properties, label);
@@ -17,7 +17,7 @@ public class Vertex extends Element implements Serializable {
     }
 
     public static Vertex create(final String id,
-                                final Map<String,Object> properties,
+                                final Map<String,String> properties,
                                 final String label,
                                 final List<String> graphs) {
         return new Vertex(id, properties, label, graphs);

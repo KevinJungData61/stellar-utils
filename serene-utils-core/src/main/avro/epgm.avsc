@@ -1,0 +1,46 @@
+[
+{
+    "namespace": "au.data61.serene.sereneutils.core.io.avro",
+    "type": "record",
+    "name": "AvroVertex",
+    "fields": [
+        {"name": "id", "type": "string"},
+        {"name": "data", "type": {
+            "type": "map",
+            "values": ["string", "boolean", "long", "double", "null"]}},
+        {"name": "label", "type": ["string", "null"]},
+        {"name": "graphs", "type": {
+            "type": "array",
+            "items": "string"}}
+    ]
+},
+{
+    "namespace": "au.data61.serene.sereneutils.core.io.avro",
+    "type": "record",
+    "name": "AvroEdge",
+    "fields": [
+        {"name": "id", "type": "string"},
+        {"name": "source", "type": "string"},
+        {"name": "target", "type": "string"},
+        {"name": "data", "type": {
+            "type": "map",
+            "values": ["string", "boolean", "long", "double", "null"]}},
+        {"name": "label", "type": ["string", "null"]},
+        {"name": "graphs", "type": {
+            "type": "array",
+            "items": "string"}}
+    ]
+},
+{
+    "namespace": "au.data61.serene.sereneutils.core.io.avro",
+    "type": "record",
+    "name": "AvroGraphHead",
+    "fields": [
+        {"name": "id", "type": "string"},
+        {"name": "data", "type": {
+            "type": "map",
+            "values": ["string", "boolean", "long", "double", "null"]}},
+        {"name": "label", "type": ["string", "null"]}
+    ]
+}
+]

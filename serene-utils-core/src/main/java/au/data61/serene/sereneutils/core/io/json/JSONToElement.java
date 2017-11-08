@@ -15,12 +15,12 @@ public abstract class JSONToElement {
         return (String) obj.get(JSONConstants.IDENTIFIER);
     }
 
-    protected Map<String,Object> getProperties(JSONObject obj) {
-        Map<String,Object> properties = new HashMap<>();
+    protected Map<String,String> getProperties(JSONObject obj) {
+        Map<String,String> properties = new HashMap<>();
         JSONObject jsonProperties = (JSONObject) obj.get(JSONConstants.PROPERTIES);
         jsonProperties.keySet().forEach(key -> {
             String keyStr = key.toString();
-            properties.put(keyStr, properties.get(keyStr));
+            properties.put(keyStr, (String) jsonProperties.get(keyStr));
         });
         return properties;
     }

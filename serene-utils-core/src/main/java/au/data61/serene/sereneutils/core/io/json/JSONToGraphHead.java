@@ -14,7 +14,7 @@ public class JSONToGraphHead extends JSONToElement implements Function<String,Gr
     public GraphHead call(String s) throws ParseException {
         JSONObject jsonGraphHead = (JSONObject) (new JSONParser()).parse(s);
         String id = getId(jsonGraphHead);
-        Map<String,Object> properties = getProperties(jsonGraphHead);
+        Map<String,String> properties = getProperties(jsonGraphHead);
         String label = getLabel(jsonGraphHead);
         return GraphHead.create(id, properties, label);
     }

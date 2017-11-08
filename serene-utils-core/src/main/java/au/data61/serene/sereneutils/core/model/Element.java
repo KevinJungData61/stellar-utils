@@ -6,10 +6,10 @@ import java.util.Map;
 public abstract class Element {
 
     protected String id;
-    protected Map<String,Object> properties;
+    protected Map<String,String> properties;
     protected String label;
 
-    protected Element(String id, Map<String,Object> properties, String label) {
+    protected Element(String id, Map<String,String> properties, String label) {
         this.id = id;
         this.properties = properties;
         this.label = label;
@@ -23,11 +23,11 @@ public abstract class Element {
         this.id = id;
     }
 
-    public Map<String,Object> getProperties() {
+    public Map<String,String> getProperties() {
         return this.properties;
     }
 
-    public void setProperties(Map<String,Object> properties) {
+    public void setProperties(Map<String,String> properties) {
         this.properties = properties;
     }
 
@@ -39,7 +39,7 @@ public abstract class Element {
         this.label = label;
     }
 
-    public Object getProperty(String key) {
+    public String getProperty(String key) {
         return properties.get(key);
     }
 }

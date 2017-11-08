@@ -15,7 +15,7 @@ public class JSONToVertex extends JSONToElement implements Function<String,Verte
     public Vertex call(String s) throws ParseException {
         JSONObject jsonVertex = (JSONObject) (new JSONParser()).parse(s);
         String id = getId(jsonVertex);
-        Map<String,Object> properties = getProperties(jsonVertex);
+        Map<String,String> properties = getProperties(jsonVertex);
         String label = getLabel(jsonVertex);
         List<String> graphs = getGraphs(jsonVertex);
         return Vertex.create(id, properties, label, graphs);

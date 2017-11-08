@@ -17,7 +17,7 @@ public class JSONToEdge extends JSONToElement implements Function<String,Edge> {
         String id = getId(jsonEdge);
         String src = getSrc(jsonEdge);
         String dst = getDst(jsonEdge);
-        Map<String,Object> properties = getProperties(jsonEdge);
+        Map<String,String> properties = getProperties(jsonEdge);
         String label = getLabel(jsonEdge);
         List<String> graphs = getGraphs(jsonEdge);
         return Edge.create(id, src, dst, properties, label, graphs);

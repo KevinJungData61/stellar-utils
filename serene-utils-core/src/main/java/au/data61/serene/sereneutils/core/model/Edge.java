@@ -13,7 +13,7 @@ public class Edge extends Element implements Serializable {
     private Edge(final String id,
                 final String src,
                 final String dst,
-                final Map<String,Object> properties,
+                final Map<String,String> properties,
                 final String label,
                  final List<String> graphs) {
         super(id, properties, label);
@@ -25,7 +25,7 @@ public class Edge extends Element implements Serializable {
     public static Edge create(final String id,
                               final String src,
                               final String dst,
-                              final Map<String,Object> properties,
+                              final Map<String,String> properties,
                               final String label,
                               final List<String> graphs) {
         return new Edge(id, src, dst, properties, label, graphs);
