@@ -1,5 +1,6 @@
 package au.data61.serene.sereneutils.core.io.json;
 
+import au.data61.serene.sereneutils.core.io.DataSource;
 import au.data61.serene.sereneutils.core.model.Edge;
 import au.data61.serene.sereneutils.core.model.GraphCollection;
 import au.data61.serene.sereneutils.core.model.GraphHead;
@@ -9,7 +10,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 
-public class JSONDataSource {
+public class JSONDataSource implements DataSource {
 
     private final String graphHeadPath;
     private final String vertexPath;
@@ -30,6 +31,7 @@ public class JSONDataSource {
         this.spark = spark;
     }
 
+    @Override
     public GraphCollection getGraphCollection() {
         JavaRDD<Vertex> vertexRDD = spark.sparkContext()
                 .textFile(vertexPath, 1)

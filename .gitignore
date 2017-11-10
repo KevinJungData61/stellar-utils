@@ -1,5 +1,6 @@
 .idea
 *.epgm/
+*.parquet/
 target/
 .DS_Store
 pom.xml.tag
