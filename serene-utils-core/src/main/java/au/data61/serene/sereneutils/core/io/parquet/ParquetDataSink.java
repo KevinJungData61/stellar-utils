@@ -1,6 +1,6 @@
 package au.data61.serene.sereneutils.core.io.parquet;
 
-import au.data61.serene.sereneutils.core.model.GraphCollection;
+import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
 import org.apache.spark.sql.SparkSession;
 
 public class ParquetDataSink {

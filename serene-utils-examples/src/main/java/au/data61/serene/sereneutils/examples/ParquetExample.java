@@ -3,11 +3,15 @@ package au.data61.serene.sereneutils.examples;
 import au.data61.serene.sereneutils.core.io.json.JSONDataSource;
 import au.data61.serene.sereneutils.core.io.parquet.ParquetDataSink;
 import au.data61.serene.sereneutils.core.io.parquet.ParquetDataSource;
-import au.data61.serene.sereneutils.core.model.GraphCollection;
+import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
 import org.apache.spark.sql.SparkSession;
 
 import java.io.IOException;
 
+/**
+ * Example for reading and writing to/from Parquet files
+ *
+ */
 public class ParquetExample {
 
     public static void main(String[] args) throws IOException {
@@ -16,8 +20,6 @@ public class ParquetExample {
                 .builder()
                 .appName("Serene Utils JSON Example")
                 .master("local")
-                .config("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2")
-                .config("spark.hadoop.parquet.metadata.read.parallelism", "50")
                 .getOrCreate();
 
         JSONDataSource dataSource = new JSONDataSource("small-yelp-hin.epgm/", spark);

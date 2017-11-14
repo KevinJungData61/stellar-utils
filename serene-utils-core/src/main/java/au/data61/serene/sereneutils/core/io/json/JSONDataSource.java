@@ -1,10 +1,10 @@
 package au.data61.serene.sereneutils.core.io.json;
 
 import au.data61.serene.sereneutils.core.io.DataSource;
-import au.data61.serene.sereneutils.core.model.Edge;
-import au.data61.serene.sereneutils.core.model.GraphCollection;
-import au.data61.serene.sereneutils.core.model.GraphHead;
-import au.data61.serene.sereneutils.core.model.Vertex;
+import au.data61.serene.sereneutils.core.model.epgm.Edge;
+import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
+import au.data61.serene.sereneutils.core.model.epgm.GraphHead;
+import au.data61.serene.sereneutils.core.model.epgm.Vertex;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -33,25 +33,9 @@ public class JSONDataSource implements DataSource {
 
     @Override
     public GraphCollection getGraphCollection() {
-        JavaRDD<Vertex> vertexRDD = spark.sparkContext()
-                .textFile(vertexPath, 1)
-                .toJavaRDD()
-                .map(new JSONToVertex());
-        Dataset<Vertex> vertexDataset = spark.createDataset(vertexRDD.rdd(), Encoders.bean(Vertex.class));
-
-        JavaRDD<Edge> edgeRDD = spark.sparkContext()
-                .textFile(edgePath, 1)
-                .toJavaRDD()
-                .map(new JSONToEdge());
-        Dataset<Edge> edgeDataset = spark.createDataset(edgeRDD.rdd(), Encoders.bean(Edge.class));
-
-        JavaRDD<GraphHead> graphHeadRDD = spark.sparkContext()
-                .textFile(graphHeadPath, 1)
-                .toJavaRDD()
-                .map(new JSONToGraphHead());
-        Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphHeadRDD.rdd(), Encoders.bean(GraphHead.class));
-
+        Dataset<Vertex> vertexDataset = spark.read().json(this.vertexPath).map(new JSONToVertex(), Encoders.bean(Vertex.class));
+        Dataset<Edge> edgeDataset = spark.read().json(this.edgePath).map(new JSONToEdge(), Encoders.bean(Edge.class));
+        Dataset<GraphHead> graphHeadDataset = spark.read().json(this.graphHeadPath).map(new JSONToGraphHead(), Encoders.bean(GraphHead.class));
         return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
-
     }
 }

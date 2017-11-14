@@ -1,10 +1,10 @@
 package au.data61.serene.sereneutils.core.io.parquet;
 
 import au.data61.serene.sereneutils.core.io.DataSource;
-import au.data61.serene.sereneutils.core.model.Edge;
-import au.data61.serene.sereneutils.core.model.GraphCollection;
-import au.data61.serene.sereneutils.core.model.GraphHead;
-import au.data61.serene.sereneutils.core.model.Vertex;
+import au.data61.serene.sereneutils.core.model.epgm.Edge;
+import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
+import au.data61.serene.sereneutils.core.model.epgm.GraphHead;
+import au.data61.serene.sereneutils.core.model.epgm.Vertex;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;

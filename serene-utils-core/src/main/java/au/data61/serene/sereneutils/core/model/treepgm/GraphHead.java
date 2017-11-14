@@ -1,4 +1,4 @@
-package au.data61.serene.sereneutils.core.model;
+package au.data61.serene.sereneutils.core.model.treepgm;
 
 import java.io.Serializable;
 import java.util.Map;

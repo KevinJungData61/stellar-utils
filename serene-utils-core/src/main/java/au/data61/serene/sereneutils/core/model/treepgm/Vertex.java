@@ -1,26 +1,27 @@
-package au.data61.serene.sereneutils.core.model;
+package au.data61.serene.sereneutils.core.model.treepgm;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class Vertex extends Element implements Serializable {
+public class Vertex extends Element {
 
     private List<String> graphs;
 
     private Vertex(final String id,
                    final Map<String,String> properties,
                    final String label,
-                   final List<String> graphs) {
-        super(id, properties, label);
+                   final List<String> graphs,
+                   final boolean real) {
+        super(id, properties, label, real);
         this.graphs = graphs;
     }
 
     public static Vertex create(final String id,
                                 final Map<String,String> properties,
                                 final String label,
-                                final List<String> graphs) {
-        return new Vertex(id, properties, label, graphs);
+                                final List<String> graphs,
+                                final boolean real) {
+        return new Vertex(id, properties, label, graphs, real);
     }
 
     public List<String> getGraphs() {
@@ -30,4 +31,5 @@ public class Vertex extends Element implements Serializable {
     public void setGraphs(List<String> graphs) {
         this.graphs = graphs;
     }
+
 }
