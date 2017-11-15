@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * EPGM vertex with fields that can be serialised in json format
+ */
 public class JSONVertex implements Serializable {
 
     private String id;
@@ -21,7 +24,7 @@ public class JSONVertex implements Serializable {
 
         public Meta() { }
 
-        public Meta(String label, List<ElementId> graphs) {
+        Meta(String label, List<ElementId> graphs) {
             this.label = label;
             this.graphs = new ArrayList<>();
             graphs.forEach(elementId -> this.graphs.add(elementId.toString()));
@@ -46,7 +49,12 @@ public class JSONVertex implements Serializable {
 
     public JSONVertex() { }
 
-    public JSONVertex(Vertex vertex) {
+    /**
+     * Creates a new json serialisable vertex given an EPGM vertex
+     *
+     * @param vertex        EPGM vertex
+     */
+    JSONVertex(Vertex vertex) {
         this.id = vertex.getId().toString();
         this.data = new HashMap<>();
         for (Map.Entry<String,Object> entry : vertex.getProperties().entrySet()) {

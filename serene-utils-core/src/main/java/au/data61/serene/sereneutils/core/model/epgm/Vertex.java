@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * POJO Implementation of an EPGM Vertex
+ */
 public class Vertex extends Element implements Serializable {
 
     private List<ElementId> graphs;
@@ -14,6 +17,7 @@ public class Vertex extends Element implements Serializable {
         this.graphs = null;
     }
 
+
     private Vertex(final String id,
                    final Map<String,Object> properties,
                    final String label,
@@ -22,6 +26,15 @@ public class Vertex extends Element implements Serializable {
         this.setGraphs(graphs);
     }
 
+    /**
+     * Creates a vertex based on the given parameters
+     *
+     * @param id            vertex identifier string
+     * @param properties    vertex properties
+     * @param label         vertex label
+     * @param graphs        graphs that vertex is contained in
+     * @returns             new vertex
+     */
     public static Vertex create(final String id,
                                 final Map<String,Object> properties,
                                 final String label,

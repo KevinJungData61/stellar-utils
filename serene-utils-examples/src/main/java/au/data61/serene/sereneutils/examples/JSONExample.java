@@ -43,7 +43,7 @@ public class JSONExample
                 .collectAsMap();
         System.out.println(locations.toString());
 
-        JSONDataSink jsonDataSink = new JSONDataSink("small-yelp-hin-written.epgm/", spark);
+        JSONDataSink jsonDataSink = new JSONDataSink("small-yelp-hin-written.epgm/");
         jsonDataSink.writeGraphCollection(gc);
 
     }

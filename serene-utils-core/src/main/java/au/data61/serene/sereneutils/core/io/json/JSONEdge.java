@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * EPGM Edge with fields that can be serialised in json format
+ */
 public class JSONEdge implements Serializable {
 
     private String id;
@@ -24,7 +27,7 @@ public class JSONEdge implements Serializable {
 
         public Meta() { }
 
-        public Meta(String label, List<ElementId> graphs) {
+        Meta(String label, List<ElementId> graphs) {
             this.label = label;
             this.graphs = new ArrayList<>();
             graphs.forEach(elementId -> this.graphs.add(elementId.toString()));
@@ -49,7 +52,12 @@ public class JSONEdge implements Serializable {
 
     public JSONEdge() { }
 
-    public JSONEdge(Edge edge) {
+    /**
+     * Create a new json edge from EPGM edge
+     *
+     * @param edge  EPGM edge
+     */
+    JSONEdge(Edge edge) {
         this.id = edge.getId().toString();
         this.data = new HashMap<>();
         for (Map.Entry<String,Object> entry : edge.getProperties().entrySet()) {

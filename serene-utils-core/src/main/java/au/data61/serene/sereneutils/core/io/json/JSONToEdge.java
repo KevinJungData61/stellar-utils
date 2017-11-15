@@ -7,6 +7,9 @@ import org.apache.spark.sql.Row;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Map function from Row (as read from json) to Edge
+ */
 public class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
 
     @Override
@@ -20,12 +23,24 @@ public class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
         return Edge.create(id, src, dst, properties, label, graphs);
     }
 
+    /**
+     * get edge source from row
+     *
+     * @param row   spark dataset row
+     * @return      source identifier string
+     */
     private String getSrc(Row row) {
-        return row.getAs("source");
+        return row.getAs(JSONConstants.SOURCE);
     }
 
+    /**
+     * get edge target from row
+     *
+     * @param row   spark dataset row
+     * @return      target identifier string
+     */
     private String getDst(Row row) {
-        return row.getAs("target");
+        return row.getAs(JSONConstants.TARGET);
     }
 
 }

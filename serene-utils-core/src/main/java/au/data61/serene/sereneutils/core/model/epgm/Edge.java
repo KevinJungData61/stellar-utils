@@ -5,10 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * POJO Implementation of an EPGM Edge
+ */
 public class Edge extends Element implements Serializable {
 
+    /**
+     * Edge source identifier
+     */
     private ElementId src;
+
+    /**
+     * Edge destination identifier
+     */
     private ElementId dst;
+
+    /**
+     * Graphs that edge is contained in
+     */
     private List<ElementId> graphs;
 
     private Edge(final String id,
@@ -23,6 +37,17 @@ public class Edge extends Element implements Serializable {
         this.setGraphs(graphs);
     }
 
+    /**
+     * Creates an edge based on the given parameters
+     *
+     * @param id            edge identifier string
+     * @param src           source identifier string
+     * @param dst           destination identifier string
+     * @param properties    edge properties
+     * @param label         edge label
+     * @param graphs        graphs that edge is contained in
+     * @return              new edge
+     */
     public static Edge create(final String id,
                               final String src,
                               final String dst,

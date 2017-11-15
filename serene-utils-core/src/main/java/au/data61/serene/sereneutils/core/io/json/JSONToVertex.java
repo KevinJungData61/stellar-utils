@@ -7,6 +7,9 @@ import org.apache.spark.sql.Row;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Map function from Row (as read from json) to Vertex
+ */
 public class JSONToVertex extends JSONToElement implements MapFunction<Row,Vertex> {
 
     @Override

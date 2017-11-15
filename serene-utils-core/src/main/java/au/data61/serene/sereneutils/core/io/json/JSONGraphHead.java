@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * EPGM GraphHead with fields that can be serialised in json format
+ */
 public class JSONGraphHead implements Serializable {
 
     private String id;
@@ -17,7 +20,7 @@ public class JSONGraphHead implements Serializable {
 
         public Meta() { }
 
-        public Meta(String label) {
+        Meta(String label) {
             this.label = label;
         }
 
@@ -33,7 +36,12 @@ public class JSONGraphHead implements Serializable {
 
     public JSONGraphHead() { }
 
-    public JSONGraphHead(GraphHead graphHead) {
+    /**
+     * Creates a new json graph head from an EPGM graph head
+     *
+     * @param graphHead     EPGM graph head
+     */
+    JSONGraphHead(GraphHead graphHead) {
         this.id = graphHead.getId().toString();
         this.data = new HashMap<>();
         for (Map.Entry<String,Object> entry : graphHead.getProperties().entrySet()) {

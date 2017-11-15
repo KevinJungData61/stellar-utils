@@ -3,18 +3,39 @@ package au.data61.serene.sereneutils.core.model.epgm;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Abstract base class for graph heads, vertices, and edges.
+ *
+ */
 public abstract class Element {
 
+    /**
+     * Element identifier
+     */
     protected ElementId id;
+
+    /**
+     * Element properties
+     */
     protected Map<String,Object> properties;
+
+    /**
+     * Element label
+     */
     protected String label;
 
-    protected Element() {
-        this.id = null;
-        this.properties = null;
-        this.label = null;
-    }
+    /**
+     * Default constructor
+     */
+    protected Element() { }
 
+    /**
+     * Creates an element from the given parameters
+     *
+     * @param id            element identifier string
+     * @param properties    element properties
+     * @param label         element label
+     */
     protected Element(String id, Map<String,Object> properties, String label) {
         this.id = ElementId.fromString(id);
         this.properties = properties;

@@ -4,27 +4,45 @@ import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 
+/**
+ * Data sink used to write graph collections in json format
+ *
+ */
 public class JSONDataSink {
 
     private final String graphHeadPath;
     private final String vertexPath;
     private final String edgePath;
-    private final SparkSession spark;
 
-    public JSONDataSink(String outputPath, SparkSession spark) {
+    /**
+     * Creates a new json data sink.
+     *
+     * @param outputPath    output epgm directory
+     */
+    public JSONDataSink(String outputPath) {
         this(outputPath + JSONConstants.GRAPHS_FILE,
                 outputPath + JSONConstants.VERTICES_FILE,
-                outputPath + JSONConstants.EDGES_FILE,
-                spark);
+                outputPath + JSONConstants.EDGES_FILE);
     }
 
-    public JSONDataSink(String graphHeadPath, String vertexPath, String edgePath, SparkSession spark) {
+    /**
+     * Creates a new json data sink
+     *
+     * @param graphHeadPath     output graphhead path
+     * @param vertexPath        output vertex path
+     * @param edgePath          output edge path
+     */
+    public JSONDataSink(String graphHeadPath, String vertexPath, String edgePath) {
         this.graphHeadPath = graphHeadPath;
         this.vertexPath = vertexPath;
         this.edgePath = edgePath;
-        this.spark = spark;
     }
 
+    /**
+     * Writes a graph collection in json format
+     *
+     * @param gc    graph collection to write
+     */
     public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
