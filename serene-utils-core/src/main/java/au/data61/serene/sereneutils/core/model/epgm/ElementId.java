@@ -77,7 +77,11 @@ public class ElementId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return this.uuid.equals(obj);
+        if (obj instanceof ElementId) {
+            return this.hashCode() == obj.hashCode();
+        } else {
+            return false;
+        }
     }
 
 }
