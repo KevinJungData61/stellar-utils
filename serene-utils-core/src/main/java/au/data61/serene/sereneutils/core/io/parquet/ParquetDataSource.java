@@ -32,9 +32,18 @@ public class ParquetDataSource implements DataSource {
 
     @Override
     public GraphCollection getGraphCollection() {
-        Dataset<GraphHead> graphHeadDataset = spark.read().parquet(this.graphHeadPath).as(Encoders.bean(GraphHead.class));
-        Dataset<Vertex> vertexDataset = spark.read().parquet(this.vertexPath).as(Encoders.bean(Vertex.class));
-        Dataset<Edge> edgeDataset = spark.read().parquet(this.edgePath).as(Encoders.bean(Edge.class));
+        Dataset<GraphHead> graphHeadDataset = spark
+                .read()
+                .parquet(this.graphHeadPath)
+                .map(new ParquetToGraphHead(), Encoders.bean(GraphHead.class));
+        Dataset<Vertex> vertexDataset = spark
+                .read()
+                .parquet(this.vertexPath)
+                .map(new ParquetToVertex(), Encoders.bean(Vertex.class));
+        Dataset<Edge> edgeDataset = spark
+                .read()
+                .parquet(this.edgePath)
+                .map(new ParquetToEdge(), Encoders.bean(Edge.class));
         return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 }

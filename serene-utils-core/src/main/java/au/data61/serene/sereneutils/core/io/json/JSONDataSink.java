@@ -1,14 +1,15 @@
 package au.data61.serene.sereneutils.core.io.json;
 
+import au.data61.serene.sereneutils.core.io.DataSink;
+import au.data61.serene.sereneutils.core.io.common.*;
 import au.data61.serene.sereneutils.core.model.epgm.GraphCollection;
 import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.SparkSession;
 
 /**
  * Data sink used to write graph collections in json format
  *
  */
-public class JSONDataSink {
+public class JSONDataSink implements DataSink {
 
     private final String graphHeadPath;
     private final String vertexPath;
@@ -45,17 +46,17 @@ public class JSONDataSink {
      */
     public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
-                .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
+                .map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class))
                 .write()
                 .mode("overwrite")
                 .json(this.graphHeadPath);
         gc.getVertices()
-                .map(new VertexToJSON(), Encoders.bean(JSONVertex.class))
+                .map(new VertexToIO(), Encoders.bean(IOVertex.class))
                 .write()
                 .mode("overwrite")
                 .json(this.vertexPath);
         gc.getEdges()
-                .map(new EdgeToJSON(), Encoders.bean(JSONEdge.class))
+                .map(new EdgeToIO(), Encoders.bean(IOEdge.class))
                 .write()
                 .mode("overwrite")
                 .json(this.edgePath);

@@ -1,4 +1,4 @@
-package au.data61.serene.sereneutils.core.io.json;
+package au.data61.serene.sereneutils.core.io.common;
 
 import au.data61.serene.sereneutils.core.model.epgm.GraphHead;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * EPGM GraphHead with fields that can be serialised in json format
  */
-public class JSONGraphHead implements Serializable {
+public class IOGraphHead implements Serializable {
 
     private String id;
     private Map<String,String> data;
@@ -34,14 +34,14 @@ public class JSONGraphHead implements Serializable {
 
     }
 
-    public JSONGraphHead() { }
+    public IOGraphHead() { }
 
     /**
      * Creates a new json graph head from an EPGM graph head
      *
      * @param graphHead     EPGM graph head
      */
-    JSONGraphHead(GraphHead graphHead) {
+    IOGraphHead(GraphHead graphHead) {
         this.id = graphHead.getId().toString();
         this.data = new HashMap<>();
         for (Map.Entry<String,Object> entry : graphHead.getProperties().entrySet()) {

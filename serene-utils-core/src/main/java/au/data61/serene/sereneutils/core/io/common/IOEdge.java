@@ -1,5 +1,6 @@
-package au.data61.serene.sereneutils.core.io.json;
+package au.data61.serene.sereneutils.core.io.common;
 
+import au.data61.serene.sereneutils.core.model.epgm.Edge;
 import au.data61.serene.sereneutils.core.model.epgm.ElementId;
 import au.data61.serene.sereneutils.core.model.epgm.Vertex;
 
@@ -10,11 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * EPGM vertex with fields that can be serialised in json format
+ * EPGM Edge with fields that can be serialised in json format
  */
-public class JSONVertex implements Serializable {
+public class IOEdge implements Serializable {
 
     private String id;
+    private String source;
+    private String target;
     private Map<String,String> data;
     private Meta meta;
 
@@ -47,20 +50,22 @@ public class JSONVertex implements Serializable {
         }
     }
 
-    public JSONVertex() { }
+    public IOEdge() { }
 
     /**
-     * Creates a new json serialisable vertex given an EPGM vertex
+     * Create a new json edge from EPGM edge
      *
-     * @param vertex        EPGM vertex
+     * @param edge  EPGM edge
      */
-    JSONVertex(Vertex vertex) {
-        this.id = vertex.getId().toString();
+    IOEdge(Edge edge) {
+        this.id = edge.getId().toString();
+        this.source = edge.getSrc().toString();
+        this.target = edge.getDst().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,Object> entry : vertex.getProperties().entrySet()) {
+        for (Map.Entry<String,Object> entry : edge.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
-        this.meta = new Meta(vertex.getLabel(), vertex.getGraphs());
+        this.meta = new Meta(edge.getLabel(), edge.getGraphs());
     }
 
     public String getId() {
@@ -69,6 +74,22 @@ public class JSONVertex implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSource() {
+        return this.source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTarget() {
+        return this.target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public Map<String,String> getData() {

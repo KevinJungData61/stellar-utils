@@ -1,16 +1,17 @@
-package au.data61.serene.sereneutils.core.io.json;
+package au.data61.serene.sereneutils.core.io.parquet;
 
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.types.StructField;
+import scala.Tuple2;
+import scala.collection.Iterator;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Common methods used by JSONToElement classes
+ * Common methods used by ParquetToElement classes
  */
-public abstract class JSONToElement {
+public abstract class ParquetToElement {
 
     /**
      * Get identifier string from row
@@ -19,7 +20,7 @@ public abstract class JSONToElement {
      * @return      element identifier string
      */
     protected String getId(Row row) {
-        return row.getAs(JSONConstants.IDENTIFIER);
+        return row.getAs(ParquetConstants.IDENTIFIER);
     }
 
     /**
@@ -30,18 +31,14 @@ public abstract class JSONToElement {
      */
     protected Map<String,Object> getProperties(Row row) {
         Map<String,Object> properties = new HashMap<>();
-        try {
-            Row data = row.getAs(JSONConstants.PROPERTIES);
-            for (StructField sf : data.schema().fields()) {
-                Object value = data.getAs(sf.name());
-                if (value != null) {
-                    properties.put(sf.name(), value);
-                }
-            }
-            return properties;
-        } catch (IllegalArgumentException e) {
-            return properties;
+        scala.collection.immutable.Map<String,String> data = row.getAs("data");
+        Iterator<Tuple2<String,String>> iterator = data.iterator();
+        while (iterator.hasNext()) {
+            Tuple2<String,String> tuple = iterator.next();
+            properties.put(tuple._1(), tuple._2());
         }
+
+        return properties;
     }
 
     /**
@@ -51,7 +48,7 @@ public abstract class JSONToElement {
      * @return      element label
      */
     protected String getLabel(Row row) {
-        return ((Row) row.getAs(JSONConstants.META)).getAs(JSONConstants.LABEL);
+        return ((Row) row.getAs(ParquetConstants.META)).getAs(ParquetConstants.LABEL);
     }
 
     /**
@@ -61,8 +58,8 @@ public abstract class JSONToElement {
      * @return      list of graphs that element is contained in
      */
     protected List<String> getGraphs(Row row) {
-        Row meta = row.getAs(JSONConstants.META);
-        return meta.getList(meta.fieldIndex(JSONConstants.GRAPHS));
+        Row meta = row.getAs(ParquetConstants.META);
+        return meta.getList(meta.fieldIndex(ParquetConstants.GRAPHS));
     }
 
 }
