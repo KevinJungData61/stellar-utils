@@ -34,7 +34,7 @@ public class Edge extends Element implements Serializable {
         super(id, properties, label);
         this.src = ElementId.fromString(src);
         this.dst = ElementId.fromString(dst);
-        this.setGraphs(graphs);
+        this.setGraphsFromStrings(graphs);
     }
 
     public Edge() {}
@@ -87,7 +87,11 @@ public class Edge extends Element implements Serializable {
         return this.graphs;
     }
 
-    public void setGraphs(List<String> graphs) {
+    public void setGraphs(List<ElementId> graphs) {
+        this.graphs = graphs;
+    }
+
+    public void setGraphsFromStrings(List<String> graphs) {
         this.graphs = new ArrayList<>();
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));

@@ -1,5 +1,6 @@
 package sh.serene.sereneutils.io.json;
 
+import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -13,17 +14,66 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
+/**
+ * JSON Data Sink & Data Source Test
+ *
+ */
 public class JSONDataTest {
 
+    /**
+     * temporary directory for reading/writing
+     */
     private final String testPath = "tmp.epgm/";
 
     private SparkSession spark;
     private JSONDataSink jsonDataSink;
     private JSONDataSource jsonDataSource;
 
+    /**
+     * Helper class to hash an element to an integer
+     * @param <T>   vertex, edge, or graph head
+     */
+    private static class ElementHash<T extends Element> implements MapFunction<T,Integer> {
+
+        @Override
+        public Integer call(T element) throws Exception {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(element.getId().toString());
+            stringBuilder.append(element.getLabel());
+            if (element instanceof Vertex) {
+                ((Vertex)element).getGraphs().forEach(elementId -> stringBuilder.append(elementId.toString()));
+            }
+            if (element instanceof Edge) {
+                Edge e = (Edge) element;
+                e.getGraphs().forEach(elementId -> stringBuilder.append(elementId.toString()));
+                stringBuilder.append(e.getSrc().toString());
+                stringBuilder.append(e.getDst().toString());
+            }
+            element.getProperties().entrySet().forEach(entry -> {
+                stringBuilder.append(entry.getKey());
+                stringBuilder.append((String)entry.getValue());
+            });
+            return stringBuilder.toString().hashCode();
+        }
+    }
+
+    /**
+     * helper function to compare two graph collections for equality
+     *
+     * @param gc1   graph collection 1
+     * @param gc2   graph collection 2
+     * @return      gc1 == gc2
+     */
     private boolean compareGraphCollections(GraphCollection gc1, GraphCollection gc2) {
-        //TODO
-        return false;
+        return compareElements(gc1.getVertices(), gc2.getVertices())
+                && compareElements(gc1.getEdges(), gc2.getEdges())
+                && compareElements(gc1.getGraphHeads(), gc2.getGraphHeads());
+    }
+
+    private <T extends Element> boolean compareElements(Dataset<T> elem1, Dataset<T> elem2) {
+        Dataset<Integer> elem1Ints = elem1.map(new ElementHash<>(), Encoders.INT());
+        Dataset<Integer> elem2Ints = elem2.map(new ElementHash<>(), Encoders.INT());
+        return (elem1Ints.union(elem2Ints).distinct().except(elem1Ints.intersect(elem2Ints)).count() == 0);
     }
 
     @Before
@@ -64,12 +114,10 @@ public class JSONDataTest {
         GraphCollection gc = GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
         gc.getGraphHeads().show();
         gc.getGraphHeads().map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class)).write().mode("overwrite").json("tmp.epgm/graphs.json");
-//        jsonDataSink.writeGraphCollection(gc);
-        /*
+        jsonDataSink.writeGraphCollection(gc);
         GraphCollection gcRead = jsonDataSource.getGraphCollection();
-        */
-        //TODO
-        assertTrue(true);
+
+        assertTrue(compareGraphCollections(gc, gcRead));
     }
 
 }

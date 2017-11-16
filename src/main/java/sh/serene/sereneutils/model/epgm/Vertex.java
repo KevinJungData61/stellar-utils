@@ -20,7 +20,7 @@ public class Vertex extends Element implements Serializable {
                    final String label,
                    final List<String> graphs) {
         super(id, properties, label);
-        this.setGraphs(graphs);
+        this.setGraphsFromStrings(graphs);
     }
 
     /**
@@ -43,7 +43,11 @@ public class Vertex extends Element implements Serializable {
         return this.graphs;
     }
 
-    public void setGraphs(List<String> graphs) {
+    public void setGraphs(List<ElementId> graphs) {
+        this.graphs = graphs;
+    }
+
+    public void setGraphsFromStrings(List<String> graphs) {
         this.graphs = new ArrayList<>();
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));
