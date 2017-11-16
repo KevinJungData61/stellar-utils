@@ -1,8 +1,10 @@
 package sh.serene.sereneutils.model.epgm;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -10,10 +12,12 @@ import java.util.UUID;
  */
 public class ElementId implements Serializable {
 
+    private final static int BYTE_ARRAY_LENGTH = 16;
+
     /**
      * Internal UUID
      */
-    private final UUID uuid;
+    private byte[] bytes;
 
     /**
      * Regex to match valid UUID string
@@ -24,7 +28,7 @@ public class ElementId implements Serializable {
     /**
      * Regex to match valid 12 byte hex
      */
-    private static final String hexStrRegex = "^[0-9a-fA-F]{24}$";
+    private static final String hexStrRegex = "^[0-9a-fA-F]+$";
 
     /**
      * Create Element ID from UUID
@@ -32,7 +36,10 @@ public class ElementId implements Serializable {
      * @param uuid  UUID
      */
     private ElementId(UUID uuid) {
-        this.uuid = uuid;
+        ByteBuffer bb = ByteBuffer.wrap(new byte[BYTE_ARRAY_LENGTH]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        this.bytes = bb.array();
     }
 
     /**
@@ -41,14 +48,30 @@ public class ElementId implements Serializable {
      * @param bytes     byte array
      */
     private ElementId(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        long high = bb.getInt();
-        long low = bb.getLong();
-        this.uuid = new UUID(high, low);
+        if (bytes.length == BYTE_ARRAY_LENGTH) {
+            this.bytes = bytes;
+        } else if (bytes.length < BYTE_ARRAY_LENGTH) {
+            this.bytes = new byte[BYTE_ARRAY_LENGTH];
+            int start = BYTE_ARRAY_LENGTH - bytes.length;
+            System.arraycopy(bytes, 0, this.bytes, start, bytes.length);
+        } else {
+            throw new IllegalArgumentException("Invalid identifier bytes");
+        }
+
     }
 
     public static ElementId create() {
         return new ElementId(UUID.randomUUID());
+    }
+
+    public ElementId() { }
+
+    public byte[] getBytes() {
+        return this.bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     /**
@@ -62,7 +85,7 @@ public class ElementId implements Serializable {
         if (id.matches(uuidStrRegex)) {
             return new ElementId(UUID.fromString(id));
         } else if (id.matches(hexStrRegex)) {
-            byte[] bytes = new BigInteger(id, 16).toByteArray();
+            byte[] bytes = DatatypeConverter.parseHexBinary(id);
             return new ElementId(bytes);
         } else {
             throw new IllegalArgumentException("Invalid identifier string");
@@ -71,18 +94,19 @@ public class ElementId implements Serializable {
 
     @Override
     public String toString() {
-        return this.uuid.toString();
+        return DatatypeConverter.printHexBinary(this.bytes);
     }
 
     @Override
     public int hashCode() {
-        return this.uuid.hashCode();
+        byte[] intBytes = Arrays.copyOfRange(this.bytes, 12, 16);
+        return ByteBuffer.wrap(intBytes).getInt();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ElementId) {
-            return this.hashCode() == obj.hashCode();
+            return Arrays.equals(((ElementId) obj).getBytes(), this.bytes);
         } else {
             return false;
         }

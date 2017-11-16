@@ -12,6 +12,8 @@ public class GraphHead extends Element implements Serializable {
         super(id, properties, label);
     }
 
+    public GraphHead() {}
+
     /**
      * Creates a new graph head based on given parameters.
      *
@@ -22,5 +24,10 @@ public class GraphHead extends Element implements Serializable {
      */
     public static GraphHead create(final String id, final Map<String,Object> properties, final String label) {
         return new GraphHead(id, properties, label);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof GraphHead) && ((GraphHead)obj).getId().equals(this.id);
     }
 }

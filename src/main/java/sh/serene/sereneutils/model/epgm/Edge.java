@@ -37,6 +37,8 @@ public class Edge extends Element implements Serializable {
         this.setGraphs(graphs);
     }
 
+    public Edge() {}
+
     /**
      * Creates an edge based on the given parameters
      *
@@ -90,5 +92,10 @@ public class Edge extends Element implements Serializable {
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Edge) && ((Edge) obj).getId().equals(this.id);
     }
 }

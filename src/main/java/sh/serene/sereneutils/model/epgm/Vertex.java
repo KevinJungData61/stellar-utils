@@ -12,10 +12,7 @@ public class Vertex extends Element implements Serializable {
 
     private List<ElementId> graphs;
 
-    public Vertex() {
-        super();
-        this.graphs = null;
-    }
+    public Vertex() { }
 
 
     private Vertex(final String id,
@@ -51,6 +48,11 @@ public class Vertex extends Element implements Serializable {
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Vertex) && ((Vertex)obj).getId().equals(this.id);
     }
 
 }

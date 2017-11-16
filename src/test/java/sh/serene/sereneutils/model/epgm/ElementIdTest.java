@@ -9,24 +9,24 @@ import static org.junit.Assert.*;
  */
 public class ElementIdTest {
 
-    private final String strId = "01234567-89ab-cdef-0123-456789ABCDEF";
+    private final String strId = "0123456789abcdef0123456789ABCDEF";
     private final String strIdAlt = "0123456789aBcDeF01234567";
-    private final String strIdAltOut = "00000000-0123-4567-89aB-cDeF01234567";
-    private final String strIdShort = "123456781234234234";
+    private final String strIdAltOut = "000000000123456789aBcDeF01234567";
+    private final String strIdEmpty = "";
     private final String strIdLong = "123412341234123412341234123412341234";
-    private final String strIdInvalid = "01234567-89ab-cdef-0123--4567890abcdef";
+    private final String strIdInvalid = "01--cd01245678----90abcdef";
 
     @Test
     public void testToAndFromString() throws Exception {
         ElementId id = ElementId.fromString(strId);
-        assertEquals(strId.toLowerCase(), id.toString());
+        assertEquals(strId.toUpperCase(), id.toString());
         ElementId idAlt = ElementId.fromString(strIdAlt);
-        assertEquals(strIdAltOut.toLowerCase(), idAlt.toString());
+        assertEquals(strIdAltOut.toUpperCase(), idAlt.toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testShortString() throws Exception {
-        ElementId.fromString(strIdShort);
+    public void testEmptyString() throws Exception {
+        ElementId.fromString(strIdEmpty);
     }
 
     @Test(expected = IllegalArgumentException.class)
