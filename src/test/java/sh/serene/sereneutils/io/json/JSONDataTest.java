@@ -1,15 +1,19 @@
 package sh.serene.sereneutils.io.json;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import sh.serene.sereneutils.io.common.GraphHeadToIO;
 import sh.serene.sereneutils.io.common.IOGraphHead;
 import sh.serene.sereneutils.model.epgm.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -112,7 +116,6 @@ public class JSONDataTest {
         Dataset<Edge> edgeDataset = spark.createDataset(edges, Encoders.bean(Edge.class));
         Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
         GraphCollection gc = GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
-        gc.getGraphHeads().show();
         gc.getGraphHeads().map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class)).write().mode("overwrite").json("tmp.epgm/graphs.json");
         jsonDataSink.writeGraphCollection(gc);
         GraphCollection gcRead = jsonDataSource.getGraphCollection();
@@ -120,4 +123,12 @@ public class JSONDataTest {
         assertTrue(compareGraphCollections(gc, gcRead));
     }
 
+    @After
+    public void tearDown() {
+        try {
+            FileUtils.deleteDirectory(new File(testPath));
+        } catch (IOException e) {
+            System.out.println("Unable to delete temporary folder");
+        }
+    }
 }
