@@ -1,9 +1,6 @@
 package sh.serene.sereneutils.model.epgm;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PropertyValue implements Serializable {
 
@@ -38,7 +35,7 @@ public class PropertyValue implements Serializable {
         }
     }
 
-    public Object getValue() {
+    public Object value() {
         try {
             return deserialize();
         } catch (Exception e) {
@@ -46,7 +43,7 @@ public class PropertyValue implements Serializable {
         }
     }
 
-    public <T> T getValue(Class<T> type) {
+    public <T> T value(Class<T> type) {
         try {
             return type.cast(deserialize());
         } catch (Exception e) {
@@ -68,7 +65,7 @@ public class PropertyValue implements Serializable {
 
     @Override
     public String toString() {
-        return this.getValue().toString();
+        return this.value().toString();
     }
 
 }

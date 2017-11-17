@@ -86,12 +86,12 @@ public abstract class Element {
 
     public Object getPropertyValue(String key) {
         PropertyValue pv = properties.get(key);
-        return (pv == null) ? null : pv.getValue();
+        return (pv == null) ? null : pv.value();
     }
 
     public <T> T getPropertyValue(String key, Class<T> type) {
         PropertyValue pv = properties.get(key);
-        return (pv == null) ? null : pv.getValue(type);
+        return (pv == null) ? null : pv.value(type);
     }
 
 }
