@@ -2,6 +2,7 @@ package sh.serene.sereneutils.io.json;
 
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,14 @@ public abstract class JSONToElement {
      * @param row   spark dataset row
      * @return      element properties
      */
-    protected Map<String,Object> getProperties(Row row) {
-        Map<String,Object> properties = new HashMap<>();
+    protected Map<String,PropertyValue> getProperties(Row row) {
+        Map<String,PropertyValue> properties = new HashMap<>();
         try {
             Row data = row.getAs(JSONConstants.PROPERTIES);
             for (StructField sf : data.schema().fields()) {
-                Object value = data.getAs(sf.name());
+                String value = data.getAs(sf.name());
                 if (value != null) {
-                    properties.put(sf.name(), value);
+                    properties.put(sf.name(), PropertyValue.create(value));
                 }
             }
             return properties;

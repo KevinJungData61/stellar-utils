@@ -34,11 +34,11 @@ public class JSONExample
 
         gc.getVertices().map((MapFunction<Vertex,String>) vertex -> (vertex.getId().toString()), Encoders.STRING()).show();
         gc.getVertices().map((MapFunction<Vertex,String>) vertex -> (vertex.getGraphs().get(0).toString()), Encoders.STRING()).show();
-        gc.getVertices().map((MapFunction<Vertex,Boolean>) vertex -> Boolean.valueOf((String) vertex.getProperty("elite")), Encoders.BOOLEAN()).show();
+        gc.getVertices().map((MapFunction<Vertex,Integer>) vertex -> (Integer.parseInt(vertex.getProperty("cool").toString())), Encoders.INT()).show();
 
         Map<String,Integer> locations = gc.getEdges()
                 .filter((FilterFunction<Edge>) edge -> edge.getLabel().equals("locatedIn"))
-                .toJavaRDD().mapToPair((PairFunction<Edge,String,Integer>) edge -> new Tuple2<>((String) edge.getProperty("toYelpId"), 1))
+                .toJavaRDD().mapToPair((PairFunction<Edge,String,Integer>) edge -> new Tuple2<>(edge.getProperty("toYelpId").toString(), 1))
                 .reduceByKey((Function2<Integer,Integer,Integer>) (a, b) -> (a + b))
                 .collectAsMap();
         System.out.println(locations.toString());

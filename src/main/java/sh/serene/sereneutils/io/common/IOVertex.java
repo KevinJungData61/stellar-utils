@@ -1,6 +1,7 @@
 package sh.serene.sereneutils.io.common;
 
 import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 import sh.serene.sereneutils.model.epgm.Vertex;
 
 import java.io.Serializable;
@@ -57,7 +58,7 @@ public class IOVertex implements Serializable {
     IOVertex(Vertex vertex) {
         this.id = vertex.getId().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,Object> entry : vertex.getProperties().entrySet()) {
+        for (Map.Entry<String,PropertyValue> entry : vertex.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
         this.meta = new Meta(vertex.getLabel(), vertex.getGraphs());

@@ -3,6 +3,7 @@ package sh.serene.sereneutils.io.json;
 import sh.serene.sereneutils.model.epgm.Edge;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ public class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
         String id = getId(row);
         String src = getSrc(row);
         String dst = getDst(row);
-        Map<String,Object> properties = getProperties(row);
+        Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
         List<String> graphs = getGraphs(row);
         return Edge.create(id, src, dst, properties, label, graphs);

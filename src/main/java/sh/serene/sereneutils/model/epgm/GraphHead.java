@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class GraphHead extends Element implements Serializable {
 
-    private GraphHead(final String id, final Map<String,Object> properties, final String label) {
+    private GraphHead(final ElementId id, final Map<String,PropertyValue> properties, final String label) {
         super(id, properties, label);
     }
 
@@ -17,13 +17,17 @@ public class GraphHead extends Element implements Serializable {
     /**
      * Creates a new graph head based on given parameters.
      *
-     * @param id            graph head identifier string
+     * @param id            graph head identifier
      * @param properties    graph head properties
      * @param label         graph head label
      * @return              new graph head
      */
-    public static GraphHead create(final String id, final Map<String,Object> properties, final String label) {
+    public static GraphHead create(final ElementId id, final Map<String,PropertyValue> properties, final String label) {
         return new GraphHead(id, properties, label);
+    }
+
+    public static GraphHead create(final String id, final Map<String,PropertyValue> properties, final String label) {
+        return new GraphHead(ElementId.fromString(id), properties, label);
     }
 
     @Override

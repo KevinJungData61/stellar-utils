@@ -1,5 +1,7 @@
 package sh.serene.sereneutils.io.parquet;
 
+import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 import sh.serene.sereneutils.model.epgm.Vertex;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
@@ -14,10 +16,10 @@ public class ParquetToVertex extends ParquetToElement implements MapFunction<Row
 
     @Override
     public Vertex call(Row row) {
-        String id = getId(row);
-        Map<String,Object> properties = getProperties(row);
+        ElementId id = getId(row);
+        Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
-        List<String> graphs = getGraphs(row);
+        List<ElementId> graphs = getGraphs(row);
         return Vertex.create(id, properties, label, graphs);
     }
 

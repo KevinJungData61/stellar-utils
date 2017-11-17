@@ -1,6 +1,7 @@
 package sh.serene.sereneutils.io.common;
 
 import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class IOGraphHead implements Serializable {
     IOGraphHead(GraphHead graphHead) {
         this.id = graphHead.getId().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,Object> entry : graphHead.getProperties().entrySet()) {
+        for (Map.Entry<String,PropertyValue> entry : graphHead.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
         this.meta = new Meta(graphHead.getLabel());

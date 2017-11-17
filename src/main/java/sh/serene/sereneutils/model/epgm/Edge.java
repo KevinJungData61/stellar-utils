@@ -25,11 +25,23 @@ public class Edge extends Element implements Serializable {
      */
     private List<ElementId> graphs;
 
-    private Edge(final String id,
-                final String src,
-                final String dst,
-                final Map<String,Object> properties,
+    private Edge(final ElementId id,
+                final ElementId src,
+                final ElementId dst,
+                final Map<String,PropertyValue> properties,
                 final String label,
+                 final List<ElementId> graphs) {
+        super(id, properties, label);
+        this.src = src;
+        this.dst = dst;
+        this.graphs = graphs;
+    }
+
+    private Edge(final String id,
+                 final String src,
+                 final String dst,
+                 final Map<String,PropertyValue> properties,
+                 final String label,
                  final List<String> graphs) {
         super(id, properties, label);
         this.src = ElementId.fromString(src);
@@ -38,6 +50,26 @@ public class Edge extends Element implements Serializable {
     }
 
     public Edge() {}
+
+    /**
+     * Creates an edge based on the given parameters
+     *
+     * @param id            edge identifier
+     * @param src           source identifier
+     * @param dst           destination identifier
+     * @param properties    edge properties
+     * @param label         edge label
+     * @param graphs        graphs that edge is contained in
+     * @return              new edge
+     */
+    public static Edge create(final ElementId id,
+                              final ElementId src,
+                              final ElementId dst,
+                              final Map<String,PropertyValue> properties,
+                              final String label,
+                              final List<ElementId> graphs) {
+        return new Edge(id, src, dst, properties, label, graphs);
+    }
 
     /**
      * Creates an edge based on the given parameters
@@ -53,7 +85,7 @@ public class Edge extends Element implements Serializable {
     public static Edge create(final String id,
                               final String src,
                               final String dst,
-                              final Map<String,Object> properties,
+                              final Map<String,PropertyValue> properties,
                               final String label,
                               final List<String> graphs) {
         return new Edge(id, src, dst, properties, label, graphs);
@@ -91,7 +123,7 @@ public class Edge extends Element implements Serializable {
         this.graphs = graphs;
     }
 
-    public void setGraphsFromStrings(List<String> graphs) {
+    private void setGraphsFromStrings(List<String> graphs) {
         this.graphs = new ArrayList<>();
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));

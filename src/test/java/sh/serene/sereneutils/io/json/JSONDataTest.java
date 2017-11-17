@@ -55,7 +55,7 @@ public class JSONDataTest {
             }
             element.getProperties().entrySet().forEach(entry -> {
                 stringBuilder.append(entry.getKey());
-                stringBuilder.append((String)entry.getValue());
+                stringBuilder.append(entry.getValue().toString());
             });
             return stringBuilder.toString().hashCode();
         }
@@ -116,7 +116,51 @@ public class JSONDataTest {
         Dataset<Edge> edgeDataset = spark.createDataset(edges, Encoders.bean(Edge.class));
         Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
         GraphCollection gc = GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
-        gc.getGraphHeads().map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class)).write().mode("overwrite").json("tmp.epgm/graphs.json");
+        jsonDataSink.writeGraphCollection(gc);
+        GraphCollection gcRead = jsonDataSource.getGraphCollection();
+
+        assertTrue(compareGraphCollections(gc, gcRead));
+    }
+
+    @Test
+    public void testSingleGraphWithAttrAndLabel() {
+
+        List<String> graphids = Arrays.asList(ElementId.create().toString());
+        List<GraphHead> graphs = Arrays.asList(GraphHead.create(
+                graphids.get(0), new HashMap<>(), "small_example"
+        ));
+        String label1 = "1";
+        String label2 = "2";
+        Map<String,PropertyValue> prop = new HashMap<>();
+        prop.put("string", PropertyValue.create("123"));
+        prop.put("boolean", PropertyValue.create(false));
+        prop.put("integer", PropertyValue.create(123));
+        prop.put("float", PropertyValue.create(1.23));
+        List<String> list = Arrays.asList("1", "2", "3");
+        prop.put("list", PropertyValue.create(list));
+        List<Vertex> vertices = Arrays.asList(
+                Vertex.create(ElementId.create().toString(), prop, label1, graphids),
+                Vertex.create(ElementId.create().toString(), prop, label1, graphids),
+                Vertex.create(ElementId.create().toString(), prop, label2, graphids)
+        );
+        List<Edge> edges = Arrays.asList(
+                Edge.create(ElementId.create().toString(),
+                        vertices.get(0).getId().toString(),
+                        vertices.get(1).getId().toString(),
+                        prop,
+                        label1,
+                        graphids),
+                Edge.create(ElementId.create().toString(),
+                        vertices.get(1).getId().toString(),
+                        vertices.get(2).getId().toString(),
+                        prop,
+                        label2,
+                        graphids)
+        );
+        Dataset<Vertex> vertexDataset = spark.createDataset(vertices, Encoders.bean(Vertex.class));
+        Dataset<Edge> edgeDataset = spark.createDataset(edges, Encoders.bean(Edge.class));
+        Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
+        GraphCollection gc = GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
         jsonDataSink.writeGraphCollection(gc);
         GraphCollection gcRead = jsonDataSource.getGraphCollection();
 

@@ -2,6 +2,7 @@ package sh.serene.sereneutils.io.common;
 
 import sh.serene.sereneutils.model.epgm.Edge;
 import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class IOEdge implements Serializable {
         this.source = edge.getSrc().toString();
         this.target = edge.getDst().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,Object> entry : edge.getProperties().entrySet()) {
+        for (Map.Entry<String,PropertyValue> entry : edge.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
         this.meta = new Meta(edge.getLabel(), edge.getGraphs());

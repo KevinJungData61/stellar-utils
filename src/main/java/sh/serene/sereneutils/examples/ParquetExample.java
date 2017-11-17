@@ -8,6 +8,7 @@ import sh.serene.sereneutils.model.epgm.GraphCollection;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
+import sh.serene.sereneutils.model.epgm.Vertex;
 
 import java.io.IOException;
 
@@ -28,15 +29,19 @@ public class ParquetExample {
         JSONDataSource dataSource = new JSONDataSource("small-yelp-hin.epgm/", spark);
         GraphCollection gc = dataSource.getGraphCollection();
         gc.getEdges().show();
+        gc.getGraphHeads().show();
 
         ParquetDataSink parquetDataSink = new ParquetDataSink("small-yelp-hin.parquet/");
         parquetDataSink.writeGraphCollection(gc);
 
+        /*
         GraphCollection gcRe = (new ParquetDataSource("small-yelp-hin.parquet/", spark)).getGraphCollection();
         gcRe.getEdges().show(20);
         gcRe.getVertices().show(20);
         gcRe.getGraphHeads().show();
         gcRe.getEdges().map((MapFunction<Edge,String>) edge -> ((String)edge.getProperty("fromYelpId")), Encoders.STRING()).show();
+        gcRe.getVertices().map((MapFunction<Vertex,Boolean>) vertex -> ((Boolean) vertex.getProperty("elite")), Encoders.BOOLEAN()).show();
+        */
 
     }
 

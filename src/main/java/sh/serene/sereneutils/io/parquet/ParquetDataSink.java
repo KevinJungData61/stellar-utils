@@ -25,19 +25,16 @@ public class ParquetDataSink implements DataSink {
 
     public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
-                .map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class))
                 .write()
                 .format("parquet")
                 .mode("overwrite")
                 .save(graphHeadPath);
         gc.getVertices()
-                .map(new VertexToIO(), Encoders.bean(IOVertex.class))
                 .write()
                 .format("parquet")
                 .mode("overwrite")
                 .save(vertexPath);
         gc.getEdges()
-                .map(new EdgeToIO(), Encoders.bean(IOEdge.class))
                 .write()
                 .format("parquet")
                 .mode("overwrite")

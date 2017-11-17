@@ -15,8 +15,16 @@ public class Vertex extends Element implements Serializable {
     public Vertex() { }
 
 
+    private Vertex(final ElementId id,
+                   final Map<String,PropertyValue> properties,
+                   final String label,
+                   final List<ElementId> graphs) {
+        super(id, properties, label);
+        this.graphs = graphs;
+    }
+
     private Vertex(final String id,
-                   final Map<String,Object> properties,
+                   final Map<String,PropertyValue> properties,
                    final String label,
                    final List<String> graphs) {
         super(id, properties, label);
@@ -32,8 +40,15 @@ public class Vertex extends Element implements Serializable {
      * @param graphs        graphs that vertex is contained in
      * @returns             new vertex
      */
+    public static Vertex create(final ElementId id,
+                                final Map<String,PropertyValue> properties,
+                                final String label,
+                                final List<ElementId> graphs) {
+        return new Vertex(id, properties, label, graphs);
+    }
+
     public static Vertex create(final String id,
-                                final Map<String,Object> properties,
+                                final Map<String,PropertyValue> properties,
                                 final String label,
                                 final List<String> graphs) {
         return new Vertex(id, properties, label, graphs);
@@ -47,7 +62,7 @@ public class Vertex extends Element implements Serializable {
         this.graphs = graphs;
     }
 
-    public void setGraphsFromStrings(List<String> graphs) {
+    private void setGraphsFromStrings(List<String> graphs) {
         this.graphs = new ArrayList<>();
         for (String g : graphs) {
             this.graphs.add(ElementId.fromString(g));

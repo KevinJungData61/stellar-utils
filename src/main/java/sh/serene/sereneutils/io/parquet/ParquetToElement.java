@@ -3,6 +3,8 @@ package sh.serene.sereneutils.io.parquet;
 import org.apache.spark.sql.Row;
 import scala.Tuple2;
 import scala.collection.Iterator;
+import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ public abstract class ParquetToElement {
      * @param row   spark dataset row
      * @return      element identifier string
      */
-    protected String getId(Row row) {
+    protected ElementId getId(Row row) {
         return row.getAs(ParquetConstants.IDENTIFIER);
     }
 
@@ -29,13 +31,13 @@ public abstract class ParquetToElement {
      * @param row   spark dataset row
      * @return      element properties
      */
-    protected Map<String,Object> getProperties(Row row) {
-        Map<String,Object> properties = new HashMap<>();
+    protected Map<String,PropertyValue> getProperties(Row row) {
+        Map<String,PropertyValue> properties = new HashMap<>();
         scala.collection.immutable.Map<String,String> data = row.getAs("data");
         Iterator<Tuple2<String,String>> iterator = data.iterator();
         while (iterator.hasNext()) {
             Tuple2<String,String> tuple = iterator.next();
-            properties.put(tuple._1(), tuple._2());
+            properties.put(tuple._1(), PropertyValue.create(tuple._2()));
         }
 
         return properties;
@@ -57,7 +59,7 @@ public abstract class ParquetToElement {
      * @param row   spark dataset row
      * @return      list of graphs that element is contained in
      */
-    protected List<String> getGraphs(Row row) {
+    protected List<ElementId> getGraphs(Row row) {
         Row meta = row.getAs(ParquetConstants.META);
         return meta.getList(meta.fieldIndex(ParquetConstants.GRAPHS));
     }

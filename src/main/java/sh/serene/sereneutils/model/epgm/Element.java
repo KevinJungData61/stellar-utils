@@ -16,7 +16,7 @@ public abstract class Element {
     /**
      * Element properties
      */
-    protected Map<String,Object> properties;
+    protected Map<String,PropertyValue> properties;
 
     /**
      * Element label
@@ -31,14 +31,25 @@ public abstract class Element {
     /**
      * Creates an element from the given parameters
      *
+     * @param id            element identifier
+     * @param properties    element properties
+     * @param label         element label
+     */
+    protected Element(ElementId id, Map<String,PropertyValue> properties, String label) {
+        this.id = id;
+        this.properties = properties;
+        this.label = label;
+    }
+
+    /**
+     * Creates an element from the given parameters
+     *
      * @param id            element identifier string
      * @param properties    element properties
      * @param label         element label
      */
-    protected Element(String id, Map<String,Object> properties, String label) {
-        this.id = ElementId.fromString(id);
-        this.properties = properties;
-        this.label = label;
+    protected Element(String id, Map<String,PropertyValue> properties, String label) {
+        this(ElementId.fromString(id), properties, label);
     }
 
     public ElementId getId() {
@@ -53,11 +64,11 @@ public abstract class Element {
         this.id = id;
     }
 
-    public Map<String,Object> getProperties() {
+    public Map<String,PropertyValue> getProperties() {
         return this.properties;
     }
 
-    public void setProperties(Map<String,Object> properties) {
+    public void setProperties(Map<String,PropertyValue> properties) {
         this.properties = properties;
     }
 
