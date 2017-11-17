@@ -6,15 +6,15 @@ public class ParquetConstants {
 
     static final String META = "meta";
 
-    static final String PROPERTIES = "data";
+    static final String PROPERTIES = "properties";
 
     static final String GRAPHS = "graphs";
 
     static final String LABEL = "label";
 
-    static final String SOURCE = "source";
+    static final String SOURCE = "src";
 
-    static final String TARGET = "target";
+    static final String TARGET = "dst";
 
     public static final String GRAPHS_FILE = "graphs.parquet";
 

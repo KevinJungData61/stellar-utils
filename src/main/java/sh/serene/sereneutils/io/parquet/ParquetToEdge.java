@@ -32,7 +32,7 @@ public class ParquetToEdge extends ParquetToElement implements MapFunction<Row,E
      * @return      source identifier string
      */
     private ElementId getSrc(Row row) {
-        return row.getAs(ParquetConstants.SOURCE);
+        return getElementId(row.getAs(ParquetConstants.SOURCE));
     }
 
     /**
@@ -42,7 +42,7 @@ public class ParquetToEdge extends ParquetToElement implements MapFunction<Row,E
      * @return      target identifier string
      */
     private ElementId getDst(Row row) {
-        return row.getAs(ParquetConstants.TARGET);
+        return getElementId(row.getAs(ParquetConstants.TARGET));
     }
 
 }

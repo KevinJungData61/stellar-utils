@@ -80,8 +80,18 @@ public abstract class Element {
         this.label = label;
     }
 
-    public Object getProperty(String key) {
+    public PropertyValue getProperty(String key) {
         return properties.get(key);
+    }
+
+    public Object getPropertyValue(String key) {
+        PropertyValue pv = properties.get(key);
+        return (pv == null) ? null : pv.getValue();
+    }
+
+    public <T> T getPropertyValue(String key, Class<T> type) {
+        PropertyValue pv = properties.get(key);
+        return (pv == null) ? null : pv.getValue(type);
     }
 
 }

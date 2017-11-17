@@ -123,9 +123,9 @@ public class JSONDataTest {
     }
 
     @Test
-    public void testSingleGraphWithAttrAndLabel() {
+    public void testSingleGraphWithAttrAndLabel() throws Exception {
 
-        List<String> graphids = Arrays.asList(ElementId.create().toString());
+        List<ElementId> graphids = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphids.get(0), new HashMap<>(), "small_example"
         ));
@@ -136,23 +136,21 @@ public class JSONDataTest {
         prop.put("boolean", PropertyValue.create(false));
         prop.put("integer", PropertyValue.create(123));
         prop.put("float", PropertyValue.create(1.23));
-        List<String> list = Arrays.asList("1", "2", "3");
-        prop.put("list", PropertyValue.create(list));
         List<Vertex> vertices = Arrays.asList(
-                Vertex.create(ElementId.create().toString(), prop, label1, graphids),
-                Vertex.create(ElementId.create().toString(), prop, label1, graphids),
-                Vertex.create(ElementId.create().toString(), prop, label2, graphids)
+                Vertex.create(ElementId.create(), prop, label1, graphids),
+                Vertex.create(ElementId.create(), prop, label1, graphids),
+                Vertex.create(ElementId.create(), prop, label2, graphids)
         );
         List<Edge> edges = Arrays.asList(
-                Edge.create(ElementId.create().toString(),
-                        vertices.get(0).getId().toString(),
-                        vertices.get(1).getId().toString(),
+                Edge.create(ElementId.create(),
+                        vertices.get(0).getId(),
+                        vertices.get(1).getId(),
                         prop,
                         label1,
                         graphids),
-                Edge.create(ElementId.create().toString(),
-                        vertices.get(1).getId().toString(),
-                        vertices.get(2).getId().toString(),
+                Edge.create(ElementId.create(),
+                        vertices.get(1).getId(),
+                        vertices.get(2).getId(),
                         prop,
                         label2,
                         graphids)
