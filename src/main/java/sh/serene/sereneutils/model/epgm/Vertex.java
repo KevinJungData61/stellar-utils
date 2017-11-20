@@ -12,8 +12,11 @@ public class Vertex extends Element implements Serializable {
 
     private List<ElementId> graphs;
 
+    /**
+     * Default constructor not to be used explicitly
+     */
+    @Deprecated
     public Vertex() { }
-
 
     private Vertex(final ElementId id,
                    final Map<String,PropertyValue> properties,
@@ -34,7 +37,7 @@ public class Vertex extends Element implements Serializable {
     /**
      * Creates a vertex based on the given parameters
      *
-     * @param id            vertex identifier string
+     * @param id            vertex identifier
      * @param properties    vertex properties
      * @param label         vertex label
      * @param graphs        graphs that vertex is contained in
@@ -47,6 +50,15 @@ public class Vertex extends Element implements Serializable {
         return new Vertex(id, properties, label, graphs);
     }
 
+    /**
+     * Creates a vertex based on the given parameters
+     *
+     * @param id            vertex identifier string
+     * @param properties    vertex properties
+     * @param label         vertex label
+     * @param graphs        graphs that vertex is contained in
+     * @return              new vertex
+     */
     public static Vertex createFromStringIds(final String id,
                                 final Map<String,PropertyValue> properties,
                                 final String label,

@@ -12,6 +12,10 @@ public class GraphHead extends Element implements Serializable {
         super(id, properties, label);
     }
 
+    /**
+     * Default constructor not to be used explicitly
+     */
+    @Deprecated
     public GraphHead() {}
 
     /**
@@ -26,6 +30,14 @@ public class GraphHead extends Element implements Serializable {
         return new GraphHead(id, properties, label);
     }
 
+    /**
+     * Creates a new graph head based on given parameters.
+     *
+     * @param id            graph head identifier string
+     * @param properties    graph head properties
+     * @param label         graph head label
+     * @return              new graph head
+     */
     public static GraphHead createFromStringIds(final String id, final Map<String,PropertyValue> properties, final String label) {
         return new GraphHead(ElementId.fromString(id), properties, label);
     }

@@ -49,6 +49,10 @@ public class Edge extends Element implements Serializable {
         this.setGraphsFromStrings(graphs);
     }
 
+    /**
+     * Default constructor not to be used explicitly
+     */
+    @Deprecated
     public Edge() {}
 
     /**

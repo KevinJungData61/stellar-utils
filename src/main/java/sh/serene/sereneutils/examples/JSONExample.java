@@ -45,6 +45,5 @@ public class JSONExample
 
         JSONDataSink jsonDataSink = new JSONDataSink("small-yelp-hin-written.epgm/");
         jsonDataSink.writeGraphCollection(gc);
-
     }
 }

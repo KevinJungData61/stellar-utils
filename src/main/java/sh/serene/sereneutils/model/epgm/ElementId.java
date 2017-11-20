@@ -60,10 +60,19 @@ public class ElementId implements Serializable {
 
     }
 
+    /**
+     * Create a new random Element ID
+     *
+     * @return  Element ID
+     */
     public static ElementId create() {
         return new ElementId(UUID.randomUUID());
     }
 
+    /**
+     * Default constructor not to be used explicitly
+     */
+    @Deprecated
     public ElementId() { }
 
     public byte[] getBytes() {
