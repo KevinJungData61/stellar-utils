@@ -2,6 +2,9 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class PropertyValueTest {
@@ -60,6 +63,34 @@ public class PropertyValueTest {
         assertEquals(value, pv.value());
         assertEquals(value, pv.value(Double.class), 1e-7);
         assertEquals(Double.toString(value), pv.toString());
+    }
+
+    @Test
+    public void testIntegerListPropertyValue() throws Exception {
+        List<Integer> value = new ArrayList<>();
+        value.add(1);
+        value.add(2);
+        value.add(3);
+        PropertyValue pv = PropertyValue.create(value);
+        assertEquals(value.get(0), pv.value(List.class).get(0));
+        assertEquals(value.get(1), pv.value(List.class).get(1));
+        assertEquals(value.get(2), pv.value(List.class).get(2));
+        assertEquals(value.size(), pv.value(List.class).size());
+        assertEquals(value.toString(), pv.value(List.class).toString());
+    }
+
+    @Test
+    public void testStringListPropertyValue() throws Exception {
+        List<String> value = new ArrayList<>();
+        value.add("1");
+        value.add("23");
+        value.add("456");
+        PropertyValue pv = PropertyValue.create(value);
+        assertEquals(value.get(0), pv.value(List.class).get(0));
+        assertEquals(value.get(1), pv.value(List.class).get(1));
+        assertEquals(value.get(2), pv.value(List.class).get(2));
+        assertEquals(value.size(), pv.value(List.class).size());
+        assertEquals(value.toString(), pv.value(List.class).toString());
     }
 
 }
