@@ -1,8 +1,8 @@
-package sh.serene.sereneutils.io.common;
+package sh.serene.sereneutils.io.json;
 
+import sh.serene.sereneutils.model.epgm.Edge;
 import sh.serene.sereneutils.model.epgm.ElementId;
 import sh.serene.sereneutils.model.epgm.PropertyValue;
-import sh.serene.sereneutils.model.epgm.Vertex;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * EPGM vertex with fields that can be serialised in json format
+ * EPGM Edge with fields that can be serialised in json format
  */
-public class IOVertex implements Serializable {
+public class JSONEdge implements Serializable {
 
     private String id;
+    private String source;
+    private String target;
     private Map<String,String> data;
     private Meta meta;
 
@@ -48,20 +50,22 @@ public class IOVertex implements Serializable {
         }
     }
 
-    public IOVertex() { }
+    public JSONEdge() { }
 
     /**
-     * Creates a new json serialisable vertex given an EPGM vertex
+     * Create a new json edge from EPGM edge
      *
-     * @param vertex        EPGM vertex
+     * @param edge  EPGM edge
      */
-    IOVertex(Vertex vertex) {
-        this.id = vertex.getId().toString();
+    JSONEdge(Edge edge) {
+        this.id = edge.getId().toString();
+        this.source = edge.getSrc().toString();
+        this.target = edge.getDst().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,PropertyValue> entry : vertex.getProperties().entrySet()) {
+        for (Map.Entry<String,PropertyValue> entry : edge.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
-        this.meta = new Meta(vertex.getLabel(), vertex.getGraphs());
+        this.meta = new Meta(edge.getLabel(), edge.getGraphs());
     }
 
     public String getId() {
@@ -70,6 +74,22 @@ public class IOVertex implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSource() {
+        return this.source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getTarget() {
+        return this.target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public Map<String,String> getData() {

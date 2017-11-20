@@ -95,20 +95,12 @@ public class Edge extends Element implements Serializable {
         return this.src;
     }
 
-    public void setSrc(String src) {
-        this.src = ElementId.fromString(src);
-    }
-
     public void setSrc(ElementId src) {
         this.src = src;
     }
 
     public ElementId getDst() {
         return this.dst;
-    }
-
-    public void setDst(String dst) {
-        this.dst = ElementId.fromString(dst);
     }
 
     public void setDst(ElementId dst) {

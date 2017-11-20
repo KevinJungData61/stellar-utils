@@ -3,7 +3,6 @@ package sh.serene.sereneutils.io.json;
 import sh.serene.sereneutils.io.DataSink;
 import sh.serene.sereneutils.model.epgm.GraphCollection;
 import org.apache.spark.sql.Encoders;
-import sh.serene.sereneutils.io.common.*;
 
 /**
  * Data sink used to write graph collections in json format
@@ -46,17 +45,17 @@ public class JSONDataSink implements DataSink {
      */
     public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
-                .map(new GraphHeadToIO(), Encoders.bean(IOGraphHead.class))
+                .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
                 .write()
                 .mode("overwrite")
                 .json(this.graphHeadPath);
         gc.getVertices()
-                .map(new VertexToIO(), Encoders.bean(IOVertex.class))
+                .map(new VertexToJSON(), Encoders.bean(JSONVertex.class))
                 .write()
                 .mode("overwrite")
                 .json(this.vertexPath);
         gc.getEdges()
-                .map(new EdgeToIO(), Encoders.bean(IOEdge.class))
+                .map(new EdgeToJSON(), Encoders.bean(JSONEdge.class))
                 .write()
                 .mode("overwrite")
                 .json(this.edgePath);

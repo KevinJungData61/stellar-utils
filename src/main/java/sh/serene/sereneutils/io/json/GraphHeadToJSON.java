@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.io.common;
+package sh.serene.sereneutils.io.json;
 
 import sh.serene.sereneutils.model.epgm.GraphHead;
 import org.apache.spark.api.java.function.MapFunction;
@@ -6,11 +6,11 @@ import org.apache.spark.api.java.function.MapFunction;
 /**
  * Maps an EPGM graph head to a graph head that is serialisable in json format
  */
-public class GraphHeadToIO implements MapFunction<GraphHead,IOGraphHead> {
+public class GraphHeadToJSON implements MapFunction<GraphHead,JSONGraphHead> {
 
     @Override
-    public IOGraphHead call(GraphHead graphHead) {
-        return new IOGraphHead(graphHead);
+    public JSONGraphHead call(GraphHead graphHead) {
+        return new JSONGraphHead(graphHead);
     }
 
 }

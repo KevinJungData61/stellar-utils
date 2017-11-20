@@ -52,6 +52,14 @@ public class ParquetDataTest {
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
+    @Test
+    public void testSingleGraphThousandVertices() throws Exception {
+        GraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
+        parquetDataSink.writeGraphCollection(gc);
+        GraphCollection gcRead = parquetDataSource.getGraphCollection();
+        assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
+    }
+
     @After
     public void tearDown() throws Exception {
         try {

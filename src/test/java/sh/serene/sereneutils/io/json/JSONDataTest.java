@@ -1,23 +1,16 @@
 package sh.serene.sereneutils.io.json;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import sh.serene.sereneutils.io.common.GraphHeadToIO;
-import sh.serene.sereneutils.io.common.IOGraphHead;
-import sh.serene.sereneutils.io.testutils.ElementHash;
 import sh.serene.sereneutils.io.testutils.GraphCollectionFactory;
 import sh.serene.sereneutils.io.testutils.GraphCompare;
 import sh.serene.sereneutils.model.epgm.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -54,6 +47,14 @@ public class JSONDataTest {
     @Test
     public void testSingleGraphWithAttrAndLabel() throws Exception {
         GraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
+        jsonDataSink.writeGraphCollection(gc);
+        GraphCollection gcRead = jsonDataSource.getGraphCollection();
+        assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
+    }
+
+    @Test
+    public void testSingleGraphThousandVertices() throws Exception {
+        GraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
         jsonDataSink.writeGraphCollection(gc);
         GraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));

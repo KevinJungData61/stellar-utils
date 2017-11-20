@@ -1,16 +1,19 @@
-package sh.serene.sereneutils.io.common;
+package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.ElementId;
 import sh.serene.sereneutils.model.epgm.PropertyValue;
+import sh.serene.sereneutils.model.epgm.Vertex;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * EPGM GraphHead with fields that can be serialised in json format
+ * EPGM vertex with fields that can be serialised in json format
  */
-public class IOGraphHead implements Serializable {
+public class JSONVertex implements Serializable {
 
     private String id;
     private Map<String,String> data;
@@ -18,11 +21,14 @@ public class IOGraphHead implements Serializable {
 
     public static class Meta {
         private String label;
+        private List<String> graphs;
 
         public Meta() { }
 
-        Meta(String label) {
+        Meta(String label, List<ElementId> graphs) {
             this.label = label;
+            this.graphs = new ArrayList<>();
+            graphs.forEach(elementId -> this.graphs.add(elementId.toString()));
         }
 
         public String getLabel() {
@@ -33,22 +39,29 @@ public class IOGraphHead implements Serializable {
             this.label = label;
         }
 
+        public List<String> getGraphs() {
+            return this.graphs;
+        }
+
+        public void setGraphs(List<String> graphs) {
+            this.graphs = graphs;
+        }
     }
 
-    public IOGraphHead() { }
+    public JSONVertex() { }
 
     /**
-     * Creates a new json graph head from an EPGM graph head
+     * Creates a new json serialisable vertex given an EPGM vertex
      *
-     * @param graphHead     EPGM graph head
+     * @param vertex        EPGM vertex
      */
-    IOGraphHead(GraphHead graphHead) {
-        this.id = graphHead.getId().toString();
+    JSONVertex(Vertex vertex) {
+        this.id = vertex.getId().toString();
         this.data = new HashMap<>();
-        for (Map.Entry<String,PropertyValue> entry : graphHead.getProperties().entrySet()) {
+        for (Map.Entry<String,PropertyValue> entry : vertex.getProperties().entrySet()) {
             this.data.put(entry.getKey(), entry.getValue().toString());
         }
-        this.meta = new Meta(graphHead.getLabel());
+        this.meta = new Meta(vertex.getLabel(), vertex.getGraphs());
     }
 
     public String getId() {

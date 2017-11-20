@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.io.common;
+package sh.serene.sereneutils.io.json;
 
 import sh.serene.sereneutils.model.epgm.Edge;
 import org.apache.spark.api.java.function.MapFunction;
@@ -6,11 +6,11 @@ import org.apache.spark.api.java.function.MapFunction;
 /**
  * Maps an EPGM edge to a edge that is serialisable in json format
  */
-public class EdgeToIO implements MapFunction<Edge,IOEdge> {
+public class EdgeToJSON implements MapFunction<Edge,JSONEdge> {
 
     @Override
-    public IOEdge call(Edge edge) {
-        return new IOEdge(edge);
+    public JSONEdge call(Edge edge) {
+        return new JSONEdge(edge);
     }
 
 }
