@@ -1,6 +1,7 @@
 package sh.serene.sereneutils.model.epgm;
 
 import java.io.*;
+import java.util.Arrays;
 
 /**
  * Container for property value
@@ -16,7 +17,9 @@ public class PropertyValue implements Serializable {
     /**
      * Default constructor
      */
-    public PropertyValue() { }
+    public PropertyValue() {
+        this.bytes = null;
+    }
 
     /**
      * Create PropertyValue from raw bytes
@@ -33,7 +36,11 @@ public class PropertyValue implements Serializable {
      * @throws IOException
      */
     private PropertyValue(Object object) throws IOException {
-        serialize(object);
+        if (object == null) {
+            this.bytes = null;
+        } else {
+            serialize(object);
+        }
     }
 
 
@@ -57,6 +64,9 @@ public class PropertyValue implements Serializable {
      * @return      stored object
      */
     public Object value() {
+        if (this.bytes == null) {
+            return null;
+        }
         try {
             return deserialize();
         } catch (Exception e) {
@@ -72,6 +82,9 @@ public class PropertyValue implements Serializable {
      * @return          stored object
      */
     public <T> T value(Class<T> type) {
+        if (this.bytes == null) {
+            return null;
+        }
         try {
             return type.cast(deserialize());
         } catch (Exception e) {
@@ -117,6 +130,11 @@ public class PropertyValue implements Serializable {
     @Override
     public String toString() {
         return this.value().toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof PropertyValue) && Arrays.equals(this.bytes, ((PropertyValue) obj).getBytes());
     }
 
 }
