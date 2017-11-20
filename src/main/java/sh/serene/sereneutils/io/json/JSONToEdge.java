@@ -21,7 +21,7 @@ class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
         Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
         List<String> graphs = getGraphs(row);
-        return Edge.create(id, src, dst, properties, label, graphs);
+        return Edge.createFromStringIds(id, src, dst, properties, label, graphs);
     }
 
     /**

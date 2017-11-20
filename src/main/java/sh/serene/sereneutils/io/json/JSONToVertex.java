@@ -19,7 +19,7 @@ class JSONToVertex extends JSONToElement implements MapFunction<Row,Vertex> {
         Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
         List<String> graphs = getGraphs(row);
-        return Vertex.create(id, properties, label, graphs);
+        return Vertex.createFromStringIds(id, properties, label, graphs);
     }
 
 }

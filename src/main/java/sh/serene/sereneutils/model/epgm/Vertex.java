@@ -47,7 +47,7 @@ public class Vertex extends Element implements Serializable {
         return new Vertex(id, properties, label, graphs);
     }
 
-    public static Vertex create(final String id,
+    public static Vertex createFromStringIds(final String id,
                                 final Map<String,PropertyValue> properties,
                                 final String label,
                                 final List<String> graphs) {

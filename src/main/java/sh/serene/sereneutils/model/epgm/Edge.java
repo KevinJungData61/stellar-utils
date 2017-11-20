@@ -82,7 +82,7 @@ public class Edge extends Element implements Serializable {
      * @param graphs        graphs that edge is contained in
      * @return              new edge
      */
-    public static Edge create(final String id,
+    public static Edge createFromStringIds(final String id,
                               final String src,
                               final String dst,
                               final Map<String,PropertyValue> properties,

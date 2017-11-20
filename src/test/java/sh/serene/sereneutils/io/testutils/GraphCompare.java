@@ -24,6 +24,5 @@ public class GraphCompare {
         Dataset<Integer> elem1Ints = elem1.map(new ElementHash<>(), Encoders.INT());
         Dataset<Integer> elem2Ints = elem2.map(new ElementHash<>(), Encoders.INT());
         return (elem1Ints.except(elem2Ints).count() == 0) && (elem2Ints.except(elem1Ints).count() == 0);
-//        return (elem1Ints.union(elem2Ints).distinct().except(elem1Ints.intersect(elem2Ints)).count() == 0);
     }
 }

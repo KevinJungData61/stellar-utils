@@ -26,7 +26,7 @@ public class GraphHead extends Element implements Serializable {
         return new GraphHead(id, properties, label);
     }
 
-    public static GraphHead create(final String id, final Map<String,PropertyValue> properties, final String label) {
+    public static GraphHead createFromStringIds(final String id, final Map<String,PropertyValue> properties, final String label) {
         return new GraphHead(ElementId.fromString(id), properties, label);
     }
 

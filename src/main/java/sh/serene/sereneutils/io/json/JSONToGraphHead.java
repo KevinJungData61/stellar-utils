@@ -17,7 +17,7 @@ class JSONToGraphHead extends JSONToElement implements MapFunction<Row,GraphHead
         String id = getId(row);
         Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
-        return GraphHead.create(id, properties, label);
+        return GraphHead.createFromStringIds(id, properties, label);
     }
 
 }
