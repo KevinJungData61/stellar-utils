@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from json) to GraphHead
  */
-public class JSONToGraphHead extends JSONToElement implements MapFunction<Row,GraphHead> {
+class JSONToGraphHead extends JSONToElement implements MapFunction<Row,GraphHead> {
 
     @Override
     public GraphHead call(Row row) {

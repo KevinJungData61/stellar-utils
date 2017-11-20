@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from json) to Edge
  */
-public class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
+class JSONToEdge extends JSONToElement implements MapFunction<Row,Edge> {
 
     @Override
     public Edge call(Row row) {

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from parquet) to GraphHead
  */
-public class ParquetToGraphHead extends ParquetToElement implements MapFunction<Row,GraphHead> {
+class ParquetToGraphHead extends ParquetToElement implements MapFunction<Row,GraphHead> {
 
     @Override
     public GraphHead call(Row row) {

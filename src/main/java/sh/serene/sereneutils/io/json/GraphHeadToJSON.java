@@ -6,7 +6,7 @@ import org.apache.spark.api.java.function.MapFunction;
 /**
  * Maps an EPGM graph head to a graph head that is serialisable in json format
  */
-public class GraphHeadToJSON implements MapFunction<GraphHead,JSONGraphHead> {
+class GraphHeadToJSON implements MapFunction<GraphHead,JSONGraphHead> {
 
     @Override
     public JSONGraphHead call(GraphHead graphHead) {

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Common methods used by JSONToElement classes
  */
-public abstract class JSONToElement {
+abstract class JSONToElement {
 
     /**
      * Get identifier string from row

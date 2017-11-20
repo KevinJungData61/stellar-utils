@@ -6,7 +6,7 @@ import org.apache.spark.api.java.function.MapFunction;
 /**
  * Maps an EPGM vertex to a vertex that is serialisable in json format
  */
-public class VertexToJSON implements MapFunction<Vertex,JSONVertex> {
+class VertexToJSON implements MapFunction<Vertex,JSONVertex> {
 
     @Override
     public JSONVertex call(Vertex vertex) {

@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Common methods used by ParquetToElement classes
  */
-public abstract class ParquetToElement {
+abstract class ParquetToElement {
 
     /**
      * Get identifier from row

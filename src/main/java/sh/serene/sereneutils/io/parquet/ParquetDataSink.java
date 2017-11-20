@@ -1,9 +1,7 @@
 package sh.serene.sereneutils.io.parquet;
 
 import sh.serene.sereneutils.io.DataSink;
-import sh.serene.sereneutils.io.common.*;
 import sh.serene.sereneutils.model.epgm.GraphCollection;
-import org.apache.spark.sql.Encoders;
 
 public class ParquetDataSink implements DataSink {
 

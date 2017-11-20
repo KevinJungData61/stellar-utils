@@ -6,7 +6,7 @@ import org.apache.spark.api.java.function.MapFunction;
 /**
  * Maps an EPGM edge to a edge that is serialisable in json format
  */
-public class EdgeToJSON implements MapFunction<Edge,JSONEdge> {
+class EdgeToJSON implements MapFunction<Edge,JSONEdge> {
 
     @Override
     public JSONEdge call(Edge edge) {

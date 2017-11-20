@@ -1,6 +1,6 @@
 package sh.serene.sereneutils.io.parquet;
 
-public class ParquetConstants {
+class ParquetConstants {
 
     static final String IDENTIFIER = "id";
 
@@ -16,10 +16,10 @@ public class ParquetConstants {
 
     static final String TARGET = "dst";
 
-    public static final String GRAPHS_FILE = "graphs.parquet";
+    static final String GRAPHS_FILE = "graphs.parquet";
 
-    public static final String VERTICES_FILE = "vertices.parquet";
+    static final String VERTICES_FILE = "vertices.parquet";
 
-    public static final String EDGES_FILE = "edges.parquet";
+    static final String EDGES_FILE = "edges.parquet";
 
 }

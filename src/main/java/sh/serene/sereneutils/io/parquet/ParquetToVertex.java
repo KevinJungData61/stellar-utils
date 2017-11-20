@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from parquet) to Vertex
  */
-public class ParquetToVertex extends ParquetToElement implements MapFunction<Row,Vertex> {
+class ParquetToVertex extends ParquetToElement implements MapFunction<Row,Vertex> {
 
     @Override
     public Vertex call(Row row) {

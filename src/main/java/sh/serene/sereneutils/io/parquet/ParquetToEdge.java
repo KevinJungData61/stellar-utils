@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from parquet) to Edge
  */
-public class ParquetToEdge extends ParquetToElement implements MapFunction<Row,Edge> {
+class ParquetToEdge extends ParquetToElement implements MapFunction<Row,Edge> {
 
     @Override
     public Edge call(Row row) {

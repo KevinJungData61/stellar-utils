@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Map function from Row (as read from json) to Vertex
  */
-public class JSONToVertex extends JSONToElement implements MapFunction<Row,Vertex> {
+class JSONToVertex extends JSONToElement implements MapFunction<Row,Vertex> {
 
     @Override
     public Vertex call(Row row) {
