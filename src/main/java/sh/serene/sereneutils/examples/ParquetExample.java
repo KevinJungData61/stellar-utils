@@ -11,7 +11,6 @@ import org.apache.spark.sql.SparkSession;
 import sh.serene.sereneutils.model.epgm.PropertyValue;
 import sh.serene.sereneutils.model.epgm.Vertex;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

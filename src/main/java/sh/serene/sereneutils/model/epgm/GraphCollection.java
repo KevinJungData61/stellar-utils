@@ -10,19 +10,19 @@ public class GraphCollection {
     /**
      * EPGM Graph Heads
      */
-    private final Dataset<GraphHead> graphHeads;
+    protected final Dataset<GraphHead> graphHeads;
 
     /**
      * EPGM Vertices
      */
-    private final Dataset<Vertex> vertices;
+    protected final Dataset<Vertex> vertices;
 
     /**
      * EPGM Edges
      */
-    private final Dataset<Edge> edges;
+    protected final Dataset<Edge> edges;
 
-    private GraphCollection(Dataset<GraphHead> graphHeads, Dataset<Vertex> vertices, Dataset<Edge> edges) {
+    protected GraphCollection(Dataset<GraphHead> graphHeads, Dataset<Vertex> vertices, Dataset<Edge> edges) {
         this.graphHeads = graphHeads;
         this.vertices = vertices;
         this.edges = edges;
