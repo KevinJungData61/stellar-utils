@@ -44,6 +44,7 @@ public class GraphHead extends Element implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof GraphHead) && ((GraphHead)obj).getId().equals(this.id);
+        return (obj instanceof GraphHead) && super.equals(obj);
     }
+
 }

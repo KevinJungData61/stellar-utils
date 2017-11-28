@@ -86,11 +86,6 @@ public class EPGMVertex extends Element implements Serializable {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof EPGMVertex) && ((EPGMVertex)obj).getId().equals(this.id);
-    }
-
     public EPGMVertex copy(ElementId graphId) {
         ElementId id = ElementId.create();
         List<ElementId> graphs = new ArrayList<>(this.graphs);
@@ -116,6 +111,11 @@ public class EPGMVertex extends Element implements Serializable {
         List<ElementId> graphs = new ArrayList<>(vertex.getGraphs());
         graphs.add(graphId);
         return new EPGMVertex(id, vertex.getProperties(), label, graphs);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof EPGMVertex) && super.equals(obj);
     }
 
 }

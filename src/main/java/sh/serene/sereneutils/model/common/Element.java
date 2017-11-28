@@ -94,4 +94,21 @@ public abstract class Element {
         return (pv == null) ? null : pv.value(type);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Element) {
+            Element other = (Element) obj;
+            return ((this.id.equals(other.getId()))
+                    && (this.properties.equals(other.getProperties()))
+                    && (this.label.equals(other.getLabel())));
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
 }

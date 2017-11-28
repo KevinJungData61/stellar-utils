@@ -133,7 +133,13 @@ public class EPGMEdge extends Element implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof EPGMEdge) && ((EPGMEdge) obj).getId().equals(this.id);
+        if (obj instanceof EPGMEdge) {
+            EPGMEdge other = (EPGMEdge) obj;
+            return (super.equals(other)
+                    && this.src.equals(other.getSrc())
+                    && this.dst.equals(other.getDst()));
+        }
+        return false;
     }
 
     public EPGMEdge copy(ElementId graphId) {
