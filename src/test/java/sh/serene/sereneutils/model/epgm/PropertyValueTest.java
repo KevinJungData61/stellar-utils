@@ -1,6 +1,7 @@
 package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Test;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.List;

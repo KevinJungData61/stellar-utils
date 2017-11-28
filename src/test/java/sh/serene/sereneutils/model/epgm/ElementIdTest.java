@@ -1,6 +1,7 @@
 package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Test;
+import sh.serene.sereneutils.model.common.ElementId;
 
 import static org.junit.Assert.*;
 

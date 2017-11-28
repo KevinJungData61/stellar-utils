@@ -1,28 +1,29 @@
 package sh.serene.sereneutils.model.epgm;
 
 import org.apache.spark.sql.Dataset;
+import sh.serene.sereneutils.model.common.GraphHead;
 
 /**
  * EPGM Graph collection representation as spark datasets
  */
-public class GraphCollection {
+public class EPGMGraphCollection {
 
     /**
      * EPGM Graph Heads
      */
-    protected final Dataset<GraphHead> graphHeads;
+    private final Dataset<GraphHead> graphHeads;
 
     /**
      * EPGM Vertices
      */
-    protected final Dataset<Vertex> vertices;
+    private final Dataset<EPGMVertex> vertices;
 
     /**
      * EPGM Edges
      */
-    protected final Dataset<Edge> edges;
+    private final Dataset<EPGMEdge> edges;
 
-    protected GraphCollection(Dataset<GraphHead> graphHeads, Dataset<Vertex> vertices, Dataset<Edge> edges) {
+    private EPGMGraphCollection(Dataset<GraphHead> graphHeads, Dataset<EPGMVertex> vertices, Dataset<EPGMEdge> edges) {
         this.graphHeads = graphHeads;
         this.vertices = vertices;
         this.edges = edges;
@@ -36,19 +37,19 @@ public class GraphCollection {
      * @param edges         edge dataset
      * @return              graph collection
      */
-    public static GraphCollection fromDatasets(Dataset<GraphHead> graphHeads, Dataset<Vertex> vertices, Dataset<Edge> edges) {
-        return new GraphCollection(graphHeads, vertices, edges);
+    public static EPGMGraphCollection fromDatasets(Dataset<GraphHead> graphHeads, Dataset<EPGMVertex> vertices, Dataset<EPGMEdge> edges) {
+        return new EPGMGraphCollection(graphHeads, vertices, edges);
     }
 
     public Dataset<GraphHead> getGraphHeads() {
         return this.graphHeads;
     }
 
-    public Dataset<Vertex> getVertices() {
+    public Dataset<EPGMVertex> getVertices() {
         return this.vertices;
     }
 
-    public Dataset<Edge> getEdges() {
+    public Dataset<EPGMEdge> getEdges() {
         return this.edges;
     }
 

@@ -1,9 +1,9 @@
 package sh.serene.sereneutils.io.testutils;
 
 import org.apache.spark.api.java.function.MapFunction;
-import sh.serene.sereneutils.model.epgm.Edge;
-import sh.serene.sereneutils.model.epgm.Element;
-import sh.serene.sereneutils.model.epgm.Vertex;
+import sh.serene.sereneutils.model.epgm.EPGMEdge;
+import sh.serene.sereneutils.model.epgm.EPGMVertex;
+import sh.serene.sereneutils.model.common.Element;
 
 /**
  * Helper class to hash an element to an integer
@@ -16,11 +16,11 @@ public class ElementHash<T extends Element> implements MapFunction<T,Integer> {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(element.getId().toString());
         stringBuilder.append(element.getLabel());
-        if (element instanceof Vertex) {
-            ((Vertex)element).getGraphs().forEach(elementId -> stringBuilder.append(elementId.toString()));
+        if (element instanceof EPGMVertex) {
+            ((EPGMVertex)element).getGraphs().forEach(elementId -> stringBuilder.append(elementId.toString()));
         }
-        if (element instanceof Edge) {
-            Edge e = (Edge) element;
+        if (element instanceof EPGMEdge) {
+            EPGMEdge e = (EPGMEdge) element;
             e.getGraphs().forEach(elementId -> stringBuilder.append(elementId.toString()));
             stringBuilder.append(e.getSrc().toString());
             stringBuilder.append(e.getDst().toString());

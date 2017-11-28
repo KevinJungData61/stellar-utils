@@ -2,7 +2,7 @@ package sh.serene.sereneutils.io.json;
 
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
-import sh.serene.sereneutils.model.epgm.PropertyValue;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.HashMap;
 import java.util.List;

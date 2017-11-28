@@ -1,10 +1,10 @@
 package sh.serene.sereneutils.io.parquet;
 
-import sh.serene.sereneutils.model.epgm.ElementId;
-import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.GraphHead;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
-import sh.serene.sereneutils.model.epgm.PropertyValue;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.Map;
 

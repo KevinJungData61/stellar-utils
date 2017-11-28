@@ -2,8 +2,8 @@ package sh.serene.sereneutils.io.testutils;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
-import sh.serene.sereneutils.model.epgm.Element;
-import sh.serene.sereneutils.model.epgm.GraphCollection;
+import sh.serene.sereneutils.model.common.Element;
+import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
 
 public class GraphCompare {
 
@@ -14,7 +14,7 @@ public class GraphCompare {
      * @param gc2   graph collection 2
      * @return      gc1 == gc2
      */
-    public static boolean compareGraphCollections(GraphCollection gc1, GraphCollection gc2) {
+    public static boolean compareGraphCollections(EPGMGraphCollection gc1, EPGMGraphCollection gc2) {
         return compareElements(gc1.getVertices(), gc2.getVertices())
                 && compareElements(gc1.getEdges(), gc2.getEdges())
                 && compareElements(gc1.getGraphHeads(), gc2.getGraphHeads());

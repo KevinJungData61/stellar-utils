@@ -2,6 +2,8 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Before;
 import org.junit.Test;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class VertexTest {
+public class EPGMVertexTest {
 
     private ElementId id;
     private Map<String,PropertyValue> properties;
@@ -31,8 +33,8 @@ public class VertexTest {
 
     @Test
     public void TestVertex() throws Exception {
-        Vertex vertex = Vertex.create(id, properties, label, graphs);
-        Vertex vertexFromStrings = Vertex.createFromStringIds(id.toString(),
+        EPGMVertex vertex = EPGMVertex.create(id, properties, label, graphs);
+        EPGMVertex vertexFromStrings = EPGMVertex.createFromStringIds(id.toString(),
                 properties,
                 label,
                 Arrays.asList(graphs.get(0).toString()));

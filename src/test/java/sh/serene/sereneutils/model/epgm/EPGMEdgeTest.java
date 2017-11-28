@@ -2,6 +2,8 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Before;
 import org.junit.Test;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class EdgeTest {
+public class EPGMEdgeTest {
 
     private ElementId id;
     private ElementId src;
@@ -35,8 +37,8 @@ public class EdgeTest {
 
     @Test
     public void TestEdge() throws Exception {
-        Edge edge = Edge.create(id, src, dst, properties, label, graphs);
-        Edge edgeFromStrings = Edge.createFromStringIds(id.toString(),
+        EPGMEdge edge = EPGMEdge.create(id, src, dst, properties, label, graphs);
+        EPGMEdge edgeFromStrings = EPGMEdge.createFromStringIds(id.toString(),
                 src.toString(),
                 dst.toString(),
                 properties,

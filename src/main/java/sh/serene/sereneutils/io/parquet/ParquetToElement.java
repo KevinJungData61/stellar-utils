@@ -1,12 +1,10 @@
 package sh.serene.sereneutils.io.parquet;
 
 import org.apache.spark.sql.Row;
-import scala.Function1;
 import scala.Tuple2;
 import scala.collection.Iterator;
-import scala.collection.mutable.WrappedArray;
-import sh.serene.sereneutils.model.epgm.ElementId;
-import sh.serene.sereneutils.model.epgm.PropertyValue;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;

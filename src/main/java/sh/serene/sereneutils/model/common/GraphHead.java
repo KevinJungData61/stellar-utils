@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.model.epgm;
+package sh.serene.sereneutils.model.common;
 
 import java.io.Serializable;
 import java.util.Map;

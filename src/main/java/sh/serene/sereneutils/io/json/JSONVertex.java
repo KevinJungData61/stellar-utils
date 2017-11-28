@@ -1,8 +1,8 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.epgm.ElementId;
-import sh.serene.sereneutils.model.epgm.PropertyValue;
-import sh.serene.sereneutils.model.epgm.Vertex;
+import sh.serene.sereneutils.model.epgm.EPGMVertex;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class JSONVertex implements Serializable {
      *
      * @param vertex        EPGM vertex
      */
-    JSONVertex(Vertex vertex) {
+    JSONVertex(EPGMVertex vertex) {
         this.id = vertex.getId().toString();
         this.data = new HashMap<>();
         for (Map.Entry<String,PropertyValue> entry : vertex.getProperties().entrySet()) {

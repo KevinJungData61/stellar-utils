@@ -1,8 +1,7 @@
-package sh.serene.sereneutils.model.epgm;
+package sh.serene.sereneutils.model.common;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;

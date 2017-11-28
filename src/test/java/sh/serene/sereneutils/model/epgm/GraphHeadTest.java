@@ -2,10 +2,11 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Before;
 import org.junit.Test;
+import sh.serene.sereneutils.model.common.ElementId;
+import sh.serene.sereneutils.model.common.GraphHead;
+import sh.serene.sereneutils.model.common.PropertyValue;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;

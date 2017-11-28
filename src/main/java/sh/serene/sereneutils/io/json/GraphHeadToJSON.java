@@ -1,6 +1,6 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.common.GraphHead;
 import org.apache.spark.api.java.function.MapFunction;
 
 /**
