@@ -1,6 +1,8 @@
 package sh.serene.sereneutils.model.epgm;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -142,6 +144,26 @@ public class GraphHead implements Element, Serializable, Cloneable {
     @Override
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    /**
+     * Get graphs
+     *
+     * @return graphs
+     */
+    @Override
+    public List<ElementId> getGraphs() {
+        return Collections.singletonList(this.id);
+    }
+
+    /**
+     * No graphs to set
+     *
+     * @param graphs
+     */
+    @Override
+    public void setGraphs(List<ElementId> graphs) {
+
     }
 
     /**

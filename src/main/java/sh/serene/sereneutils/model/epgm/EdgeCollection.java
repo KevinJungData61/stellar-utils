@@ -139,10 +139,12 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
         this.dst = dst;
     }
 
+    @Override
     public List<ElementId> getGraphs() {
         return this.graphs;
     }
 
+    @Override
     public void setGraphs(List<ElementId> graphs) {
         this.graphs = graphs;
     }

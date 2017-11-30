@@ -1,5 +1,6 @@
 package sh.serene.sereneutils.model.epgm;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +50,20 @@ public interface Element {
      * @param label element label
      */
     void setLabel(String label);
+
+    /**
+     * Get graphs
+     *
+     * @return  graphs
+     */
+    List<ElementId> getGraphs();
+
+    /**
+     * Set graphs
+     *
+     * @param graphs
+     */
+    void setGraphs(List<ElementId> graphs);
 
     /**
      * Get element property

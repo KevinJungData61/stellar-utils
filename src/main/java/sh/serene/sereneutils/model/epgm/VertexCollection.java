@@ -133,10 +133,12 @@ public class VertexCollection implements Element, Serializable, Cloneable {
         return (pv == null) ? null : pv.value(type);
     }
 
+    @Override
     public List<ElementId> getGraphs() {
         return this.graphs;
     }
 
+    @Override
     public void setGraphs(List<ElementId> graphs) {
         this.graphs = graphs;
     }

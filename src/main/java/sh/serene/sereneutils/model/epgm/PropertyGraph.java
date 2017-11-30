@@ -5,68 +5,119 @@ import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import scala.Tuple2;
+import scala.Tuple3;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 
-public class PropertyGraph {
+public class PropertyGraph extends GraphCollection implements Serializable {
 
-    private final GraphHead graphHead;
+    @Deprecated
+    public PropertyGraph() { }
 
-    private final Dataset<Vertex> vertices;
-
-    private final Dataset<Edge> edges;
-
-    private PropertyGraph(GraphHead graphHead, Dataset<Vertex> vertices, Dataset<Edge> edges) {
-        this.graphHead = graphHead;
-        this.vertices = vertices;
-        this.edges = edges;
+    private PropertyGraph(
+            Dataset<GraphHead> graphHeads,
+            Dataset<VertexCollection> vertices,
+            Dataset<EdgeCollection> edges
+    ) {
+        super(graphHeads, vertices, edges);
     }
 
-    public static PropertyGraph fromEPGM(GraphCollection graphCollection, ElementId graphId) {
+    public static PropertyGraph fromCollection(GraphCollection graphCollection, ElementId graphId) {
+
+        // check null
         if (graphCollection == null || graphId == null) {
             return null;
         }
+
+        // check graph head count
         Dataset<GraphHead> graphHeads = graphCollection.getGraphHeads()
                 .filter((FilterFunction<GraphHead>) graphHead1 -> graphHead1.getId().equals(graphId));
         if (graphHeads.count() != 1) {
             return null;
         }
-        Dataset<Vertex> vertices = graphCollection.getVertices()
+
+        // get vertices and edges from collection
+        Dataset<VertexCollection> vertices = graphCollection.getVertices()
                 .filter((FilterFunction<VertexCollection>) vertex -> vertex.getGraphs().contains(graphId))
-                .map((MapFunction<VertexCollection,Vertex>) Vertex::fromEPGM, Encoders.bean(Vertex.class));
-        Dataset<Edge> edges = graphCollection.getEdges()
+                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> VertexCollection.create(
+                        vertex.getId(),
+                        vertex.getProperties(),
+                        vertex.getLabel(),
+                        Collections.singletonList(vertex.getGraphs().get(0))
+                ), Encoders.bean(VertexCollection.class));
+        Dataset<EdgeCollection> edges = graphCollection.getEdges()
                 .filter((FilterFunction<EdgeCollection>) edge -> edge.getGraphs().contains(graphId))
-                .map((MapFunction<EdgeCollection,Edge>) Edge::fromEPGM, Encoders.bean(Edge.class));
-        return new PropertyGraph(graphHeads.first(), vertices, edges);
+                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> EdgeCollection.create(
+                        edge.getId(),
+                        edge.getSrc(),
+                        edge.getDst(),
+                        edge.getProperties(),
+                        edge.getLabel(),
+                        Collections.singletonList(edge.getGraphs().get(0))
+                ), Encoders.bean(EdgeCollection.class));
+        return new PropertyGraph(graphHeads, vertices, edges);
     }
 
-    /*
-    public GraphCollection toEPGM(GraphCollection graphCollection) {
+    private Dataset<VertexCollection> verticesToCollection() {
+        ElementId graphId = this.getGraphId();
+        return this.getVertices()
+                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> {
+                    List<ElementId> graphs = new ArrayList<>(vertex.getGraphs());
+                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                        graphs.add(graphId);
+                    }
+                    return VertexCollection.create(
+                            vertex.getId(),
+                            vertex.getProperties(),
+                            vertex.getLabel(),
+                            graphs
+                    );
+                }, Encoders.bean(VertexCollection.class));
+    }
+
+    private Dataset<EdgeCollection> edgesToCollection() {
+        ElementId graphId = this.getGraphId();
+        return this.getEdges()
+                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> {
+                    List<ElementId> graphs = new ArrayList<>(edge.getGraphs());
+                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                        graphs.add(graphId);
+                    }
+                    return EdgeCollection.create(
+                            edge.getId(),
+                            edge.getSrc(),
+                            edge.getDst(),
+                            edge.getProperties(),
+                            edge.getLabel(),
+                            graphs
+                    );
+                }, Encoders.bean(EdgeCollection.class));
+    }
+
+    public GraphCollection toCollection() {
+        return new GraphCollection(this.getGraphHeads(), verticesToCollection(), edgesToCollection());
+    }
+
+    public GraphCollection intoCollection(GraphCollection graphCollection) {
         if (graphCollection == null) {
             return null;
         }
-        // check if graphid exists
-        // for vertices and edges:
-        // joinWith outer on id
-        // groupby?
-        //
-    }*/
+
+        Dataset<GraphHead> graphHeads = this.getGraphHeads().union(graphCollection.getGraphHeads());
+        Dataset<VertexCollection> vertices = joinVertexCollections(
+                verticesToCollection(),
+                graphCollection.getVertices()
+        );
+        Dataset<EdgeCollection> edges = joinEdgeCollections(
+                edgesToCollection(),
+                graphCollection.getEdges()
+        );
+        return new GraphCollection(graphHeads, vertices, edges);
+    }
 
     public ElementId getGraphId() {
-        return this.graphHead.getId();
-    }
-
-    public GraphHead getGraphHead() {
-        return this.graphHead;
-    }
-
-    public Dataset<Vertex> getVertices() {
-        return this.vertices;
-    }
-
-    public Dataset<Edge> getEdges() {
-        return this.edges;
+        return this.getGraphHeads().first().getId();
     }
 
     @Override
@@ -74,24 +125,11 @@ public class PropertyGraph {
         return (obj instanceof PropertyGraph) && ((PropertyGraph) obj).getGraphId().equals(this.getGraphId());
     }
 
-    /**
-     * Aggregate operator
-     *
-     * @param propertyKey       key for new graph property
-     * @param func              map function to obtain property value from graph
-     * @return                  new graph
-     */
-    public PropertyGraph aggregate(String propertyKey, MapFunction<PropertyGraph,PropertyValue> func) {
-        try {
-            PropertyValue propertyValue = func.call(this);
-            ElementId graphId = ElementId.create();
-            Map<String,PropertyValue> properties = new HashMap<>(this.graphHead.getProperties());
-            properties.put(propertyKey, propertyValue);
-            GraphHead graphHeadNew = GraphHead.create(graphId, properties, this.graphHead.getLabel());
-            return new PropertyGraph(graphHeadNew, this.vertices, this.edges);
-        } catch (Exception e) {
-            return null;
-        }
+    private Dataset<GraphHead> createGraphHead() {
+        return this.getGraphHeads().map(
+                (MapFunction<GraphHead,GraphHead>) g -> g.copy(),
+                Encoders.bean(GraphHead.class)
+        );
     }
 
     /**
@@ -101,8 +139,8 @@ public class PropertyGraph {
      * @param edges     new edges to add
      * @return          new graph
      */
-    public PropertyGraph addEdges(Dataset<Edge> edges) {
-        return new PropertyGraph(this.graphHead.copy(), this.vertices, this.edges.union(edges));
+    public PropertyGraph addEdges(Dataset<EdgeCollection> edges) {
+        return new PropertyGraph(createGraphHead(), this.getVertices(), this.getEdges().union(edges));
     }
 
     /**
@@ -112,8 +150,8 @@ public class PropertyGraph {
      * @param vertices      new vertices to add
      * @return              new graph
      */
-    public PropertyGraph addVertices(Dataset<Vertex> vertices) {
-        return new PropertyGraph(this.graphHead.copy(), this.vertices.union(vertices), this.edges);
+    public PropertyGraph addVertices(Dataset<VertexCollection> vertices) {
+        return new PropertyGraph(createGraphHead(), this.getVertices().union(vertices), this.getEdges());
     }
 
     /**
@@ -122,7 +160,7 @@ public class PropertyGraph {
      * @return  edge list
      */
     public Dataset<Tuple2<ElementId,ElementId>> getEdgeList() {
-        return this.edges.map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
+        return this.getEdges().map((MapFunction<EdgeCollection,Tuple2<ElementId,ElementId>>) edge -> (
                 new Tuple2<>(edge.getSrc(), edge.getDst())
                 ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class)));
     }
