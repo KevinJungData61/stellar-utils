@@ -3,8 +3,8 @@ package sh.serene.sereneutils.io.parquet;
 import org.apache.spark.sql.Row;
 import scala.Tuple2;
 import scala.collection.Iterator;
-import sh.serene.sereneutils.model.common.ElementId;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;

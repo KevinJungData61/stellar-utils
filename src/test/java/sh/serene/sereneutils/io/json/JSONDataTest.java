@@ -38,25 +38,25 @@ public class JSONDataTest {
 
     @Test
     public void testSingleGraphNoAttrNoLabel() {
-        EPGMGraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
+        GraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
         jsonDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = jsonDataSource.getGraphCollection();
+        GraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphWithAttrAndLabel() throws Exception {
-        EPGMGraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
+        GraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
         jsonDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = jsonDataSource.getGraphCollection();
+        GraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphThousandVertices() throws Exception {
-        EPGMGraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
+        GraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
         jsonDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = jsonDataSource.getGraphCollection();
+        GraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 

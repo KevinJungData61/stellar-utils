@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.model.common;
+package sh.serene.sereneutils.model.epgm;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.Serializable;

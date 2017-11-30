@@ -1,9 +1,9 @@
 package sh.serene.sereneutils.io;
 
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
 
 public interface DataSink {
 
-    void writeGraphCollection(EPGMGraphCollection gc);
+    void writeGraphCollection(GraphCollection gc);
 
 }

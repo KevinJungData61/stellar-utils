@@ -2,9 +2,9 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.junit.Before;
 import org.junit.Test;
-import sh.serene.sereneutils.model.common.ElementId;
-import sh.serene.sereneutils.model.common.GraphHead;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;

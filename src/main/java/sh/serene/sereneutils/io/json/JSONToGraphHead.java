@@ -1,9 +1,9 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.common.GraphHead;
+import sh.serene.sereneutils.model.epgm.GraphHead;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.Map;
 

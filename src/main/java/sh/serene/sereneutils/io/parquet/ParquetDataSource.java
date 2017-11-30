@@ -1,10 +1,10 @@
 package sh.serene.sereneutils.io.parquet;
 
 import sh.serene.sereneutils.io.DataSource;
-import sh.serene.sereneutils.model.epgm.EPGMEdge;
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
-import sh.serene.sereneutils.model.common.GraphHead;
-import sh.serene.sereneutils.model.epgm.EPGMVertex;
+import sh.serene.sereneutils.model.epgm.EdgeCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.VertexCollection;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -56,19 +56,19 @@ public class ParquetDataSource implements DataSource {
      * @return  Graph collection
      */
     @Override
-    public EPGMGraphCollection getGraphCollection() {
+    public GraphCollection getGraphCollection() {
         Dataset<GraphHead> graphHeadDataset = spark
                 .read()
                 .parquet(this.graphHeadPath)
                 .map(new ParquetToGraphHead(), Encoders.bean(GraphHead.class));
-        Dataset<EPGMVertex> vertexDataset = spark
+        Dataset<VertexCollection> vertexDataset = spark
                 .read()
                 .parquet(this.vertexPath)
-                .map(new ParquetToVertex(), Encoders.bean(EPGMVertex.class));
-        Dataset<EPGMEdge> edgeDataset = spark
+                .map(new ParquetToVertex(), Encoders.bean(VertexCollection.class));
+        Dataset<EdgeCollection> edgeDataset = spark
                 .read()
                 .parquet(this.edgePath)
-                .map(new ParquetToEdge(), Encoders.bean(EPGMEdge.class));
-        return EPGMGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+                .map(new ParquetToEdge(), Encoders.bean(EdgeCollection.class));
+        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 }

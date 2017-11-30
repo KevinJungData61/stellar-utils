@@ -1,8 +1,8 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.epgm.EPGMEdge;
-import sh.serene.sereneutils.model.common.ElementId;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.EdgeCollection;
+import sh.serene.sereneutils.model.epgm.ElementId;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * EPGM EPGMEdge with fields that can be serialised in json format
+ * EPGM EdgeCollection with fields that can be serialised in json format
  */
 public class JSONEdge implements Serializable {
 
@@ -57,7 +57,7 @@ public class JSONEdge implements Serializable {
      *
      * @param edge  EPGM edge
      */
-    JSONEdge(EPGMEdge edge) {
+    JSONEdge(EdgeCollection edge) {
         this.id = edge.getId().toString();
         this.source = edge.getSrc().toString();
         this.target = edge.getDst().toString();

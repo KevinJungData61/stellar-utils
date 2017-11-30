@@ -1,27 +1,27 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.epgm.EPGMEdge;
+import sh.serene.sereneutils.model.epgm.EdgeCollection;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Map function from Row (as read from json) to EPGMEdge
+ * Map function from Row (as read from json) to EdgeCollection
  */
-class JSONToEdge extends JSONToElement implements MapFunction<Row,EPGMEdge> {
+class JSONToEdge extends JSONToElement implements MapFunction<Row,EdgeCollection> {
 
     @Override
-    public EPGMEdge call(Row row) {
+    public EdgeCollection call(Row row) {
         String id = getId(row);
         String src = getSrc(row);
         String dst = getDst(row);
         Map<String,PropertyValue> properties = getProperties(row);
         String label = getLabel(row);
         List<String> graphs = getGraphs(row);
-        return EPGMEdge.createFromStringIds(id, src, dst, properties, label, graphs);
+        return EdgeCollection.createFromStringIds(id, src, dst, properties, label, graphs);
     }
 
     /**

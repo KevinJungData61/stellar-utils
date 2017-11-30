@@ -1,7 +1,7 @@
 package sh.serene.sereneutils.io.parquet;
 
 import sh.serene.sereneutils.io.DataSink;
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
 
 /**
  * Parquet data sink
@@ -44,7 +44,7 @@ public class ParquetDataSink implements DataSink {
      *
      * @param gc    Graph collection
      */
-    public void writeGraphCollection(EPGMGraphCollection gc) {
+    public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .write()
                 .format("parquet")

@@ -1,10 +1,10 @@
 package sh.serene.sereneutils.io.json;
 
 import sh.serene.sereneutils.io.DataSource;
-import sh.serene.sereneutils.model.epgm.EPGMEdge;
-import sh.serene.sereneutils.model.common.GraphHead;
-import sh.serene.sereneutils.model.epgm.EPGMVertex;
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
+import sh.serene.sereneutils.model.epgm.EdgeCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.VertexCollection;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -54,10 +54,10 @@ public class JSONDataSource implements DataSource {
      * @return  graph collection
      */
     @Override
-    public EPGMGraphCollection getGraphCollection() {
-        Dataset<EPGMVertex> vertexDataset = spark.read().json(this.vertexPath).map(new JSONToVertex(), Encoders.bean(EPGMVertex.class));
-        Dataset<EPGMEdge> edgeDataset = spark.read().json(this.edgePath).map(new JSONToEdge(), Encoders.bean(EPGMEdge.class));
+    public GraphCollection getGraphCollection() {
+        Dataset<VertexCollection> vertexDataset = spark.read().json(this.vertexPath).map(new JSONToVertex(), Encoders.bean(VertexCollection.class));
+        Dataset<EdgeCollection> edgeDataset = spark.read().json(this.edgePath).map(new JSONToEdge(), Encoders.bean(EdgeCollection.class));
         Dataset<GraphHead> graphHeadDataset = spark.read().json(this.graphHeadPath).map(new JSONToGraphHead(), Encoders.bean(GraphHead.class));
-        return EPGMGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 }

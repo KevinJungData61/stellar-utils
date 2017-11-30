@@ -1,7 +1,7 @@
 package sh.serene.sereneutils.io.json;
 
-import sh.serene.sereneutils.model.common.GraphHead;
-import sh.serene.sereneutils.model.common.PropertyValue;
+import sh.serene.sereneutils.model.epgm.GraphHead;
+import sh.serene.sereneutils.model.epgm.PropertyValue;
 
 import java.io.Serializable;
 import java.util.HashMap;

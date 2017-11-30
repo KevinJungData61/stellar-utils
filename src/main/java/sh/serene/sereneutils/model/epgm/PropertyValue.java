@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.model.common;
+package sh.serene.sereneutils.model.epgm;
 
 import java.io.*;
 import java.util.Arrays;

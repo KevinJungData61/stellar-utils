@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import sh.serene.sereneutils.io.testutils.GraphCollectionFactory;
 import sh.serene.sereneutils.io.testutils.GraphCompare;
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,25 +38,25 @@ public class ParquetDataTest {
 
     @Test
     public void testSingleGraphNoAttrNoLabel() {
-        EPGMGraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
+        GraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
         parquetDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = parquetDataSource.getGraphCollection();
+        GraphCollection gcRead = parquetDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphWithPrimAttr() {
-        EPGMGraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
+        GraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
         parquetDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = parquetDataSource.getGraphCollection();
+        GraphCollection gcRead = parquetDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphThousandVertices() throws Exception {
-        EPGMGraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
+        GraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
         parquetDataSink.writeGraphCollection(gc);
-        EPGMGraphCollection gcRead = parquetDataSource.getGraphCollection();
+        GraphCollection gcRead = parquetDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 

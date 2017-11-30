@@ -1,7 +1,7 @@
 package sh.serene.sereneutils.io.json;
 
 import sh.serene.sereneutils.io.DataSink;
-import sh.serene.sereneutils.model.epgm.EPGMGraphCollection;
+import sh.serene.sereneutils.model.epgm.GraphCollection;
 import org.apache.spark.sql.Encoders;
 
 /**
@@ -43,7 +43,7 @@ public class JSONDataSink implements DataSink {
      *
      * @param gc    graph collection to write
      */
-    public void writeGraphCollection(EPGMGraphCollection gc) {
+    public void writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
                 .write()
