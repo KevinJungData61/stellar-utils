@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.io.testutils;
+package sh.serene.sereneutils.testutils;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -23,6 +23,7 @@ public class GraphCompare {
     private static <T extends Element> boolean compareElements(Dataset<T> elem1, Dataset<T> elem2) {
         Dataset<Integer> elem1Ints = elem1.map(new ElementHash<>(), Encoders.INT());
         Dataset<Integer> elem2Ints = elem2.map(new ElementHash<>(), Encoders.INT());
-        return (elem1Ints.except(elem2Ints).count() == 0) && (elem2Ints.except(elem1Ints).count() == 0);
+        long count = elem1Ints.intersect(elem2Ints).count();
+        return (count == elem1Ints.count() && count == elem2Ints.count());
     }
 }

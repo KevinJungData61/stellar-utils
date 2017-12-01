@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.io.testutils;
+package sh.serene.sereneutils.testutils;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;

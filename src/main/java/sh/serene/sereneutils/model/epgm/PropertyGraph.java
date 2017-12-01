@@ -5,12 +5,30 @@ import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import scala.Tuple2;
-import scala.Tuple3;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class PropertyGraph extends GraphCollection implements Serializable {
+/**
+ * Property Graph - a single graph extracted from an EPGM Graph Collection
+ *
+ */
+public class PropertyGraph implements Serializable {
+
+    /**
+     * EPGM Graph Head
+     */
+    private Dataset<GraphHead> graphHeads;
+
+    /**
+     * EPGM Vertices
+     */
+    private Dataset<VertexCollection> vertices;
+
+    /**
+     * EPGM Edges
+     */
+    private Dataset<EdgeCollection> edges;
 
     @Deprecated
     public PropertyGraph() { }
@@ -20,9 +38,18 @@ public class PropertyGraph extends GraphCollection implements Serializable {
             Dataset<VertexCollection> vertices,
             Dataset<EdgeCollection> edges
     ) {
-        super(graphHeads, vertices, edges);
+        this.graphHeads = graphHeads;
+        this.vertices = vertices;
+        this.edges = edges;
     }
 
+    /**
+     * Get Property Graph from collection by ID
+     *
+     * @param graphCollection   graph collection
+     * @param graphId           ID of property graph
+     * @return                  property graph
+     */
     public static PropertyGraph fromCollection(GraphCollection graphCollection, ElementId graphId) {
 
         // check null
@@ -56,12 +83,19 @@ public class PropertyGraph extends GraphCollection implements Serializable {
                         edge.getLabel(),
                         Collections.singletonList(edge.getGraphs().get(0))
                 ), Encoders.bean(EdgeCollection.class));
+
         return new PropertyGraph(graphHeads, vertices, edges);
     }
 
+    /**
+     * Transform vertices to the EPGM Graph Collection format. This is done by appending the graphID list
+     * of each vertex with the current Property Graph's ID.
+     *
+     * @return  vertices
+     */
     private Dataset<VertexCollection> verticesToCollection() {
         ElementId graphId = this.getGraphId();
-        return this.getVertices()
+        return this.vertices
                 .map((MapFunction<VertexCollection,VertexCollection>) vertex -> {
                     List<ElementId> graphs = new ArrayList<>(vertex.getGraphs());
                     if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
@@ -76,9 +110,15 @@ public class PropertyGraph extends GraphCollection implements Serializable {
                 }, Encoders.bean(VertexCollection.class));
     }
 
+    /**
+     * Transform edges to the EPGM Graph Collection format. This is done by appending the graphID list of
+     * each edge with the current Property Graph's ID.
+     *
+     * @return  edges
+     */
     private Dataset<EdgeCollection> edgesToCollection() {
         ElementId graphId = this.getGraphId();
-        return this.getEdges()
+        return this.edges
                 .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> {
                     List<ElementId> graphs = new ArrayList<>(edge.getGraphs());
                     if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
@@ -95,29 +135,67 @@ public class PropertyGraph extends GraphCollection implements Serializable {
                 }, Encoders.bean(EdgeCollection.class));
     }
 
+    /**
+     * Turns the Property Graph into a Graph Collection
+     *
+     * @return  graph collection
+     */
     public GraphCollection toCollection() {
-        return new GraphCollection(this.getGraphHeads(), verticesToCollection(), edgesToCollection());
+        return new GraphCollection(this.graphHeads, verticesToCollection(), edgesToCollection());
     }
 
+    /**
+     * Writes the Property Graph into a given Graph Collection
+     *
+     * @param graphCollection   graph collection
+     * @return                  new graph collection
+     */
     public GraphCollection intoCollection(GraphCollection graphCollection) {
         if (graphCollection == null) {
             return null;
         }
 
-        Dataset<GraphHead> graphHeads = this.getGraphHeads().union(graphCollection.getGraphHeads());
-        Dataset<VertexCollection> vertices = joinVertexCollections(
-                verticesToCollection(),
-                graphCollection.getVertices()
-        );
-        Dataset<EdgeCollection> edges = joinEdgeCollections(
-                edgesToCollection(),
-                graphCollection.getEdges()
-        );
+        Dataset<GraphHead> graphHeads = graphCollection.getGraphHeads().union(this.graphHeads);
+        Dataset<VertexCollection> vertices = graphCollection.joinVertexCollections(verticesToCollection());
+        Dataset<EdgeCollection> edges = graphCollection.joinEdgeCollections(edgesToCollection());
+
         return new GraphCollection(graphHeads, vertices, edges);
     }
 
+    /**
+     * Get Graph ID
+     *
+     * @return  graph ID
+     */
     public ElementId getGraphId() {
-        return this.getGraphHeads().first().getId();
+        return this.graphHeads.first().getId();
+    }
+
+    /**
+     * Get graph heads dataset
+     *
+     * @return  graph heads
+     */
+    public Dataset<GraphHead> getGraphHeads() {
+        return this.graphHeads;
+    }
+
+    /**
+     * Get vertex dataset
+     *
+     * @return  vertices
+     */
+    public Dataset<VertexCollection> getVertices() {
+        return this.vertices;
+    }
+
+    /**
+     * Get edge dataset
+     *
+     * @return  edges
+     */
+    public Dataset<EdgeCollection> getEdges() {
+        return this.edges;
     }
 
     @Override
@@ -125,9 +203,14 @@ public class PropertyGraph extends GraphCollection implements Serializable {
         return (obj instanceof PropertyGraph) && ((PropertyGraph) obj).getGraphId().equals(this.getGraphId());
     }
 
+    /**
+     * Create a new graph head with the same properties as the current graph head. A new ID is generated.
+     *
+     * @return  graph head
+     */
     private Dataset<GraphHead> createGraphHead() {
         return this.getGraphHeads().map(
-                (MapFunction<GraphHead,GraphHead>) g -> g.copy(),
+                (MapFunction<GraphHead,GraphHead>) GraphHead::copy,
                 Encoders.bean(GraphHead.class)
         );
     }

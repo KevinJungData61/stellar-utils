@@ -5,8 +5,8 @@ import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import sh.serene.sereneutils.io.testutils.GraphCollectionFactory;
-import sh.serene.sereneutils.io.testutils.GraphCompare;
+import sh.serene.sereneutils.testutils.GraphCollectionFactory;
+import sh.serene.sereneutils.testutils.GraphCompare;
 import sh.serene.sereneutils.model.epgm.*;
 
 import java.io.File;

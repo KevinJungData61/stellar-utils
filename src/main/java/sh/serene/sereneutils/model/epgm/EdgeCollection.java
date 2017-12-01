@@ -170,6 +170,11 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
     /**
      * Get element identifier
      *

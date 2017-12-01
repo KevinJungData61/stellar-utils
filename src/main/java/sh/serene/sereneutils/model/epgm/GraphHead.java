@@ -86,6 +86,11 @@ public class GraphHead implements Element, Serializable, Cloneable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
     /**
      * Get element identifier
      *

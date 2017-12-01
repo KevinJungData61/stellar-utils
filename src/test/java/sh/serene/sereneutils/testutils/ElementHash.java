@@ -1,4 +1,4 @@
-package sh.serene.sereneutils.io.testutils;
+package sh.serene.sereneutils.testutils;
 
 import org.apache.spark.api.java.function.MapFunction;
 import sh.serene.sereneutils.model.epgm.EdgeCollection;

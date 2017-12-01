@@ -2,18 +2,17 @@ package sh.serene.sereneutils.model.epgm;
 
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
 import scala.Tuple2;
-import scala.Tuple3;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * EPGM Graph collection representation as spark datasets
  */
-public class GraphCollection {
+public class GraphCollection implements Serializable {
 
     /**
      * EPGM Graph Heads
@@ -50,18 +49,40 @@ public class GraphCollection {
         return new GraphCollection(graphHeads, vertices, edges);
     }
 
+    /**
+     * Get graph heads
+     *
+     * @return  graph heads
+     */
     public Dataset<GraphHead> getGraphHeads() {
         return this.graphHeads;
     }
 
+    /**
+     * Get vertices
+     *
+     * @return  vertices
+     */
     public Dataset<VertexCollection> getVertices() {
         return this.vertices;
     }
 
+    /**
+     * Get edges
+     *
+     * @return  edges
+     */
     public Dataset<EdgeCollection> getEdges() {
         return this.edges;
     }
 
+    /**
+     * Concatenate two element IDs into a byte array
+     *
+     * @param id1   element ID 1
+     * @param id2   element ID 2
+     * @return      byte array
+     */
     private byte[] concatenateIds(ElementId id1, ElementId id2) {
         byte[] bytes = new byte[id1.getBytes().length + id2.getBytes().length];
         System.arraycopy(id1.getBytes(), 0, bytes, 0, id1.getBytes().length);
@@ -69,6 +90,14 @@ public class GraphCollection {
         return bytes;
     }
 
+    /**
+     * Transform element to Tuple of ID|Version (byte array) and element
+     *
+     * @param elements  elements
+     * @param type      class of element
+     * @param <T>       vertex or edge
+     * @return          tuples
+     */
     private <T extends Element> Dataset<Tuple2<byte[],T>> elemToTuples(
             Dataset<T> elements,
             Class<T> type
@@ -83,13 +112,15 @@ public class GraphCollection {
         );
     }
 
-    public Dataset<VertexCollection> joinVertexCollections(
-            Dataset<VertexCollection> vertices1,
-            Dataset<VertexCollection> vertices2
-    ) {
-        Dataset<Tuple2<byte[],VertexCollection>> tup1 = elemToTuples(vertices1, VertexCollection.class);
-        Dataset<Tuple2<byte[],VertexCollection>> tup2 = elemToTuples(vertices2, VertexCollection.class);
-        tup1.show();
+    /**
+     * Full-outer join vertices with another set of vertices based on ID and version indicated by the graph IDs
+     *
+     * @param vOther    other vertices
+     * @return          new vertices
+     */
+    public Dataset<VertexCollection> joinVertexCollections(Dataset<VertexCollection> vOther) {
+        Dataset<Tuple2<byte[],VertexCollection>> tup1 = elemToTuples(this.vertices, VertexCollection.class);
+        Dataset<Tuple2<byte[],VertexCollection>> tup2 = elemToTuples(vOther, VertexCollection.class);
         return tup1
                 .joinWith(
                         tup2,
@@ -122,12 +153,15 @@ public class GraphCollection {
                 }, Encoders.bean(VertexCollection.class));
     }
 
-    public Dataset<EdgeCollection> joinEdgeCollections(
-            Dataset<EdgeCollection> edges1,
-            Dataset<EdgeCollection> edges2
-    ) {
-        Dataset<Tuple2<byte[],EdgeCollection>> tup1 = elemToTuples(edges1, EdgeCollection.class);
-        Dataset<Tuple2<byte[],EdgeCollection>> tup2 = elemToTuples(edges2, EdgeCollection.class);
+    /**
+     * Full-outer join edges with another set of edges based on ID and version indicated by the graph IDS.
+     *
+     * @param eOther    other edges
+     * @return          new edges
+     */
+    public Dataset<EdgeCollection> joinEdgeCollections(Dataset<EdgeCollection> eOther) {
+        Dataset<Tuple2<byte[],EdgeCollection>> tup1 = elemToTuples(this.edges, EdgeCollection.class);
+        Dataset<Tuple2<byte[],EdgeCollection>> tup2 = elemToTuples(eOther, EdgeCollection.class);
         return tup1.
                 joinWith(
                         tup2,

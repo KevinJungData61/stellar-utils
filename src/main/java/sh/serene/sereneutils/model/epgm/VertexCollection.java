@@ -168,4 +168,9 @@ public class VertexCollection implements Element, Serializable, Cloneable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
+
 }
