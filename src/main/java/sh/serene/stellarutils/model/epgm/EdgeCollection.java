@@ -29,12 +29,14 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      */
     private List<ElementId> graphs;
 
-    private EdgeCollection(final ElementId id,
-                           final ElementId src,
-                           final ElementId dst,
-                           final Map<String,PropertyValue> properties,
-                           final String label,
-                           final List<ElementId> graphs) {
+    private EdgeCollection(
+            final ElementId id,
+            final ElementId src,
+            final ElementId dst,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
         this.id = id;
         this.src = src;
         this.dst = dst;
@@ -43,12 +45,14 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
         this.graphs = graphs;
     }
 
-    private EdgeCollection(final String id,
-                           final String src,
-                           final String dst,
-                           final Map<String,PropertyValue> properties,
-                           final String label,
-                           final List<String> graphs) {
+    private EdgeCollection(
+            final String id,
+            final String src,
+            final String dst,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<String> graphs
+    ) {
         this.id = ElementId.fromString(id);
         this.src = ElementId.fromString(src);
         this.dst = ElementId.fromString(dst);
@@ -94,13 +98,35 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      * @param graphs        graphs that edge is contained in
      * @return              new edge
      */
-    public static EdgeCollection create(final ElementId id,
-                                        final ElementId src,
-                                        final ElementId dst,
-                                        final Map<String,PropertyValue> properties,
-                                        final String label,
-                                        final List<ElementId> graphs) {
+    public static EdgeCollection create(
+            final ElementId id,
+            final ElementId src,
+            final ElementId dst,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
         return new EdgeCollection(id, src, dst, properties, label, graphs);
+    }
+
+    /**
+     * Creates an edge based on the given parameters. A unique ID is generated.
+     *
+     * @param src           source identifier
+     * @param dst           destination identifier
+     * @param properties    edge properties
+     * @param label         edge label
+     * @param graphs        graphs that edge is contained in
+     * @return              new edge
+     */
+    public static EdgeCollection create(
+            final ElementId src,
+            final ElementId dst,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
+        return new EdgeCollection(ElementId.create(), src, dst, properties, label, graphs);
     }
 
     /**
@@ -114,12 +140,14 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      * @param graphs        graphs that edge is contained in
      * @return              new edge
      */
-    public static EdgeCollection createFromStringIds(final String id,
-                                                     final String src,
-                                                     final String dst,
-                                                     final Map<String,PropertyValue> properties,
-                                                     final String label,
-                                                     final List<String> graphs) {
+    public static EdgeCollection createFromStringIds(
+            final String id,
+            final String src,
+            final String dst,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<String> graphs
+    ) {
         return new EdgeCollection(id, src, dst, properties, label, graphs);
     }
 

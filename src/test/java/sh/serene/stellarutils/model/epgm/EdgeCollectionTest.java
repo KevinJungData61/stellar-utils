@@ -36,6 +36,7 @@ public class EdgeCollectionTest {
     @Test
     public void TestEdge() throws Exception {
         EdgeCollection edge = EdgeCollection.create(id, src, dst, properties, label, graphs);
+        EdgeCollection edgeWithoutId = EdgeCollection.create(src, dst, properties, label, graphs);
         EdgeCollection edgeFromStrings = EdgeCollection.createFromStringIds(id.toString(),
                 src.toString(),
                 dst.toString(),
@@ -44,9 +45,13 @@ public class EdgeCollectionTest {
                 Arrays.asList(graphs.get(0).toString()));
         assertEquals(edge.getId(), edgeFromStrings.getId());
         assertEquals(edge.getSrc(), edgeFromStrings.getSrc());
+        assertEquals(edge.getSrc(), edgeWithoutId.getSrc());
         assertEquals(edge.getDst(), edgeFromStrings.getDst());
+        assertEquals(edge.getDst(), edgeWithoutId.getDst());
         assertEquals(edge.getLabel(), edgeFromStrings.getLabel());
+        assertEquals(edge.getLabel(), edgeWithoutId.getLabel());
         assertEquals(edge.getGraphs().get(0), edgeFromStrings.getGraphs().get(0));
+        assertEquals(edge.getGraphs().get(0), edgeWithoutId.getGraphs().get(0));
         assertEquals(edge, edgeFromStrings);
     }
 

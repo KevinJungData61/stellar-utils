@@ -32,13 +32,16 @@ public class VertexCollectionTest {
     @Test
     public void TestVertex() throws Exception {
         VertexCollection vertex = VertexCollection.create(id, properties, label, graphs);
+        VertexCollection vertexWithoutId = VertexCollection.create(properties, label, graphs);
         VertexCollection vertexFromStrings = VertexCollection.createFromStringIds(id.toString(),
                 properties,
                 label,
                 Arrays.asList(graphs.get(0).toString()));
         assertEquals(vertex.getId(), vertexFromStrings.getId());
         assertEquals(vertex.getLabel(), vertexFromStrings.getLabel());
+        assertEquals(vertex.getLabel(), vertexWithoutId.getLabel());
         assertEquals(vertex.getGraphs().get(0), vertexFromStrings.getGraphs().get(0));
+        assertEquals(vertex.getGraphs().get(0), vertexWithoutId.getGraphs().get(0));
         assertEquals(vertex, vertexFromStrings);
     }
 

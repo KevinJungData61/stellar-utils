@@ -21,20 +21,24 @@ public class VertexCollection implements Element, Serializable, Cloneable {
     @Deprecated
     public VertexCollection() { }
 
-    private VertexCollection(final ElementId id,
-                             final Map<String,PropertyValue> properties,
-                             final String label,
-                             final List<ElementId> graphs) {
+    private VertexCollection(
+            final ElementId id,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
         this.id = id;
         this.properties = properties;
         this.label = label;
         this.graphs = graphs;
     }
 
-    private VertexCollection(final String id,
-                             final Map<String,PropertyValue> properties,
-                             final String label,
-                             final List<String> graphs) {
+    private VertexCollection(
+            final String id,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<String> graphs
+    ) {
         this.id = ElementId.fromString(id);
         this.properties = properties;
         this.label = label;
@@ -63,11 +67,29 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      * @param graphs        graphs that vertex is contained in
      * @returns             new vertex
      */
-    public static VertexCollection create(final ElementId id,
-                                          final Map<String,PropertyValue> properties,
-                                          final String label,
-                                          final List<ElementId> graphs) {
+    public static VertexCollection create(
+            final ElementId id,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
         return new VertexCollection(id, properties, label, graphs);
+    }
+
+    /**
+     * Creates a vertex based on the given parameters. A unique ID is generated.
+     *
+     * @param properties    vertex properties
+     * @param label         vertex label
+     * @param graphs        graphs that vertex is contained in
+     * @return              new vertex
+     */
+    public static VertexCollection create(
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<ElementId> graphs
+    ) {
+        return new VertexCollection(ElementId.create(), properties, label, graphs);
     }
 
     /**
@@ -79,10 +101,12 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      * @param graphs        graphs that vertex is contained in
      * @return              new vertex
      */
-    public static VertexCollection createFromStringIds(final String id,
-                                                       final Map<String,PropertyValue> properties,
-                                                       final String label,
-                                                       final List<String> graphs) {
+    public static VertexCollection createFromStringIds(
+            final String id,
+            final Map<String,PropertyValue> properties,
+            final String label,
+            final List<String> graphs
+    ) {
         return new VertexCollection(id, properties, label, graphs);
     }
 
