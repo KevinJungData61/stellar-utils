@@ -30,6 +30,32 @@ public class GraphCollectionTest {
     }
 
     @Test
+    public void fromLists() throws Exception {
+        List<GraphHead> graphHeads = Collections.singletonList(GraphHead.create(ElementId.create(), new HashMap<>(), ""));
+        List<ElementId> graphs = Collections.singletonList(graphHeads.get(0).getId());
+        List<VertexCollection> vertices = new ArrayList<>();
+        List<EdgeCollection> edges = new ArrayList<>();
+        int n = 100;
+        vertices.add(VertexCollection.create(ElementId.create(), new HashMap<>(), "", graphs));
+        for (int i = 1; i < n; i++) {
+            vertices.add(VertexCollection.create(ElementId.create(), new HashMap<>(), "", graphs));
+            edges.add(EdgeCollection.create(
+                    ElementId.create(),
+                    vertices.get(i-1).getId(),
+                    vertices.get(i).getId(),
+                    new HashMap<>(),
+                    "",
+                    graphs
+            ));
+        }
+        GraphCollection graphCollection = GraphCollection.fromLists(graphHeads, vertices, edges);
+        assertEquals(1, graphCollection.getGraphHeads().count());
+        assertEquals(graphs.get(0), graphCollection.getGraphHeads().first().getId());
+        assertEquals(n, graphCollection.getVertices().count());
+        assertEquals(n-1, graphCollection.getEdges().count());
+    }
+
+    @Test
     public void joinVertexCollections() throws Exception {
         // get two vertices from graph collection
         // one to be changed, another to be left unchanged

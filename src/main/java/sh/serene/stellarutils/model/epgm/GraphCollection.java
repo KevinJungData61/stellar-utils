@@ -3,10 +3,12 @@ package sh.serene.stellarutils.model.epgm;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -31,7 +33,11 @@ public class GraphCollection implements Serializable {
 
     public GraphCollection() { }
 
-    public GraphCollection(Dataset<GraphHead> graphHeads, Dataset<VertexCollection> vertices, Dataset<EdgeCollection> edges) {
+    public GraphCollection(
+            Dataset<GraphHead> graphHeads,
+            Dataset<VertexCollection> vertices,
+            Dataset<EdgeCollection> edges
+    ) {
         this.graphHeads = graphHeads;
         this.vertices = vertices;
         this.edges = edges;
@@ -45,8 +51,38 @@ public class GraphCollection implements Serializable {
      * @param edges         edge dataset
      * @return              graph collection
      */
-    public static GraphCollection fromDatasets(Dataset<GraphHead> graphHeads, Dataset<VertexCollection> vertices, Dataset<EdgeCollection> edges) {
+    public static GraphCollection fromDatasets(
+            Dataset<GraphHead> graphHeads,
+            Dataset<VertexCollection> vertices,
+            Dataset<EdgeCollection> edges
+    ) {
         return new GraphCollection(graphHeads, vertices, edges);
+    }
+
+    /**
+     * Creates an EPGM Graph Collection from lists. A spark session with a default configuration is created.
+     *
+     * @param graphHeads    graph head list
+     * @param vertices      vertex list
+     * @param edges         edge list
+     * @return              graph collection
+     */
+    public static GraphCollection fromLists(
+            List<GraphHead> graphHeads,
+            List<VertexCollection> vertices,
+            List<EdgeCollection> edges
+    ) {
+        SparkSession sparkSession = SparkSession
+                .builder()
+                .appName("Graph Collection")
+                .master("local")
+                .getOrCreate();
+        Dataset<GraphHead> graphHeadDataset = sparkSession.createDataset(graphHeads, Encoders.bean(GraphHead.class));
+        Dataset<VertexCollection> vertexDataset = sparkSession
+                .createDataset(vertices, Encoders.bean(VertexCollection.class));
+        Dataset<EdgeCollection> edgeDataset = sparkSession
+                .createDataset(edges, Encoders.bean(EdgeCollection.class));
+        return new GraphCollection(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
     /**
