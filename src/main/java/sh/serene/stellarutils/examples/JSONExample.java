@@ -1,5 +1,6 @@
 package sh.serene.stellarutils.examples;
 
+import sh.serene.stellarutils.io.gdf.GDFDataSink;
 import sh.serene.stellarutils.io.json.JSONDataSink;
 import sh.serene.stellarutils.io.json.JSONDataSource;
 import sh.serene.stellarutils.model.epgm.EdgeCollection;
@@ -45,5 +46,8 @@ public class JSONExample
 
         JSONDataSink jsonDataSink = new JSONDataSink("small-yelp-hin-written.epgm/");
         jsonDataSink.writeGraphCollection(gc);
+
+        GDFDataSink gdfDataSink = new GDFDataSink("small-yelp-hin.gdf");
+        gdfDataSink.writeGraphCollection(gc);
     }
 }
