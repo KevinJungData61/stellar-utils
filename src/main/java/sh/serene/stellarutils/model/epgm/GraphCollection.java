@@ -8,7 +8,6 @@ import scala.Tuple2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -140,7 +139,7 @@ public class GraphCollection implements Serializable {
     ) {
         return elements.map(
                 (MapFunction<T, Tuple2<byte[],T>>) elem ->
-                        new Tuple2<>(concatenateIds(elem.getId(), elem.getGraphs().get(0)), elem),
+                        new Tuple2<>(concatenateIds(elem.getId(), elem.version()), elem),
                 Encoders.tuple(
                         Encoders.BINARY(),
                         Encoders.bean(type)

@@ -2,10 +2,7 @@ package sh.serene.stellarutils.examples;
 
 import org.apache.spark.sql.*;
 import sh.serene.stellarutils.io.json.JSONDataSource;
-import sh.serene.stellarutils.model.epgm.PropertyGraph;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
-import sh.serene.stellarutils.model.epgm.ElementId;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
+import sh.serene.stellarutils.model.epgm.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -53,13 +50,14 @@ public class AddVertexLabelsExample {
         ElementId graphId = graphCollection.getGraphHeads().first().getId();
 
         PropertyGraph propertyGraph = PropertyGraph.fromCollection(graphCollection, graphId);
-        Dataset<VertexCollection> verticesNew = spark.createDataset(
-                Arrays.asList(VertexCollection.create(
+        ElementId version = ElementId.create();
+        Dataset<Vertex> verticesNew = spark.createDataset(
+                Arrays.asList(Vertex.create(
                         ElementId.create(),
                         new HashMap<>(),
                         "new one",
-                        new ArrayList<>()
-                )), Encoders.bean(VertexCollection.class));
+                        version
+                )), Encoders.bean(Vertex.class));
         PropertyGraph propertyGraph1 = propertyGraph.addVertices(verticesNew);
         GraphCollection graphCollection1 = propertyGraph1.intoCollection(graphCollection);
         System.out.println(graphCollection1.getVertices().count());

@@ -1,48 +1,46 @@
 package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
- * POJO Implementation of an EPGM VertexCollection
+ * Vertex of a Property Graph
  */
-public class VertexCollection implements Element, Serializable, Cloneable {
+public class Vertex implements Element, Serializable, Cloneable {
 
     private ElementId id;
     private Map<String,PropertyValue> properties;
     private String label;
-    private List<ElementId> graphs;
+    private ElementId version;
 
     /**
      * Default constructor not to be used explicitly
      */
     @Deprecated
-    public VertexCollection() { }
+    public Vertex() { }
 
-    private VertexCollection(
+    private Vertex(
             final ElementId id,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
         this.id = id;
         this.properties = properties;
         this.label = label;
-        this.graphs = graphs;
+        this.version = version;
     }
 
-    private VertexCollection(
+    private Vertex(
             final String id,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<String> graphs
+            final String version
     ) {
         this.id = ElementId.fromString(id);
         this.properties = properties;
         this.label = label;
-        this.setGraphsFromStrings(graphs);
+        this.version = ElementId.fromString(version);
     }
 
     /**
@@ -50,12 +48,12 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      *
      * @param vertex
      */
-    public VertexCollection(VertexCollection vertex) {
-        this(vertex.getId(), vertex.getProperties(), vertex.getLabel(), vertex.getGraphs());
+    public Vertex(Vertex vertex) {
+        this(vertex.getId(), vertex.getProperties(), vertex.getLabel(), vertex.version());
     }
 
-    public VertexCollection clone() {
-        return new VertexCollection(this);
+    public Vertex clone() {
+        return new Vertex(this);
     }
 
     /**
@@ -64,16 +62,16 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      * @param id            vertex identifier
      * @param properties    vertex properties
      * @param label         vertex label
-     * @param graphs        graphs that vertex is contained in
+     * @param version       id of first graph this version of the vertex was contained in
      * @returns             new vertex
      */
-    public static VertexCollection create(
+    public static Vertex create(
             final ElementId id,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
-        return new VertexCollection(id, properties, label, graphs);
+        return new Vertex(id, properties, label, version);
     }
 
     /**
@@ -81,15 +79,15 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      *
      * @param properties    vertex properties
      * @param label         vertex label
-     * @param graphs        graphs that vertex is contained in
+     * @param version       id of first graph this version of the vertex was contained in
      * @return              new vertex
      */
-    public static VertexCollection create(
+    public static Vertex create(
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
-        return new VertexCollection(ElementId.create(), properties, label, graphs);
+        return new Vertex(ElementId.create(), properties, label, version);
     }
 
     /**
@@ -98,16 +96,31 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      * @param id            vertex identifier string
      * @param properties    vertex properties
      * @param label         vertex label
-     * @param graphs        graphs that vertex is contained in
+     * @param version       id of first graph this version of the vertex was contained in
      * @return              new vertex
      */
-    public static VertexCollection createFromStringIds(
+    public static Vertex createFromStringIds(
             final String id,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<String> graphs
+            final String version
     ) {
-        return new VertexCollection(id, properties, label, graphs);
+        return new Vertex(id, properties, label, version);
+    }
+
+    /**
+     * Create a vertex from a vertex collection
+     *
+     * @param vertexCollection  vertex collection
+     * @return                  new vertex
+     */
+    public static Vertex createFromCollection(VertexCollection vertexCollection) {
+        return new Vertex(
+                vertexCollection.getId(),
+                vertexCollection.getProperties(),
+                vertexCollection.getLabel(),
+                vertexCollection.version()
+        );
     }
 
     @Override
@@ -159,34 +172,21 @@ public class VertexCollection implements Element, Serializable, Cloneable {
 
     @Override
     public ElementId version() {
-        return (this.graphs == null || this.graphs.isEmpty()) ? null : this.graphs.get(0);
+        return this.version;
     }
 
-    public List<ElementId> getGraphs() {
-        return this.graphs;
+    public ElementId getVersion() {
+        return version();
     }
 
-    public void setGraphs(List<ElementId> graphs) {
-        this.graphs = graphs;
-    }
-
-    private void setGraphsFromStrings(List<String> graphs) {
-        this.graphs = new ArrayList<>();
-        for (String g : graphs) {
-            this.graphs.add(ElementId.fromString(g));
-        }
-    }
-
-    public VertexCollection addToGraphs(List<ElementId> graphs) {
-        List<ElementId> graphsNew = new ArrayList<>(this.graphs);
-        graphsNew.addAll(graphs);
-        return new VertexCollection(this.id, this.properties, this.label, graphsNew);
+    public void setVersion(ElementId version) {
+        this.version = version;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof VertexCollection) {
-            VertexCollection other = (VertexCollection) obj;
+        if (obj instanceof Vertex) {
+            Vertex other = (Vertex) obj;
             return ((this.id.equals(other.getId()))
                     && (this.properties.equals(other.getProperties()))
                     && (this.label.equals(other.getLabel())));

@@ -152,23 +152,13 @@ public class GraphHead implements Element, Serializable, Cloneable {
     }
 
     /**
-     * Get graphs
+     * Get version
      *
-     * @return graphs
+     * @return version ID
      */
     @Override
-    public List<ElementId> getGraphs() {
-        return Collections.singletonList(this.id);
-    }
-
-    /**
-     * No graphs to set
-     *
-     * @param graphs
-     */
-    @Override
-    public void setGraphs(List<ElementId> graphs) {
-
+    public ElementId version() {
+        return this.id;
     }
 
     /**

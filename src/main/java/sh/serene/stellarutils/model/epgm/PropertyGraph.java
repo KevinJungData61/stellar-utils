@@ -23,20 +23,20 @@ public class PropertyGraph implements Serializable {
     /**
      * EPGM Vertices
      */
-    private Dataset<VertexCollection> vertices;
+    private Dataset<Vertex> vertices;
 
     /**
      * EPGM Edges
      */
-    private Dataset<EdgeCollection> edges;
+    private Dataset<Edge> edges;
 
     @Deprecated
     public PropertyGraph() { }
 
     private PropertyGraph(
             Dataset<GraphHead> graphHeads,
-            Dataset<VertexCollection> vertices,
-            Dataset<EdgeCollection> edges
+            Dataset<Vertex> vertices,
+            Dataset<Edge> edges
     ) {
         this.graphHeads = graphHeads;
         this.vertices = vertices;
@@ -65,24 +65,14 @@ public class PropertyGraph implements Serializable {
         }
 
         // get vertices and edges from collection
-        Dataset<VertexCollection> vertices = graphCollection.getVertices()
+        Dataset<Vertex> vertices = graphCollection.getVertices()
                 .filter((FilterFunction<VertexCollection>) vertex -> vertex.getGraphs().contains(graphId))
-                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> VertexCollection.create(
-                        vertex.getId(),
-                        vertex.getProperties(),
-                        vertex.getLabel(),
-                        Collections.singletonList(vertex.getGraphs().get(0))
-                ), Encoders.bean(VertexCollection.class));
-        Dataset<EdgeCollection> edges = graphCollection.getEdges()
+                .map((MapFunction<VertexCollection,Vertex>) Vertex::createFromCollection,
+                        Encoders.bean(Vertex.class));
+        Dataset<Edge> edges = graphCollection.getEdges()
                 .filter((FilterFunction<EdgeCollection>) edge -> edge.getGraphs().contains(graphId))
-                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> EdgeCollection.create(
-                        edge.getId(),
-                        edge.getSrc(),
-                        edge.getDst(),
-                        edge.getProperties(),
-                        edge.getLabel(),
-                        Collections.singletonList(edge.getGraphs().get(0))
-                ), Encoders.bean(EdgeCollection.class));
+                .map((MapFunction<EdgeCollection,Edge>) Edge::createFromCollection,
+                        Encoders.bean(Edge.class));
 
         return new PropertyGraph(graphHeads, vertices, edges);
     }
@@ -96,9 +86,10 @@ public class PropertyGraph implements Serializable {
     private Dataset<VertexCollection> verticesToCollection() {
         ElementId graphId = this.getGraphId();
         return this.vertices
-                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> {
-                    List<ElementId> graphs = new ArrayList<>(vertex.getGraphs());
-                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                .map((MapFunction<Vertex,VertexCollection>) vertex -> {
+                    List<ElementId> graphs = new ArrayList<>();
+                    graphs.add(vertex.version());
+                    if (vertex.version() != graphId) {
                         graphs.add(graphId);
                     }
                     return VertexCollection.create(
@@ -119,9 +110,10 @@ public class PropertyGraph implements Serializable {
     private Dataset<EdgeCollection> edgesToCollection() {
         ElementId graphId = this.getGraphId();
         return this.edges
-                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> {
-                    List<ElementId> graphs = new ArrayList<>(edge.getGraphs());
-                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                .map((MapFunction<Edge,EdgeCollection>) edge -> {
+                    List<ElementId> graphs = new ArrayList<>();
+                    graphs.add(edge.version());
+                    if (edge.version() != graphId) {
                         graphs.add(graphId);
                     }
                     return EdgeCollection.create(
@@ -185,7 +177,7 @@ public class PropertyGraph implements Serializable {
      *
      * @return  vertices
      */
-    public Dataset<VertexCollection> getVertices() {
+    public Dataset<Vertex> getVertices() {
         return this.vertices;
     }
 
@@ -194,7 +186,7 @@ public class PropertyGraph implements Serializable {
      *
      * @return  edges
      */
-    public Dataset<EdgeCollection> getEdges() {
+    public Dataset<Edge> getEdges() {
         return this.edges;
     }
 
@@ -222,7 +214,7 @@ public class PropertyGraph implements Serializable {
      * @param edges     new edges to add
      * @return          new graph
      */
-    public PropertyGraph addEdges(Dataset<EdgeCollection> edges) {
+    public PropertyGraph addEdges(Dataset<Edge> edges) {
         return new PropertyGraph(createGraphHead(), this.getVertices(), this.getEdges().union(edges));
     }
 
@@ -233,7 +225,7 @@ public class PropertyGraph implements Serializable {
      * @param vertices      new vertices to add
      * @return              new graph
      */
-    public PropertyGraph addVertices(Dataset<VertexCollection> vertices) {
+    public PropertyGraph addVertices(Dataset<Vertex> vertices) {
         return new PropertyGraph(createGraphHead(), this.getVertices().union(vertices), this.getEdges());
     }
 
@@ -243,7 +235,7 @@ public class PropertyGraph implements Serializable {
      * @return  edge list
      */
     public Dataset<Tuple2<ElementId,ElementId>> getEdgeList() {
-        return this.getEdges().map((MapFunction<EdgeCollection,Tuple2<ElementId,ElementId>>) edge -> (
+        return this.getEdges().map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
                 new Tuple2<>(edge.getSrc(), edge.getDst())
                 ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class)));
     }

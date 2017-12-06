@@ -33,40 +33,42 @@ public class PropertyGraphTest {
         graphId = graphCollection.getGraphHeads().first().getId();
     }
 
-    private Dataset<EdgeCollection> getNewEdges(int n) {
-        List<EdgeCollection> edges = new ArrayList<>();
+    private Dataset<Edge> getNewEdges(int n) {
+        List<Edge> edges = new ArrayList<>();
+        ElementId version = ElementId.create();
         for (int i = 0; i < n; i++) {
             edges.add(
-                    EdgeCollection.create(ElementId.create(),
+                    Edge.create(ElementId.create(),
                             ElementId.create(),
                             ElementId.create(),
                             new HashMap<>(),
                             "new",
-                            new ArrayList<>())
+                            version)
             );
         }
-        return spark.createDataset(edges, Encoders.bean(EdgeCollection.class));
+        return spark.createDataset(edges, Encoders.bean(Edge.class));
     }
 
-    private Dataset<VertexCollection> getNewVertices(int n) {
-        List<VertexCollection> vertices = new ArrayList<>();
+    private Dataset<Vertex> getNewVertices(int n) {
+        List<Vertex> vertices = new ArrayList<>();
+        ElementId version = ElementId.create();
         for (int i = 0; i < n; i++) {
             vertices.add(
-                    VertexCollection.create(
+                    Vertex.create(
                             ElementId.create(),
                             new HashMap<>(),
                             "new",
-                            new ArrayList<>()
+                            version
                     )
             );
         }
-        return spark.createDataset(vertices, Encoders.bean(VertexCollection.class));
+        return spark.createDataset(vertices, Encoders.bean(Vertex.class));
     }
 
     @Test
     public void addEdges() throws Exception {
         int n = 100;
-        Dataset<EdgeCollection> edgesNew = getNewEdges(n);
+        Dataset<Edge> edgesNew = getNewEdges(n);
         PropertyGraph graphNew = PropertyGraph
                 .fromCollection(graphCollection, graphId)
                 .addEdges(edgesNew);
@@ -81,7 +83,7 @@ public class PropertyGraphTest {
     @Test
     public void addVertices() throws Exception {
         int n = 100;
-        Dataset<VertexCollection> verticesNew = getNewVertices(n);
+        Dataset<Vertex> verticesNew = getNewVertices(n);
         PropertyGraph graphNew = PropertyGraph
                 .fromCollection(graphCollection, graphId)
                 .addVertices(verticesNew);
@@ -96,7 +98,7 @@ public class PropertyGraphTest {
     @Test
     public void getEdgeList() throws Exception {
         PropertyGraph graph = PropertyGraph.fromCollection(graphCollection, graphId);
-        Dataset<EdgeCollection> edges = graph.getEdges();
+        Dataset<Edge> edges = graph.getEdges();
         Dataset<Tuple2<ElementId,ElementId>> edgeList = graph.getEdgeList();
 
         assertEquals(edges.count(), edgeList.count());

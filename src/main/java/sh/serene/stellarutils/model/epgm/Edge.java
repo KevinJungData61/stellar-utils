@@ -1,14 +1,12 @@
 package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
  * POJO Implementation of an EPGM EdgeCollection
  */
-public class EdgeCollection implements Element, Serializable, Cloneable {
+public class Edge implements Element, Serializable, Cloneable {
 
     private ElementId id;
     private Map<String,PropertyValue> properties;
@@ -27,38 +25,38 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
     /**
      * Graphs that edge is contained in
      */
-    private List<ElementId> graphs;
+    private ElementId version;
 
-    private EdgeCollection(
+    private Edge(
             final ElementId id,
             final ElementId src,
             final ElementId dst,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
         this.id = id;
         this.src = src;
         this.dst = dst;
         this.properties = properties;
         this.label = label;
-        this.graphs = graphs;
+        this.version = version;
     }
 
-    private EdgeCollection(
+    private Edge(
             final String id,
             final String src,
             final String dst,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<String> graphs
+            final String version
     ) {
         this.id = ElementId.fromString(id);
         this.src = ElementId.fromString(src);
         this.dst = ElementId.fromString(dst);
         this.properties = properties;
         this.label = label;
-        this.setGraphsFromStrings(graphs);
+        this.version = ElementId.fromString(version);
     }
 
     /**
@@ -66,26 +64,26 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      *
      * @param edge
      */
-    public EdgeCollection(EdgeCollection edge) {
+    public Edge(Edge edge) {
         this(
                 edge.getId(),
                 edge.getSrc(),
                 edge.getDst(),
                 edge.getProperties(),
                 edge.getLabel(),
-                edge.getGraphs()
+                edge.version()
         );
     }
 
-    public EdgeCollection clone() {
-        return new EdgeCollection(this);
+    public Edge clone() {
+        return new Edge(this);
     }
 
     /**
      * Default constructor not to be used explicitly
      */
     @Deprecated
-    public EdgeCollection() {}
+    public Edge() {}
 
     /**
      * Creates an edge based on the given parameters
@@ -95,18 +93,18 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      * @param dst           destination identifier
      * @param properties    edge properties
      * @param label         edge label
-     * @param graphs        graphs that edge is contained in
+     * @param version       id of first graph this version of the edge was contained in
      * @return              new edge
      */
-    public static EdgeCollection create(
+    public static Edge create(
             final ElementId id,
             final ElementId src,
             final ElementId dst,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
-        return new EdgeCollection(id, src, dst, properties, label, graphs);
+        return new Edge(id, src, dst, properties, label, version);
     }
 
     /**
@@ -116,17 +114,16 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      * @param dst           destination identifier
      * @param properties    edge properties
      * @param label         edge label
-     * @param graphs        graphs that edge is contained in
      * @return              new edge
      */
-    public static EdgeCollection create(
+    public static Edge create(
             final ElementId src,
             final ElementId dst,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<ElementId> graphs
+            final ElementId version
     ) {
-        return new EdgeCollection(ElementId.create(), src, dst, properties, label, graphs);
+        return new Edge(ElementId.create(), src, dst, properties, label, version);
     }
 
     /**
@@ -137,18 +134,35 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
      * @param dst           destination identifier string
      * @param properties    edge properties
      * @param label         edge label
-     * @param graphs        graphs that edge is contained in
+     * @param version       id of first graph this version of the edge was contained in
      * @return              new edge
      */
-    public static EdgeCollection createFromStringIds(
+    public static Edge createFromStringIds(
             final String id,
             final String src,
             final String dst,
             final Map<String,PropertyValue> properties,
             final String label,
-            final List<String> graphs
+            final String version
     ) {
-        return new EdgeCollection(id, src, dst, properties, label, graphs);
+        return new Edge(id, src, dst, properties, label, version);
+    }
+
+    /**
+     * Create an edge from an edge collection
+     *
+     * @param edgeCollection    edge collection
+     * @return                  new edge
+     */
+    public static Edge createFromCollection(EdgeCollection edgeCollection) {
+        return new Edge(
+                edgeCollection.getId(),
+                edgeCollection.getSrc(),
+                edgeCollection.getDst(),
+                edgeCollection.getProperties(),
+                edgeCollection.getLabel(),
+                edgeCollection.version()
+        );
     }
 
     public ElementId getSrc() {
@@ -167,25 +181,10 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
         this.dst = dst;
     }
 
-    public List<ElementId> getGraphs() {
-        return this.graphs;
-    }
-
-    public void setGraphs(List<ElementId> graphs) {
-        this.graphs = graphs;
-    }
-
-    private void setGraphsFromStrings(List<String> graphs) {
-        this.graphs = new ArrayList<>();
-        for (String g : graphs) {
-            this.graphs.add(ElementId.fromString(g));
-        }
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof EdgeCollection) {
-            EdgeCollection other = (EdgeCollection) obj;
+        if (obj instanceof Edge) {
+            Edge other = (Edge) obj;
             return (this.id.equals(other.getId())
                     && this.src.equals(other.getSrc())
                     && this.dst.equals(other.getDst())
@@ -263,7 +262,15 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
 
     @Override
     public ElementId version() {
-        return (this.graphs == null || this.graphs.isEmpty()) ? null : this.graphs.get(0);
+        return this.version;
+    }
+
+    public ElementId getVersion() {
+        return version();
+    }
+
+    public void setVersion(ElementId version) {
+        this.version = version;
     }
 
     /**
