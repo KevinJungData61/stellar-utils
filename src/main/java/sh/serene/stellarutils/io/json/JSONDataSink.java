@@ -20,9 +20,10 @@ public class JSONDataSink implements DataSink {
      * @param outputPath    output epgm directory
      */
     public JSONDataSink(String outputPath) {
-        this(outputPath + JSONConstants.GRAPHS_FILE,
-                outputPath + JSONConstants.VERTICES_FILE,
-                outputPath + JSONConstants.EDGES_FILE);
+        outputPath += (outputPath.charAt(outputPath.length() - 1) == '/') ? "" : "/";
+        this.graphHeadPath = outputPath + JSONConstants.GRAPHS_FILE;
+        this.vertexPath = outputPath + JSONConstants.VERTICES_FILE;
+        this.edgePath = outputPath + JSONConstants.EDGES_FILE;
     }
 
     /**
@@ -43,7 +44,7 @@ public class JSONDataSink implements DataSink {
      *
      * @param gc    graph collection to write
      */
-    public void writeGraphCollection(GraphCollection gc) {
+    public boolean writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
                 .write()
@@ -59,5 +60,7 @@ public class JSONDataSink implements DataSink {
                 .write()
                 .mode("overwrite")
                 .json(this.edgePath);
+
+        return true;
     }
 }

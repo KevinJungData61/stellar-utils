@@ -1,5 +1,6 @@
 package sh.serene.stellarutils.model.epgm;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +8,7 @@ import java.util.Map;
  * Helper class to add properties of different types to
  *
  */
-public class Properties {
+public class Properties implements Serializable {
 
     private Map<String,PropertyValue> map;
 
@@ -30,7 +31,7 @@ public class Properties {
      * @return  Map of (String, PropertyValue)
      */
     public Map<String,PropertyValue> getMap() {
-        return this.map;
+        return new HashMap<>(this.map);
     }
 
     /**

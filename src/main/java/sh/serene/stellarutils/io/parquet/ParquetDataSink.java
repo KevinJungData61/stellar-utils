@@ -21,9 +21,10 @@ public class ParquetDataSink implements DataSink {
      * @param outputPath    output directory
      */
     public ParquetDataSink(String outputPath) {
-        this(outputPath + ParquetConstants.GRAPHS_FILE,
-                outputPath + ParquetConstants.VERTICES_FILE,
-                outputPath + ParquetConstants.EDGES_FILE);
+        outputPath += (outputPath.charAt(outputPath.length() - 1) == '/') ? "" : "/";
+        this.graphHeadPath = outputPath + ParquetConstants.GRAPHS_FILE;
+        this.vertexPath = outputPath + ParquetConstants.VERTICES_FILE;
+        this.edgePath = outputPath + ParquetConstants.EDGES_FILE;
     }
 
     /**
@@ -44,7 +45,7 @@ public class ParquetDataSink implements DataSink {
      *
      * @param gc    Graph collection
      */
-    public void writeGraphCollection(GraphCollection gc) {
+    public boolean writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .write()
                 .format("parquet")
@@ -60,6 +61,7 @@ public class ParquetDataSink implements DataSink {
                 .format("parquet")
                 .mode("overwrite")
                 .save(edgePath);
+        return true;
     }
 
 }
