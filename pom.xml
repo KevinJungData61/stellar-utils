@@ -7,7 +7,7 @@
     <groupId>sh.serene</groupId>
     <artifactId>stellar-utils</artifactId>
     <packaging>jar</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <repositories>
         <!-- list of other repositories -->

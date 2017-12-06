@@ -24,7 +24,7 @@ public class GDFDataSink implements DataSink {
         this.outputPath = outputPath;
     }
 
-    public void writeGraphCollection(GraphCollection graphCollection) {
+    public boolean writeGraphCollection(GraphCollection graphCollection) {
 
         try {
             FileWriter writer = new FileWriter(outputPath);
@@ -55,8 +55,10 @@ public class GDFDataSink implements DataSink {
                 writer.write(e);
             }
             writer.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
     }

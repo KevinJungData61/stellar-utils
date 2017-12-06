@@ -45,7 +45,7 @@ public class ParquetDataSink implements DataSink {
      *
      * @param gc    Graph collection
      */
-    public void writeGraphCollection(GraphCollection gc) {
+    public boolean writeGraphCollection(GraphCollection gc) {
         gc.getGraphHeads()
                 .write()
                 .format("parquet")
@@ -61,6 +61,7 @@ public class ParquetDataSink implements DataSink {
                 .format("parquet")
                 .mode("overwrite")
                 .save(edgePath);
+        return true;
     }
 
 }

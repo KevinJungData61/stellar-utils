@@ -231,4 +231,8 @@ public class GraphCollection implements Serializable {
                     }
                 }, Encoders.bean(EdgeCollection.class));
     }
+
+    public GraphCollectionWriter write() {
+        return new GraphCollectionWriter(this);
+    }
 }
