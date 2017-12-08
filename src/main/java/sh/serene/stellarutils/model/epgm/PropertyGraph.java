@@ -230,6 +230,72 @@ public class PropertyGraph implements Serializable {
     }
 
     /**
+     * Add properties to vertices
+     *
+     * @param key               property key
+     * @param vertexToProps     dataset of (vertex ID, property value)
+     * @return                  new property graph
+     */
+    public PropertyGraph addVertexProperty(String key, Dataset<Tuple2<ElementId,PropertyValue>> vertexToProps) {
+        Dataset<GraphHead> graphHeadNew = createGraphHead();
+        ElementId graphId = graphHeadNew.first().getId();
+        Dataset<Vertex> verticesNew = this.vertices
+                .joinWith(
+                        vertexToProps,
+                        this.vertices.col("id").equalTo(vertexToProps.col("_1"))
+                )
+                .map((MapFunction<
+                        Tuple2<Vertex,
+                            Tuple2<ElementId,PropertyValue>>,
+                        Vertex>) tup -> {
+                    Vertex vertexOri = tup._1;
+                    Map<String,PropertyValue> properties = new HashMap<>(vertexOri.getProperties());
+                    properties.put(key, tup._2._2);
+                    return Vertex.create(
+                            vertexOri.getId(),
+                            properties,
+                            vertexOri.getLabel(),
+                            graphId
+                    );
+                }, Encoders.bean(Vertex.class));
+        return new PropertyGraph(graphHeadNew, verticesNew, this.getEdges());
+    }
+
+    /**
+     * Add properties to edges
+     *
+     * @param key               property key
+     * @param edgeToProps       dataset of (edge ID, property value)
+     * @return                  new property graph
+     */
+    public PropertyGraph addEdgeProperty(String key, Dataset<Tuple2<ElementId,PropertyValue>> edgeToProps) {
+        Dataset<GraphHead> graphHeadNew = createGraphHead();
+        ElementId graphId = graphHeadNew.first().getId();
+        Dataset<Edge> edgesNew = this.edges
+                .joinWith(
+                        edgeToProps,
+                        this.edges.col("id").equalTo(edgeToProps.col("_1"))
+                )
+                .map((MapFunction<
+                        Tuple2<Edge,
+                            Tuple2<ElementId,PropertyValue>>,
+                        Edge>) tup -> {
+                    Edge edgeOri = tup._1;
+                    Map<String,PropertyValue> properties = new HashMap<>(edgeOri.getProperties());
+                    properties.put(key, tup._2._2);
+                    return Edge.create(
+                            edgeOri.getId(),
+                            edgeOri.getSrc(),
+                            edgeOri.getDst(),
+                            properties,
+                            edgeOri.getLabel(),
+                            graphId
+                    );
+                }, Encoders.bean(Edge.class));
+        return new PropertyGraph(graphHeadNew, this.getVertices(), edgesNew);
+    }
+
+    /**
      * Get edge list as a dataset of tuples (src,dst) from graph.
      *
      * @return  edge list

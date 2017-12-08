@@ -1,5 +1,6 @@
 package sh.serene.stellarutils.model.epgm;
 
+import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -8,9 +9,7 @@ import org.junit.Test;
 import scala.Tuple2;
 import sh.serene.stellarutils.testutils.GraphCollectionFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -93,6 +92,44 @@ public class PropertyGraphTest {
         assertEquals(size + n, graphCollectionNew.getVertices().count());
         assertEquals(size,
                 PropertyGraph.fromCollection(graphCollectionNew, graphId).getVertices().count());
+    }
+
+    @Test
+    public void addVertexProperty() throws Exception {
+        PropertyGraph graphOrig = PropertyGraph.fromCollection(graphCollection, graphId);
+        ElementId vertexId = graphOrig.getVertices().first().getId();
+        String key = "newkey";
+        PropertyValue prop = PropertyValue.create("value");
+        List<Tuple2<ElementId,PropertyValue>> vertexToPropsList = Collections.singletonList(
+                new Tuple2<>(vertexId, prop)
+        );
+        Dataset<Tuple2<ElementId,PropertyValue>> vertexToProps = spark.createDataset(vertexToPropsList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.bean(PropertyValue.class)
+        ));
+        PropertyGraph graphNew = graphOrig.addVertexProperty(key, vertexToProps);
+        Vertex vertex = graphNew.getVertices().filter((FilterFunction<Vertex>) v ->
+                v.getId().equals(vertexId)).first();
+        assertEquals(prop, vertex.getProperty(key));
+    }
+
+    @Test
+    public void addEdgeProperty() throws Exception {
+        PropertyGraph graphOrig = PropertyGraph.fromCollection(graphCollection, graphId);
+        ElementId edgeId = graphOrig.getEdges().first().getId();
+        String key = "newkey";
+        PropertyValue prop = PropertyValue.create("value");
+        List<Tuple2<ElementId,PropertyValue>> edgeToPropsList = Collections.singletonList(
+                new Tuple2<>(edgeId, prop)
+        );
+        Dataset<Tuple2<ElementId,PropertyValue>> edgeToProps = spark.createDataset(edgeToPropsList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.bean(PropertyValue.class)
+        ));
+        PropertyGraph graphNew = graphOrig.addEdgeProperty(key, edgeToProps);
+        Edge edge = graphNew.getEdges().filter((FilterFunction<Edge>) e ->
+                e.getId().equals(edgeId)).first();
+        assertEquals(prop, edge.getProperty(key));
     }
 
     @Test
