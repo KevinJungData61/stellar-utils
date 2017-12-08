@@ -83,7 +83,7 @@ public class VertexTest {
         Vertex vertexIdentical = Vertex.create(id, properties, label1, version);
         Vertex vertexDiffVersion = Vertex.create(id, properties, label1, ElementId.create());
         Vertex vertexDiffLabel = Vertex.create(id, properties, label2, ElementId.create());
-        Vertex vertexDiffProps = Vertex.create(new HashMap<>(), label1, ElementId.create());
+        Vertex vertexDiffProps = Vertex.create(id, new HashMap<>(), label1, ElementId.create());
         Vertex vertexDiffId = Vertex.create(properties, label1, ElementId.create());
         assertEquals(vertex, vertexIdentical);
         assertEquals(vertex, vertexDiffVersion);
