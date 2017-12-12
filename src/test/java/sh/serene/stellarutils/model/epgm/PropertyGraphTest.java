@@ -156,7 +156,7 @@ public class PropertyGraphTest {
     }
 
     @Test
-    public void getAdjacencyList() throws Exception {
+    public void getAdjacencyMatrix() throws Exception {
         double[][] expected = {
                 {0, 1, 1},
                 {0, 0, 1},
@@ -183,6 +183,44 @@ public class PropertyGraphTest {
         gcb.addEdge(vertexId2, vertexId3, new HashMap<>(), "edge23", graphs);
         PropertyGraph propertyGraph = PropertyGraph.fromCollection(gcb.toGraphCollection(), graphId);
         CoordinateMatrix adjacencyMatrix = propertyGraph.getAdjacencyMatrix(vertexToIndex);
+        List<IndexedRow> indexedRows = adjacencyMatrix.toIndexedRowMatrix().rows().toJavaRDD().collect();
+        for (IndexedRow row : indexedRows) {
+            long index = row.index();
+            double[] v = row.vector().toArray();
+            for (int j = 0; j < v.length; j++) {
+                assertEquals(expected[(int)index][j], v[j], 1e-8);
+            }
+        }
+    }
+
+    @Test
+    public void getLaplacianMatrix() throws Exception {
+        double[][] expected = {
+                {2, -1, -1},
+                {0, 1, -1},
+                {0, 0, 0}
+        };
+
+        GraphCollectionBuilder gcb = new GraphCollectionBuilder();
+        ElementId graphId = gcb.addGraphHead(new HashMap<>(), "graph");
+        List<ElementId> graphs = Collections.singletonList(graphId);
+        ElementId vertexId1 = gcb.addVertex(new HashMap<>(), "vertex1", graphs);
+        ElementId vertexId2 = gcb.addVertex(new HashMap<>(), "vertex2", graphs);
+        ElementId vertexId3 = gcb.addVertex(new HashMap<>(), "vertex3", graphs);
+        List<Tuple2<ElementId,Long>> vertexToIndexList = Arrays.asList(
+                new Tuple2<>(vertexId1,0L),
+                new Tuple2<>(vertexId2, 1L),
+                new Tuple2<>(vertexId3, 2L)
+        );
+        Dataset<Tuple2<ElementId,Long>> vertexToIndex = spark.createDataset(vertexToIndexList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.LONG()
+        ));
+        gcb.addEdge(vertexId1, vertexId2, new HashMap<>(), "edge12", graphs);
+        gcb.addEdge(vertexId1, vertexId3, new HashMap<>(), "edge13", graphs);
+        gcb.addEdge(vertexId2, vertexId3, new HashMap<>(), "edge23", graphs);
+        PropertyGraph propertyGraph = PropertyGraph.fromCollection(gcb.toGraphCollection(), graphId);
+        CoordinateMatrix adjacencyMatrix = propertyGraph.getLaplacianMatrix(vertexToIndex);
         List<IndexedRow> indexedRows = adjacencyMatrix.toIndexedRowMatrix().rows().toJavaRDD().collect();
         for (IndexedRow row : indexedRows) {
             long index = row.index();

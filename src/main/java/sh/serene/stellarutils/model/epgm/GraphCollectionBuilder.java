@@ -21,9 +21,9 @@ public class GraphCollectionBuilder implements Serializable {
     /**
      * Graph elements builders
      */
-    GraphElementsBuilder<GraphHead> graphHeadsBuilder;
-    GraphElementsBuilder<VertexCollection> verticesBuilder;
-    GraphElementsBuilder<EdgeCollection> edgesBuilder;
+    private GraphElementsBuilder<GraphHead> graphHeadsBuilder;
+    private GraphElementsBuilder<VertexCollection> verticesBuilder;
+    private GraphElementsBuilder<EdgeCollection> edgesBuilder;
 
     /**
      * Constructor
@@ -114,7 +114,8 @@ public class GraphCollectionBuilder implements Serializable {
             edgesBuilder.add(edge);
             return edge.getId();
         } else {
-            throw new InvalidIdException(String.format("Could not build edge from %s to %s", src, dst));
+            throw new InvalidIdException(
+                    String.format("Could not build edge from %s to %s", src.toString(), dst.toString()));
         }
     }
 

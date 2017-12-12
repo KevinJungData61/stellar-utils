@@ -1,5 +1,6 @@
 package sh.serene.stellarutils.model.epgm;
 
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.api.java.function.Function;
@@ -360,6 +361,30 @@ public class PropertyGraph implements Serializable {
         JavaRDD<MatrixEntry> entries = getIndexPairList(vertexToIndex)
                 .toJavaRDD()
                 .map(edge -> (new MatrixEntry(edge._1, edge._2, 1)));
+        return new CoordinateMatrix(entries.rdd());
+    }
+
+    /**
+     * Get Laplacian matrix
+     *
+     * @param vertexToIndex     mapping from vertex id to vertex index
+     * @return                  Laplacian matrix
+     */
+    public CoordinateMatrix getLaplacianMatrix(Dataset<Tuple2<ElementId,Long>> vertexToIndex) {
+        JavaRDD<MatrixEntry> entries = getIndexPairList(vertexToIndex)
+                .toJavaRDD()
+                .mapToPair(tup -> new Tuple2<>(tup._1, Collections.singletonList(tup._2)))
+                .reduceByKey((l1, l2) -> {
+                    List<Long> l3 = new ArrayList<>(l1);
+                    l3.addAll(l2);
+                    return l3;
+                })
+                .map(edges -> (new MatrixEntry(edges._1, edges._1, edges._2.size())))
+                .union(
+                        getIndexPairList(vertexToIndex)
+                                .toJavaRDD()
+                                .map(edge -> (new MatrixEntry(edge._1, edge._2, -1)))
+                );
         return new CoordinateMatrix(entries.rdd());
     }
 
