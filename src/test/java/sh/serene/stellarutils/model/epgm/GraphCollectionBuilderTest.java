@@ -3,6 +3,7 @@ package sh.serene.stellarutils.model.epgm;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.junit.Before;
 import org.junit.Test;
+import sh.serene.stellarutils.exceptions.InvalidIdException;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -83,6 +84,17 @@ public class GraphCollectionBuilderTest implements Serializable {
         assertEqualsProperty("string", edgeCollection);
         assertEqualsProperty("boolean", edgeCollection);
         assertEqualsProperty("integer", edgeCollection);
+    }
+
+    @Test(expected = InvalidIdException.class)
+    public void testInvalidEdge() throws Exception {
+        builder.addEdge(
+                vertex1,
+                ElementId.create(),
+                properties.getMap(),
+                "invalid edge",
+                Collections.singletonList(graph)
+        );
     }
 
 }
