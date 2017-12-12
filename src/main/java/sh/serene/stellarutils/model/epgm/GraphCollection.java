@@ -241,4 +241,16 @@ public class GraphCollection implements Serializable {
     public GraphCollectionWriter write() {
         return new GraphCollectionWriter(this);
     }
+
+    public static GraphCollectionReader read(SparkSession sparkSession) {
+        return new GraphCollectionReader(sparkSession);
+    }
+
+    public PropertyGraph get(ElementId graphId) {
+        return PropertyGraph.fromCollection(this, graphId);
+    }
+
+    public PropertyGraph get(int index) {
+        return PropertyGraph.fromCollection(this, this.graphHeads.toJavaRDD().take(index+1).get(index).getId());
+    }
 }

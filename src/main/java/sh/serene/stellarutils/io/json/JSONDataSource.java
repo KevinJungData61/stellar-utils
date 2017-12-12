@@ -27,10 +27,13 @@ public class JSONDataSource implements DataSource {
      * @param spark         spark session
      */
     public JSONDataSource(String inputPath, SparkSession spark) {
-        this(inputPath + JSONConstants.GRAPHS_FILE,
-                inputPath + JSONConstants.VERTICES_FILE,
-                inputPath + JSONConstants.EDGES_FILE,
-                spark);
+        if (inputPath.charAt(inputPath.length() - 1) != '/') {
+            inputPath += '/';
+        }
+        this.graphHeadPath = inputPath + JSONConstants.GRAPHS_FILE;
+        this.vertexPath = inputPath + JSONConstants.VERTICES_FILE;
+        this.edgePath = inputPath + JSONConstants.EDGES_FILE;
+        this.spark = spark;
     }
 
     /**
