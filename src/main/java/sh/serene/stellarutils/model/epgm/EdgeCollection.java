@@ -2,6 +2,7 @@ package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +38,20 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
             final String label,
             final List<ElementId> graphs
     ) {
+        if (id == null) {
+            throw new NullPointerException("ID was null");
+        } else if (src == null) {
+            throw new NullPointerException("Source ID was null");
+        } else if (dst == null) {
+            throw new NullPointerException("Target ID was null");
+        } else if (graphs == null || graphs.isEmpty()) {
+            throw new NullPointerException("Graphs was null or empty");
+        }
         this.id = id;
         this.src = src;
         this.dst = dst;
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.graphs = graphs;
     }
 
@@ -56,8 +66,8 @@ public class EdgeCollection implements Element, Serializable, Cloneable {
         this.id = ElementId.fromString(id);
         this.src = ElementId.fromString(src);
         this.dst = ElementId.fromString(dst);
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.setGraphsFromStrings(graphs);
     }
 

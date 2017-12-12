@@ -63,5 +63,7 @@ public class AddVertexLabelsExample {
         System.out.println(graphCollection1.getVertices().count());
         System.out.println(PropertyGraph.fromCollection(graphCollection1, graphId).getVertices().count());
 
+        GraphCollectionBuilder gcb = new GraphCollectionBuilder(spark);
+
     }
 }

@@ -2,6 +2,7 @@ package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,14 @@ public class VertexCollection implements Element, Serializable, Cloneable {
             final String label,
             final List<ElementId> graphs
     ) {
+        if (id == null) {
+            throw new NullPointerException("ID was null");
+        } else if (graphs == null || graphs.isEmpty()) {
+            throw new NullPointerException("graphs was null or empty");
+        }
         this.id = id;
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.graphs = graphs;
     }
 
@@ -40,8 +46,8 @@ public class VertexCollection implements Element, Serializable, Cloneable {
             final List<String> graphs
     ) {
         this.id = ElementId.fromString(id);
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.setGraphsFromStrings(graphs);
     }
 

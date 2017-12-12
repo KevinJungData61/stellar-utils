@@ -1,6 +1,7 @@
 package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,9 +26,14 @@ public class Vertex implements Element, Serializable, Cloneable {
             final String label,
             final ElementId version
     ) {
+        if (id == null) {
+            throw new NullPointerException("ID was null");
+        } else if (version == null) {
+            throw new NullPointerException("Version was null");
+        }
         this.id = id;
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.version = version;
     }
 
@@ -38,8 +44,8 @@ public class Vertex implements Element, Serializable, Cloneable {
             final String version
     ) {
         this.id = ElementId.fromString(id);
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
         this.version = ElementId.fromString(version);
     }
 

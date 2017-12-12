@@ -37,6 +37,13 @@ public class GraphCollection implements Serializable {
             Dataset<VertexCollection> vertices,
             Dataset<EdgeCollection> edges
     ) {
+        if (graphHeads == null) {
+            throw new NullPointerException("Graph Head Dataset was null");
+        } else if (vertices == null) {
+            throw new NullPointerException("Vertex Collection Dataset was null");
+        } else if (edges == null) {
+            throw new NullPointerException("Edge Collection Dataset was null");
+        }
         this.graphHeads = graphHeads;
         this.vertices = vertices;
         this.edges = edges;

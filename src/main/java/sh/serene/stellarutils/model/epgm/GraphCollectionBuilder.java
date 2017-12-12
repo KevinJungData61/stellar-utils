@@ -50,6 +50,21 @@ public class GraphCollectionBuilder implements Serializable {
     }
 
     /**
+     * Constructor with given spark session
+     *
+     * @param spark
+     */
+    public GraphCollectionBuilder(SparkSession spark) {
+        if (spark == null) {
+            throw new NullPointerException("Spark Session was null");
+        }
+        this.spark = spark;
+        graphHeads = new ArrayList<>();
+        vertexCollections = new ArrayList<>();
+        edgeCollections = new ArrayList<>();
+    }
+
+    /**
      * Creates a Graph Collection from the builder
      *
      * @return  graph collection
@@ -58,9 +73,6 @@ public class GraphCollectionBuilder implements Serializable {
         graphHeadListIntoDataset();
         vertexListIntoDataset();
         edgeListIntoDataset();
-        if (graphHeadDataset == null || vertexCollectionDataset == null || edgeCollectionDataset == null) {
-            return null;
-        }
         return GraphCollection.fromDatasets(graphHeadDataset, vertexCollectionDataset, edgeCollectionDataset);
     }
 
