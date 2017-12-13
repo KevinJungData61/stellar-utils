@@ -1,15 +1,16 @@
 language: java
+
 env:
   global:
-  - secure: NNjJlSpVJ0LiGgPBofBMwVMDoQLUnFbCkNXMU/mueQ7s71u0gv1Y+n5RRCypNAy6l7Fm5lMH5Lcw4rcDqRpDT8+7VcxA+wWKFpOmknjboH6450qy3iZ7axJ1oxEiw/zjhjIub39ucfv6/xlXQBLtPwGtHkfKrnXvIEsdryYtJvh4ZRODmDIimcrORJA+sLcEXfjx+s7Sbu4IgUztyhOA6WkL9ZWkuSqsA+AxUNrYX8+HG1b0aOe+UGLn5iahC54hT2AmZP5znbhe1Esv0fT7I9z32MWeSZc45KbL+hsJn5OgoyEg1bGW+jWg3FQs+OaZTghGPbCzsGEjeKFHrFXqXEbOeDoNbMlGyCPpblAx8sJitRYst4+GhVMS6JpVz2VZuZYynvre+tPt8IeciZ+48npWkuZZq8B4uVgWESW+TXE9OkQhk7dK/Wgh4VB3B5dEe6XZU9/rovrl0/0uu558JM0WpaNKJIe0QjlnS2vjUTB/zfr41wtcddF1GzfhJXn19cO2pbIh/I+k/I8Vja4hf1lZ3HSuYGZ+7oSHmAC8IiKLqK+NfP/H4aFENaUfXr4h6EsHV7WAUPvPIS9o/FMzWnMaOLxjVzHLAZdIyOwc/s7s9ZdT/l2xmx756fW2n0JL+WmY6owknuSGYOqDCOy1n/oqQpaTSgTrnatbY3Vdcbw=
-  - secure: kU166dyVM1eQ0TqoiKlRiyOesU51RCA+UXf698DYSe0wPJJa0IpAPhoxX6zDUSMZoVKSDn8dd2nli7cweDWgo38+iK+/Hy0/z318tLZuhEnD62Xju4GJViDg42zDnVEvspiD/nWBEjAiNukjObywsDeR+gtcRrYo1GWSJ+1ODd7aqJL2TNkEOqnjmQs6IfUhn5g4AmzTW5VBzUTQoZIL8IYLfAif49+XDlWbP5gpxZ5AnS0QHEfuCHtXwMs2pddsppNQfdULDXctUFNzU8Xk9T/7d1xUz6XyRkapjv7ioTODjomP3escgfih5u+w+eFsXF8AkrnEGZWvENONu49X63oBOsHkjPIVqxUut1I9WDxdhkIuNy/Ieb6FBD9kSmnfor3sAkk7onBbALjTfilHhU0Yio55vQsG8CeyWbQrDS6dRK+WJjj9wfrFsMqkyrdDcMP1Bq2FHg/wK9Q9GyRRTbKTrk4IC23q4fF+ZCNJKOpMkIi5nJcw94bzCFzuEDWuixIa+gBYC8DmI8jLi+y3AF/lKmm7Rj2h6fMzzzCyyTCgE7UmrpXLql1fFyeUwX2cAOaK7Utw0S7zQvIq6NMm2Aa/V3uVtICZxWy6Sb+70lEOK91HHJUuON6G0UJl4HeqFzqBJYjxUdQcCrwbm8Cyt5ddZHWJ/cpVJ0pFKu0010Y=
+  - secure: TFD2kTFPNIQmuhcOLsh4E+UOawFuPtsv0jMyIzHNXkiNp4keZhxn6r14I+PpcAXX4+vZWIYu1PkVj5dYbVz0NNEH9P7JFQQo855WjKPOAuZMKkzONDPf0rw7ntbDnU8O5aGGNDk5PNxtYUXxBvShDGQ6fX9xyywu454UDPBBNjD3ZHyfWy5ClWDLc3s3vAHaDM6pXfFsZ/ESovLDpBna9MgVrmTHT4kZGM+dqxKo19fhlpCX8LMcHIYVDSPle0zUhaSMB1ED3o6gIsrvlg8sTNud6fgQ+FVX1YoFHqEpOKuUJ5WvwVmnQ+dtEx2y6n9e1a64WywnHKjHZ9f/i4QqhVaINXmy28M05Nr9NOZrrpG76dovnfxO0pVTMoTySy3sAUyDHi1P6lJwoSViAkBgHAQQY8F3PWXcZFqn+FZKAOaIuDpzm4sCGDGeBkUiY9HrA/WRSkuCpxpitZoP4ab5zb9rhxpBkphS34muRzsbUW8+jzxO9vllLHj2pUmBml7Y9GeSQnCm50fD2dZyJtOyILT1+pz8xe+/jGLZPvjbE2mNrMR/iNygMVggKtKpMayPXud7pom96Fr6BsUuOu+WqcFxuV+1OfCGGeGFx2EjkWSpKl7dKvTpUJwGFw6+B83w5sYCNgJbFgEPTt8Hmyumsc6b5VCZYFP0t6B6qZC0z+c=
+  - secure: MlX76380Dt58Kjf0Vt8Uaj6XlWhdA8bYZzHrQfrgg2iuPTWlj6FyJqCPanmxFmYfF1QH2Sxh4+eN3dcVxovZHMlRpE88yKAVMqABwWf8wubzJNAEDQWQcW0yofgI3Sf2DsgWG45CGtxwSrr14O47yv3x87Kh7TRtGdBVJfckfVhY6EZ3l9ARIISwdkVrrVpkn4X3Rj7lcR0tG+lDvKLCAn2vOnQepFaPauBErYZHalnGYrqTATbHbo6N2qC+odBG972lpisr+ce5BjtP5/FJTpX207ADxexkxtIC2p/k253ZYmogPfQAKqI66Pu6WFueOtcbhjRsVqtKPfgSk93ZgPUjFzGcEvuKYh/tYG4ZHWXWid/065OEV0tmtnfCdkE9K6WX1TISxyZl3cbY4TDXNBI7eUryELMZv7OZLrMDkumiGTAEwndMBCy30ZsQXi9hL2R0yeUJWNo+oXjAowlAa4wj3qjhB3kuGi/pQMab2auSWSEHJpPzdsTjF3rQ3g0tCm6lneIxzRvU7Ghui1WePcUOf/rJxfQ59YiFFh2w0fMQqGkZoHwMBZ9CND+FdnmRnYQeyhkvvqBwFdMGUFhRN6v4/POJwwqrNj9CjDYrLo6jh2knTEXlo/NolfvmiB0qpgrQQOjWBzXOKZ/MTovHx2HoNk5pSifmSYeSszBVl5Q=
 
 jobs:
-    include:
-        - stage: test
-          if: branch IN (master, devel) OR branch =~ ^version-
-          script: mvn test
-        - stage: publish
-          if: branch IN (master, devel) OR branch =~ ^version-
-          script: mvn deploy
-
+  include:
+  - stage: test
+    if: branch IN (master, devel) OR branch =~ ^version-
+    script: mvn test
+  - stage: publish
+    if: branch IN (master, devel) OR branch =~ ^version-
+    script: mvn deploy
+e
