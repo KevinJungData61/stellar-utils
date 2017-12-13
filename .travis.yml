@@ -13,4 +13,4 @@ jobs:
   - stage: publish
     if: branch IN (master, devel) OR branch =~ ^version-
     script: mvn deploy
-e
+
