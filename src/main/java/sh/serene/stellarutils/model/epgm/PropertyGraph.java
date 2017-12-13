@@ -1,7 +1,13 @@
 package sh.serene.stellarutils.model.epgm;
 
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FilterFunction;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.MapFunction;
+import org.apache.spark.ml.linalg.SparseMatrix;
+import org.apache.spark.mllib.linalg.distributed.CoordinateMatrix;
+import org.apache.spark.mllib.linalg.distributed.MatrixEntry;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import scala.Tuple2;
@@ -23,20 +29,20 @@ public class PropertyGraph implements Serializable {
     /**
      * EPGM Vertices
      */
-    private Dataset<VertexCollection> vertices;
+    private Dataset<Vertex> vertices;
 
     /**
      * EPGM Edges
      */
-    private Dataset<EdgeCollection> edges;
+    private Dataset<Edge> edges;
 
     @Deprecated
     public PropertyGraph() { }
 
     private PropertyGraph(
             Dataset<GraphHead> graphHeads,
-            Dataset<VertexCollection> vertices,
-            Dataset<EdgeCollection> edges
+            Dataset<Vertex> vertices,
+            Dataset<Edge> edges
     ) {
         this.graphHeads = graphHeads;
         this.vertices = vertices;
@@ -65,24 +71,14 @@ public class PropertyGraph implements Serializable {
         }
 
         // get vertices and edges from collection
-        Dataset<VertexCollection> vertices = graphCollection.getVertices()
+        Dataset<Vertex> vertices = graphCollection.getVertices()
                 .filter((FilterFunction<VertexCollection>) vertex -> vertex.getGraphs().contains(graphId))
-                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> VertexCollection.create(
-                        vertex.getId(),
-                        vertex.getProperties(),
-                        vertex.getLabel(),
-                        Collections.singletonList(vertex.getGraphs().get(0))
-                ), Encoders.bean(VertexCollection.class));
-        Dataset<EdgeCollection> edges = graphCollection.getEdges()
+                .map((MapFunction<VertexCollection,Vertex>) Vertex::createFromCollection,
+                        Encoders.bean(Vertex.class));
+        Dataset<Edge> edges = graphCollection.getEdges()
                 .filter((FilterFunction<EdgeCollection>) edge -> edge.getGraphs().contains(graphId))
-                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> EdgeCollection.create(
-                        edge.getId(),
-                        edge.getSrc(),
-                        edge.getDst(),
-                        edge.getProperties(),
-                        edge.getLabel(),
-                        Collections.singletonList(edge.getGraphs().get(0))
-                ), Encoders.bean(EdgeCollection.class));
+                .map((MapFunction<EdgeCollection,Edge>) Edge::createFromCollection,
+                        Encoders.bean(Edge.class));
 
         return new PropertyGraph(graphHeads, vertices, edges);
     }
@@ -96,9 +92,10 @@ public class PropertyGraph implements Serializable {
     private Dataset<VertexCollection> verticesToCollection() {
         ElementId graphId = this.getGraphId();
         return this.vertices
-                .map((MapFunction<VertexCollection,VertexCollection>) vertex -> {
-                    List<ElementId> graphs = new ArrayList<>(vertex.getGraphs());
-                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                .map((MapFunction<Vertex,VertexCollection>) vertex -> {
+                    List<ElementId> graphs = new ArrayList<>();
+                    graphs.add(vertex.version());
+                    if (vertex.version() != graphId) {
                         graphs.add(graphId);
                     }
                     return VertexCollection.create(
@@ -119,9 +116,10 @@ public class PropertyGraph implements Serializable {
     private Dataset<EdgeCollection> edgesToCollection() {
         ElementId graphId = this.getGraphId();
         return this.edges
-                .map((MapFunction<EdgeCollection,EdgeCollection>) edge -> {
-                    List<ElementId> graphs = new ArrayList<>(edge.getGraphs());
-                    if (graphs.isEmpty() || graphs.get(graphs.size() - 1) != graphId) {
+                .map((MapFunction<Edge,EdgeCollection>) edge -> {
+                    List<ElementId> graphs = new ArrayList<>();
+                    graphs.add(edge.version());
+                    if (edge.version() != graphId) {
                         graphs.add(graphId);
                     }
                     return EdgeCollection.create(
@@ -185,7 +183,7 @@ public class PropertyGraph implements Serializable {
      *
      * @return  vertices
      */
-    public Dataset<VertexCollection> getVertices() {
+    public Dataset<Vertex> getVertices() {
         return this.vertices;
     }
 
@@ -194,7 +192,7 @@ public class PropertyGraph implements Serializable {
      *
      * @return  edges
      */
-    public Dataset<EdgeCollection> getEdges() {
+    public Dataset<Edge> getEdges() {
         return this.edges;
     }
 
@@ -222,7 +220,7 @@ public class PropertyGraph implements Serializable {
      * @param edges     new edges to add
      * @return          new graph
      */
-    public PropertyGraph addEdges(Dataset<EdgeCollection> edges) {
+    public PropertyGraph addEdges(Dataset<Edge> edges) {
         return new PropertyGraph(createGraphHead(), this.getVertices(), this.getEdges().union(edges));
     }
 
@@ -233,8 +231,82 @@ public class PropertyGraph implements Serializable {
      * @param vertices      new vertices to add
      * @return              new graph
      */
-    public PropertyGraph addVertices(Dataset<VertexCollection> vertices) {
+    public PropertyGraph addVertices(Dataset<Vertex> vertices) {
         return new PropertyGraph(createGraphHead(), this.getVertices().union(vertices), this.getEdges());
+    }
+
+    /**
+     * Add properties to vertices
+     *
+     * @param key               property key
+     * @param vertexToProps     dataset of (vertex ID, property value)
+     * @return                  new property graph
+     */
+    public PropertyGraph addVertexProperty(String key, Dataset<Tuple2<ElementId,PropertyValue>> vertexToProps) {
+        Dataset<GraphHead> graphHeadNew = createGraphHead();
+        ElementId graphId = graphHeadNew.first().getId();
+        Dataset<Vertex> verticesNew = this.vertices
+                .joinWith(
+                        vertexToProps,
+                        this.vertices.col("id").equalTo(vertexToProps.col("_1")),
+                        "leftouter"
+                )
+                .map((MapFunction<
+                        Tuple2<Vertex,
+                            Tuple2<ElementId,PropertyValue>>,
+                        Vertex>) tup -> {
+                    Vertex vertexOri = tup._1;
+                    if (tup._2 == null) {
+                        return vertexOri;
+                    }
+                    Map<String,PropertyValue> properties = new HashMap<>(vertexOri.getProperties());
+                    properties.put(key, tup._2._2);
+                    return Vertex.create(
+                            vertexOri.getId(),
+                            properties,
+                            vertexOri.getLabel(),
+                            graphId
+                    );
+                }, Encoders.bean(Vertex.class));
+        return new PropertyGraph(graphHeadNew, verticesNew, this.getEdges());
+    }
+
+    /**
+     * Add properties to edges
+     *
+     * @param key               property key
+     * @param edgeToProps       dataset of (edge ID, property value)
+     * @return                  new property graph
+     */
+    public PropertyGraph addEdgeProperty(String key, Dataset<Tuple2<ElementId,PropertyValue>> edgeToProps) {
+        Dataset<GraphHead> graphHeadNew = createGraphHead();
+        ElementId graphId = graphHeadNew.first().getId();
+        Dataset<Edge> edgesNew = this.edges
+                .joinWith(
+                        edgeToProps,
+                        this.edges.col("id").equalTo(edgeToProps.col("_1")),
+                        "leftouter"
+                )
+                .map((MapFunction<
+                        Tuple2<Edge,
+                            Tuple2<ElementId,PropertyValue>>,
+                        Edge>) tup -> {
+                    Edge edgeOri = tup._1;
+                    if (tup._2 == null) {
+                        return edgeOri;
+                    }
+                    Map<String,PropertyValue> properties = new HashMap<>(edgeOri.getProperties());
+                    properties.put(key, tup._2._2);
+                    return Edge.create(
+                            edgeOri.getId(),
+                            edgeOri.getSrc(),
+                            edgeOri.getDst(),
+                            properties,
+                            edgeOri.getLabel(),
+                            graphId
+                    );
+                }, Encoders.bean(Edge.class));
+        return new PropertyGraph(graphHeadNew, this.getVertices(), edgesNew);
     }
 
     /**
@@ -243,9 +315,77 @@ public class PropertyGraph implements Serializable {
      * @return  edge list
      */
     public Dataset<Tuple2<ElementId,ElementId>> getEdgeList() {
-        return this.getEdges().map((MapFunction<EdgeCollection,Tuple2<ElementId,ElementId>>) edge -> (
+        return this.getEdges().map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
                 new Tuple2<>(edge.getSrc(), edge.getDst())
                 ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class)));
+    }
+
+    /**
+     * Get edge list as a dataset of tuples (src,dst) where src and dst are vertex indices defined by a given dataset
+     * vertexToIndex.
+     *
+     * @param vertexToIndex     mapping from vertex id to vertex index
+     * @return                  edge list as index pairs
+     */
+    public Dataset<Tuple2<Long,Long>> getIndexPairList(Dataset<Tuple2<ElementId,Long>> vertexToIndex) {
+        Dataset<Tuple2<ElementId,ElementId>> edgeList = getEdgeList();
+        Dataset<Tuple2<Long,ElementId>> srcesIndexed = edgeList
+                .joinWith(
+                        vertexToIndex,
+                        edgeList.col("_1").equalTo(vertexToIndex.col("_1")),
+                        "inner"
+                )
+                .map((MapFunction<
+                        Tuple2<Tuple2<ElementId,ElementId>,Tuple2<ElementId,Long>>,
+                        Tuple2<Long,ElementId>>) tup -> (new Tuple2<>(tup._2._2, tup._1._2))
+                , Encoders.tuple(Encoders.LONG(), Encoders.bean(ElementId.class)));
+        return srcesIndexed
+                .joinWith(
+                        vertexToIndex,
+                        srcesIndexed.col("_2").equalTo(vertexToIndex.col("_1")),
+                        "inner"
+                )
+                .map((MapFunction<
+                        Tuple2<Tuple2<Long,ElementId>,Tuple2<ElementId,Long>>,
+                        Tuple2<Long,Long>>) tup -> (new Tuple2<>(tup._1._1, tup._2._2)),
+                        Encoders.tuple(Encoders.LONG(), Encoders.LONG()));
+    }
+
+    /**
+     * Get adjacency matrix
+     *
+     * @param vertexToIndex     mapping from vertex id to vertex index
+     * @return                  adjacency matrix
+     */
+    public CoordinateMatrix getAdjacencyMatrix(Dataset<Tuple2<ElementId,Long>> vertexToIndex) {
+        JavaRDD<MatrixEntry> entries = getIndexPairList(vertexToIndex)
+                .toJavaRDD()
+                .map(edge -> (new MatrixEntry(edge._1, edge._2, 1)));
+        return new CoordinateMatrix(entries.rdd());
+    }
+
+    /**
+     * Get Laplacian matrix
+     *
+     * @param vertexToIndex     mapping from vertex id to vertex index
+     * @return                  Laplacian matrix
+     */
+    public CoordinateMatrix getLaplacianMatrix(Dataset<Tuple2<ElementId,Long>> vertexToIndex) {
+        JavaRDD<MatrixEntry> entries = getIndexPairList(vertexToIndex)
+                .toJavaRDD()
+                .mapToPair(tup -> new Tuple2<>(tup._1, Collections.singletonList(tup._2)))
+                .reduceByKey((l1, l2) -> {
+                    List<Long> l3 = new ArrayList<>(l1);
+                    l3.addAll(l2);
+                    return l3;
+                })
+                .map(edges -> (new MatrixEntry(edges._1, edges._1, edges._2.size())))
+                .union(
+                        getIndexPairList(vertexToIndex)
+                                .toJavaRDD()
+                                .map(edge -> (new MatrixEntry(edge._1, edge._2, -1)))
+                );
+        return new CoordinateMatrix(entries.rdd());
     }
 
 }

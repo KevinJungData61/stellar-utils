@@ -2,6 +2,7 @@ package sh.serene.stellarutils.model.epgm;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,12 @@ public class GraphHead implements Element, Serializable, Cloneable {
     private String label;
 
     private GraphHead(final ElementId id, final Map<String,PropertyValue> properties, final String label) {
+        if (id == null) {
+            throw new NullPointerException("ID was null");
+        }
         this.id = id;
-        this.properties = properties;
-        this.label = label;
+        this.properties = (properties == null) ? new HashMap<>() : properties;
+        this.label = (label == null) ? "" : label;
     }
 
     /**
@@ -152,23 +156,13 @@ public class GraphHead implements Element, Serializable, Cloneable {
     }
 
     /**
-     * Get graphs
+     * Get version
      *
-     * @return graphs
+     * @return version ID
      */
     @Override
-    public List<ElementId> getGraphs() {
-        return Collections.singletonList(this.id);
-    }
-
-    /**
-     * No graphs to set
-     *
-     * @param graphs
-     */
-    @Override
-    public void setGraphs(List<ElementId> graphs) {
-
+    public ElementId version() {
+        return this.id;
     }
 
     /**

@@ -29,10 +29,13 @@ public class ParquetDataSource implements DataSource {
      * @param spark         spark session to create datasets with
      */
     public ParquetDataSource(String inputPath, SparkSession spark) {
-        this(inputPath + ParquetConstants.GRAPHS_FILE,
-                inputPath + ParquetConstants.VERTICES_FILE,
-                inputPath + ParquetConstants.EDGES_FILE,
-                spark);
+        if (inputPath.charAt(inputPath.length() - 1) != '/') {
+            inputPath += '/';
+        }
+        this.graphHeadPath = inputPath + ParquetConstants.GRAPHS_FILE;
+        this.vertexPath = inputPath + ParquetConstants.VERTICES_FILE;
+        this.edgePath = inputPath + ParquetConstants.EDGES_FILE;
+        this.spark = spark;
     }
 
     /**

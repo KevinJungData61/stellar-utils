@@ -52,18 +52,11 @@ public interface Element {
     void setLabel(String label);
 
     /**
-     * Get graphs
+     * Get version
      *
-     * @return  graphs
+     * @return  version ID
      */
-    List<ElementId> getGraphs();
-
-    /**
-     * Set graphs
-     *
-     * @param graphs
-     */
-    void setGraphs(List<ElementId> graphs);
+    ElementId version();
 
     /**
      * Get element property

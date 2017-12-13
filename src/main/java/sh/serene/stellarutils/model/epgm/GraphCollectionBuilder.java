@@ -1,11 +1,9 @@
 package sh.serene.stellarutils.model.epgm;
 
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
+import sh.serene.stellarutils.exceptions.InvalidIdException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,32 +19,37 @@ public class GraphCollectionBuilder implements Serializable {
     private static final int LIST_MAX_SIZE = 100000;
 
     /**
-     * Spark Session
+     * Graph elements builders
      */
-    private SparkSession spark;
-
-    /**
-     * Datasets
-     */
-    private Dataset<GraphHead> graphHeadDataset;
-    private Dataset<VertexCollection> vertexCollectionDataset;
-    private Dataset<EdgeCollection> edgeCollectionDataset;
-
-    /**
-     * Lists to temporarily store elements
-     */
-    private List<GraphHead> graphHeads;
-    private List<VertexCollection> vertexCollections;
-    private List<EdgeCollection> edgeCollections;
+    private GraphElementsBuilder<GraphHead> graphHeadsBuilder;
+    private GraphElementsBuilder<VertexCollection> verticesBuilder;
+    private GraphElementsBuilder<EdgeCollection> edgesBuilder;
 
     /**
      * Constructor
      */
     public GraphCollectionBuilder() {
-        spark = SparkSession.builder().appName("Stellar Utils Graph Collection Builder").master("local").getOrCreate();
-        graphHeads = new ArrayList<>();
-        vertexCollections = new ArrayList<>();
-        edgeCollections = new ArrayList<>();
+        this(
+                SparkSession
+                        .builder()
+                        .appName("Stellar Utils Graph Collection Builder")
+                        .master("local")
+                        .getOrCreate()
+        );
+    }
+
+    /**
+     * Constructor with given spark session
+     *
+     * @param spark
+     */
+    public GraphCollectionBuilder(SparkSession spark) {
+        if (spark == null) {
+            throw new NullPointerException("Spark Session was null");
+        }
+        graphHeadsBuilder = new GraphElementsBuilder<>(GraphHead.class, LIST_MAX_SIZE, spark);
+        verticesBuilder = new GraphElementsBuilder<>(VertexCollection.class, LIST_MAX_SIZE, spark);
+        edgesBuilder = new GraphElementsBuilder<>(EdgeCollection.class, LIST_MAX_SIZE, spark);
     }
 
     /**
@@ -55,13 +58,11 @@ public class GraphCollectionBuilder implements Serializable {
      * @return  graph collection
      */
     public GraphCollection toGraphCollection() {
-        graphHeadListIntoDataset();
-        vertexListIntoDataset();
-        edgeListIntoDataset();
-        if (graphHeadDataset == null || vertexCollectionDataset == null || edgeCollectionDataset == null) {
-            return null;
-        }
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexCollectionDataset, edgeCollectionDataset);
+        return GraphCollection.fromDatasets(
+                graphHeadsBuilder.toElements(),
+                verticesBuilder.toElements(),
+                edgesBuilder.toElements()
+        );
     }
 
     /**
@@ -73,10 +74,7 @@ public class GraphCollectionBuilder implements Serializable {
      */
     public ElementId addGraphHead(Map<String,PropertyValue> properties, String label) {
         GraphHead graphHead = GraphHead.create(ElementId.create(), properties, label);
-        graphHeads.add(graphHead);
-        if (graphHeads.size() >= LIST_MAX_SIZE) {
-            graphHeadListIntoDataset();
-        }
+        graphHeadsBuilder.add(graphHead);
         return graphHead.getId();
     }
 
@@ -90,10 +88,7 @@ public class GraphCollectionBuilder implements Serializable {
      */
     public ElementId addVertex(Map<String,PropertyValue> properties, String label, List<ElementId> graphs) {
         VertexCollection vertex = VertexCollection.create(properties, label, graphs);
-        vertexCollections.add(vertex);
-        if (vertexCollections.size() >= LIST_MAX_SIZE) {
-            vertexListIntoDataset();
-        }
+        verticesBuilder.add(vertex);
         return vertex.getId();
     }
 
@@ -114,48 +109,55 @@ public class GraphCollectionBuilder implements Serializable {
             String label,
             List<ElementId> graphs
     ) {
-        EdgeCollection edge = EdgeCollection.create(src, dst, properties, label, graphs);
-        edgeCollections.add(edge);
-        if (edgeCollections.size() >= LIST_MAX_SIZE) {
-            edgeListIntoDataset();
+        if (verticesBuilder.contains(src) && verticesBuilder.contains(dst)) {
+            EdgeCollection edge = EdgeCollection.create(src, dst, properties, label, graphs);
+            edgesBuilder.add(edge);
+            return edge.getId();
+        } else {
+            throw new InvalidIdException(
+                    String.format("Could not build edge from %s to %s", src.toString(), dst.toString()));
         }
-        return edge.getId();
     }
 
     /**
-     * Move graph heads from list to dataset
+     * Check whether a particular graph head has been added
+     *
+     * @param id    graph head id
+     * @return      builder contains graph head
      */
-    private void graphHeadListIntoDataset() {
-        if (this.graphHeads.isEmpty()) {
-            return;
-        }
-        Dataset<GraphHead> graphHeads = spark.createDataset(this.graphHeads, Encoders.bean(GraphHead.class));
-        graphHeadDataset = (graphHeadDataset == null) ? graphHeads : graphHeadDataset.union(graphHeads);
-        this.graphHeads.clear();
+    public boolean containsGraphHead(ElementId id) {
+        return graphHeadsBuilder.contains(id);
     }
 
     /**
-     * Move vertices from list to dataset
+     * Check whether a particular vertex has been added
+     *
+     * @param id    vertex id
+     * @return      builder contains vertex
      */
-    private void vertexListIntoDataset() {
-        if (vertexCollections.isEmpty()) {
-            return;
-        }
-        Dataset<VertexCollection> vertices = spark.createDataset(vertexCollections, Encoders.bean(VertexCollection.class));
-        vertexCollectionDataset = (vertexCollectionDataset == null) ? vertices : vertexCollectionDataset.union(vertices);
-        vertexCollections.clear();
+    public boolean containsVertex(ElementId id) {
+        return verticesBuilder.contains(id);
     }
 
     /**
-     * Move edges from list to dataset
+     * Check whether a particular ege has been added
+     *
+     * @param id    edge id
+     * @return      builder contains edge
      */
-    private void edgeListIntoDataset() {
-        if (edgeCollections.isEmpty()) {
-            return;
-        }
-        Dataset<EdgeCollection> edges = spark.createDataset(edgeCollections, Encoders.bean(EdgeCollection.class));
-        edgeCollectionDataset = (edgeCollectionDataset == null) ? edges : edgeCollectionDataset.union(edges);
-        edgeCollections.clear();
+    public boolean containsEdge(ElementId id) {
+        return edgesBuilder.contains(id);
+    }
+
+    /**
+     * Check whether a particular element has been added. If the element type is known, users should use the other
+     * methods for efficiency.
+     *
+     * @param id    element id
+     * @return      builder contains element
+     */
+    public boolean contains(ElementId id) {
+        return (containsGraphHead(id) || containsVertex(id) || containsEdge(id));
     }
 
 }

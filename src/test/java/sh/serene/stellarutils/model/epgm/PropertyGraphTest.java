@@ -1,5 +1,9 @@
 package sh.serene.stellarutils.model.epgm;
 
+import org.apache.spark.api.java.function.FilterFunction;
+import org.apache.spark.mllib.linalg.Vector;
+import org.apache.spark.mllib.linalg.distributed.CoordinateMatrix;
+import org.apache.spark.mllib.linalg.distributed.IndexedRow;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -8,9 +12,7 @@ import org.junit.Test;
 import scala.Tuple2;
 import sh.serene.stellarutils.testutils.GraphCollectionFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -33,40 +35,42 @@ public class PropertyGraphTest {
         graphId = graphCollection.getGraphHeads().first().getId();
     }
 
-    private Dataset<EdgeCollection> getNewEdges(int n) {
-        List<EdgeCollection> edges = new ArrayList<>();
+    private Dataset<Edge> getNewEdges(int n) {
+        List<Edge> edges = new ArrayList<>();
+        ElementId version = ElementId.create();
         for (int i = 0; i < n; i++) {
             edges.add(
-                    EdgeCollection.create(ElementId.create(),
+                    Edge.create(ElementId.create(),
                             ElementId.create(),
                             ElementId.create(),
                             new HashMap<>(),
                             "new",
-                            new ArrayList<>())
+                            version)
             );
         }
-        return spark.createDataset(edges, Encoders.bean(EdgeCollection.class));
+        return spark.createDataset(edges, Encoders.bean(Edge.class));
     }
 
-    private Dataset<VertexCollection> getNewVertices(int n) {
-        List<VertexCollection> vertices = new ArrayList<>();
+    private Dataset<Vertex> getNewVertices(int n) {
+        List<Vertex> vertices = new ArrayList<>();
+        ElementId version = ElementId.create();
         for (int i = 0; i < n; i++) {
             vertices.add(
-                    VertexCollection.create(
+                    Vertex.create(
                             ElementId.create(),
                             new HashMap<>(),
                             "new",
-                            new ArrayList<>()
+                            version
                     )
             );
         }
-        return spark.createDataset(vertices, Encoders.bean(VertexCollection.class));
+        return spark.createDataset(vertices, Encoders.bean(Vertex.class));
     }
 
     @Test
     public void addEdges() throws Exception {
         int n = 100;
-        Dataset<EdgeCollection> edgesNew = getNewEdges(n);
+        Dataset<Edge> edgesNew = getNewEdges(n);
         PropertyGraph graphNew = PropertyGraph
                 .fromCollection(graphCollection, graphId)
                 .addEdges(edgesNew);
@@ -81,7 +85,7 @@ public class PropertyGraphTest {
     @Test
     public void addVertices() throws Exception {
         int n = 100;
-        Dataset<VertexCollection> verticesNew = getNewVertices(n);
+        Dataset<Vertex> verticesNew = getNewVertices(n);
         PropertyGraph graphNew = PropertyGraph
                 .fromCollection(graphCollection, graphId)
                 .addVertices(verticesNew);
@@ -94,9 +98,47 @@ public class PropertyGraphTest {
     }
 
     @Test
+    public void addVertexProperty() throws Exception {
+        PropertyGraph graphOrig = PropertyGraph.fromCollection(graphCollection, graphId);
+        ElementId vertexId = graphOrig.getVertices().first().getId();
+        String key = "newkey";
+        PropertyValue prop = PropertyValue.create("value");
+        List<Tuple2<ElementId,PropertyValue>> vertexToPropsList = Collections.singletonList(
+                new Tuple2<>(vertexId, prop)
+        );
+        Dataset<Tuple2<ElementId,PropertyValue>> vertexToProps = spark.createDataset(vertexToPropsList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.bean(PropertyValue.class)
+        ));
+        PropertyGraph graphNew = graphOrig.addVertexProperty(key, vertexToProps);
+        Vertex vertex = graphNew.getVertices().filter((FilterFunction<Vertex>) v ->
+                v.getId().equals(vertexId)).first();
+        assertEquals(prop, vertex.getProperty(key));
+    }
+
+    @Test
+    public void addEdgeProperty() throws Exception {
+        PropertyGraph graphOrig = PropertyGraph.fromCollection(graphCollection, graphId);
+        ElementId edgeId = graphOrig.getEdges().first().getId();
+        String key = "newkey";
+        PropertyValue prop = PropertyValue.create("value");
+        List<Tuple2<ElementId,PropertyValue>> edgeToPropsList = Collections.singletonList(
+                new Tuple2<>(edgeId, prop)
+        );
+        Dataset<Tuple2<ElementId,PropertyValue>> edgeToProps = spark.createDataset(edgeToPropsList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.bean(PropertyValue.class)
+        ));
+        PropertyGraph graphNew = graphOrig.addEdgeProperty(key, edgeToProps);
+        Edge edge = graphNew.getEdges().filter((FilterFunction<Edge>) e ->
+                e.getId().equals(edgeId)).first();
+        assertEquals(prop, edge.getProperty(key));
+    }
+
+    @Test
     public void getEdgeList() throws Exception {
         PropertyGraph graph = PropertyGraph.fromCollection(graphCollection, graphId);
-        Dataset<EdgeCollection> edges = graph.getEdges();
+        Dataset<Edge> edges = graph.getEdges();
         Dataset<Tuple2<ElementId,ElementId>> edgeList = graph.getEdgeList();
 
         assertEquals(edges.count(), edgeList.count());
@@ -111,6 +153,82 @@ public class PropertyGraphTest {
 
         assertEquals(edges.count(), count);
 
+    }
+
+    @Test
+    public void getAdjacencyMatrix() throws Exception {
+        double[][] expected = {
+                {0, 1, 1},
+                {0, 0, 1},
+                {0, 0, 0}
+        };
+
+        GraphCollectionBuilder gcb = new GraphCollectionBuilder();
+        ElementId graphId = gcb.addGraphHead(new HashMap<>(), "graph");
+        List<ElementId> graphs = Collections.singletonList(graphId);
+        ElementId vertexId1 = gcb.addVertex(new HashMap<>(), "vertex1", graphs);
+        ElementId vertexId2 = gcb.addVertex(new HashMap<>(), "vertex2", graphs);
+        ElementId vertexId3 = gcb.addVertex(new HashMap<>(), "vertex3", graphs);
+        List<Tuple2<ElementId,Long>> vertexToIndexList = Arrays.asList(
+                new Tuple2<>(vertexId1,0L),
+                new Tuple2<>(vertexId2, 1L),
+                new Tuple2<>(vertexId3, 2L)
+        );
+        Dataset<Tuple2<ElementId,Long>> vertexToIndex = spark.createDataset(vertexToIndexList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.LONG()
+        ));
+        gcb.addEdge(vertexId1, vertexId2, new HashMap<>(), "edge12", graphs);
+        gcb.addEdge(vertexId1, vertexId3, new HashMap<>(), "edge13", graphs);
+        gcb.addEdge(vertexId2, vertexId3, new HashMap<>(), "edge23", graphs);
+        PropertyGraph propertyGraph = PropertyGraph.fromCollection(gcb.toGraphCollection(), graphId);
+        CoordinateMatrix adjacencyMatrix = propertyGraph.getAdjacencyMatrix(vertexToIndex);
+        List<IndexedRow> indexedRows = adjacencyMatrix.toIndexedRowMatrix().rows().toJavaRDD().collect();
+        for (IndexedRow row : indexedRows) {
+            long index = row.index();
+            double[] v = row.vector().toArray();
+            for (int j = 0; j < v.length; j++) {
+                assertEquals(expected[(int)index][j], v[j], 1e-8);
+            }
+        }
+    }
+
+    @Test
+    public void getLaplacianMatrix() throws Exception {
+        double[][] expected = {
+                {2, -1, -1},
+                {0, 1, -1},
+                {0, 0, 0}
+        };
+
+        GraphCollectionBuilder gcb = new GraphCollectionBuilder();
+        ElementId graphId = gcb.addGraphHead(new HashMap<>(), "graph");
+        List<ElementId> graphs = Collections.singletonList(graphId);
+        ElementId vertexId1 = gcb.addVertex(new HashMap<>(), "vertex1", graphs);
+        ElementId vertexId2 = gcb.addVertex(new HashMap<>(), "vertex2", graphs);
+        ElementId vertexId3 = gcb.addVertex(new HashMap<>(), "vertex3", graphs);
+        List<Tuple2<ElementId,Long>> vertexToIndexList = Arrays.asList(
+                new Tuple2<>(vertexId1,0L),
+                new Tuple2<>(vertexId2, 1L),
+                new Tuple2<>(vertexId3, 2L)
+        );
+        Dataset<Tuple2<ElementId,Long>> vertexToIndex = spark.createDataset(vertexToIndexList, Encoders.tuple(
+                Encoders.bean(ElementId.class),
+                Encoders.LONG()
+        ));
+        gcb.addEdge(vertexId1, vertexId2, new HashMap<>(), "edge12", graphs);
+        gcb.addEdge(vertexId1, vertexId3, new HashMap<>(), "edge13", graphs);
+        gcb.addEdge(vertexId2, vertexId3, new HashMap<>(), "edge23", graphs);
+        PropertyGraph propertyGraph = PropertyGraph.fromCollection(gcb.toGraphCollection(), graphId);
+        CoordinateMatrix adjacencyMatrix = propertyGraph.getLaplacianMatrix(vertexToIndex);
+        List<IndexedRow> indexedRows = adjacencyMatrix.toIndexedRowMatrix().rows().toJavaRDD().collect();
+        for (IndexedRow row : indexedRows) {
+            long index = row.index();
+            double[] v = row.vector().toArray();
+            for (int j = 0; j < v.length; j++) {
+                assertEquals(expected[(int)index][j], v[j], 1e-8);
+            }
+        }
     }
 
 }

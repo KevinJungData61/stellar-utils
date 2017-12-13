@@ -8,7 +8,6 @@ import scala.Tuple2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,6 +37,13 @@ public class GraphCollection implements Serializable {
             Dataset<VertexCollection> vertices,
             Dataset<EdgeCollection> edges
     ) {
+        if (graphHeads == null) {
+            throw new NullPointerException("Graph Head Dataset was null");
+        } else if (vertices == null) {
+            throw new NullPointerException("Vertex Collection Dataset was null");
+        } else if (edges == null) {
+            throw new NullPointerException("Edge Collection Dataset was null");
+        }
         this.graphHeads = graphHeads;
         this.vertices = vertices;
         this.edges = edges;
@@ -140,7 +146,7 @@ public class GraphCollection implements Serializable {
     ) {
         return elements.map(
                 (MapFunction<T, Tuple2<byte[],T>>) elem ->
-                        new Tuple2<>(concatenateIds(elem.getId(), elem.getGraphs().get(0)), elem),
+                        new Tuple2<>(concatenateIds(elem.getId(), elem.version()), elem),
                 Encoders.tuple(
                         Encoders.BINARY(),
                         Encoders.bean(type)
@@ -234,5 +240,17 @@ public class GraphCollection implements Serializable {
 
     public GraphCollectionWriter write() {
         return new GraphCollectionWriter(this);
+    }
+
+    public static GraphCollectionReader read(SparkSession sparkSession) {
+        return new GraphCollectionReader(sparkSession);
+    }
+
+    public PropertyGraph get(ElementId graphId) {
+        return PropertyGraph.fromCollection(this, graphId);
+    }
+
+    public PropertyGraph get(int index) {
+        return PropertyGraph.fromCollection(this, this.graphHeads.toJavaRDD().take(index+1).get(index).getId());
     }
 }
