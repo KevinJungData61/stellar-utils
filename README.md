@@ -1,4 +1,4 @@
-# stellar-utils 
+# stellar-utils [![Build Status](https://travis-ci.org/data61/stellar-utils.svg?branch=master)](https://travis-ci.org/data61/stellar-utils)
 
 Utility tools for the Stellar project. This library provides a common interface for the different modules to read/write graphs represented in the EPGM format. It can currently be imported from the maven repository to read/write to/from JSON and Parquet files. 
 
