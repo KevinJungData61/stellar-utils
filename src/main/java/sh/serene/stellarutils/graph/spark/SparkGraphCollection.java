@@ -293,7 +293,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
     @Override
     public StellarGraphCollection union(StellarGraph graph) {
         //TODO
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
@@ -305,7 +305,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
     @Override
     public StellarGraphCollection union(StellarGraphCollection other) {
         //TODO
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
 

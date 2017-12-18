@@ -217,7 +217,7 @@ public class SparkGraph implements StellarGraph, Serializable {
     @Override
     public StellarGraph union(StellarGraph other) {
         //TODO
-        return null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
