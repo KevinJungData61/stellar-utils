@@ -1,7 +1,7 @@
 package sh.serene.stellarutils.io.parquet;
 
 import sh.serene.stellarutils.io.DataSink;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 
 /**
  * Parquet data sink
@@ -45,7 +45,7 @@ public class ParquetDataSink implements DataSink {
      *
      * @param gc    Graph collection
      */
-    public boolean writeGraphCollection(GraphCollection gc) {
+    public boolean writeGraphCollection(SparkGraphCollection gc) {
         gc.getGraphHeads()
                 .write()
                 .format("parquet")

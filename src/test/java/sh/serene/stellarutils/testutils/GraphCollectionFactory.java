@@ -3,10 +3,8 @@ package sh.serene.stellarutils.testutils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
-import sh.serene.stellarutils.model.epgm.ElementId;
-import sh.serene.stellarutils.model.epgm.GraphHead;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
-import sh.serene.stellarutils.model.epgm.*;
+import sh.serene.stellarutils.entities.*;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 
 import java.util.*;
 
@@ -21,7 +19,7 @@ public class GraphCollectionFactory {
         return properties;
     }
 
-    public static GraphCollection createWithNoAttrNoLabels(SparkSession spark) {
+    public static SparkGraphCollection createWithNoAttrNoLabels(SparkSession spark) {
         List<ElementId> graphids = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphids.get(0), new HashMap<>(), "small_example"
@@ -48,10 +46,10 @@ public class GraphCollectionFactory {
         Dataset<VertexCollection> vertexDataset = spark.createDataset(vertices, Encoders.bean(VertexCollection.class));
         Dataset<EdgeCollection> edgeDataset = spark.createDataset(edges, Encoders.bean(EdgeCollection.class));
         Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
-    public static GraphCollection createWithPrimAttr(SparkSession spark) {
+    public static SparkGraphCollection createWithPrimAttr(SparkSession spark) {
         List<ElementId> graphids = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphids.get(0), new HashMap<>(), "small_example"
@@ -81,10 +79,10 @@ public class GraphCollectionFactory {
         Dataset<VertexCollection> vertexDataset = spark.createDataset(vertices, Encoders.bean(VertexCollection.class));
         Dataset<EdgeCollection> edgeDataset = spark.createDataset(edges, Encoders.bean(EdgeCollection.class));
         Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
-    public static GraphCollection createSingleGraphNVertices(SparkSession spark, int n) {
+    public static SparkGraphCollection createSingleGraphNVertices(SparkSession spark, int n) {
         List<ElementId> graphIds = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphIds.get(0), new HashMap<>(), Integer.toString(n) + "_vertices"
@@ -109,7 +107,7 @@ public class GraphCollectionFactory {
         Dataset<VertexCollection> vertexDataset = spark.createDataset(vertices, Encoders.bean(VertexCollection.class));
         Dataset<EdgeCollection> edgeDataset = spark.createDataset(edges, Encoders.bean(EdgeCollection.class));
         Dataset<GraphHead> graphHeadDataset = spark.createDataset(graphs, Encoders.bean(GraphHead.class));
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
 }

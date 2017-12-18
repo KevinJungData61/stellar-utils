@@ -1,7 +1,7 @@
 package sh.serene.stellarutils.io.json;
 
 import sh.serene.stellarutils.io.DataSink;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 import org.apache.spark.sql.Encoders;
 
 /**
@@ -44,7 +44,7 @@ public class JSONDataSink implements DataSink {
      *
      * @param gc    graph collection to write
      */
-    public boolean writeGraphCollection(GraphCollection gc) {
+    public boolean writeGraphCollection(SparkGraphCollection gc) {
         gc.getGraphHeads()
                 .map(new GraphHeadToJSON(), Encoders.bean(JSONGraphHead.class))
                 .write()

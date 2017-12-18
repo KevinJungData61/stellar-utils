@@ -1,7 +1,7 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.VertexCollection;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.VertexCollection;
+import sh.serene.stellarutils.entities.PropertyValue;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
 

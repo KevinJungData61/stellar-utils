@@ -1,8 +1,8 @@
 package sh.serene.stellarutils.io.parquet;
 
-import sh.serene.stellarutils.model.epgm.VertexCollection;
-import sh.serene.stellarutils.model.epgm.ElementId;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.VertexCollection;
+import sh.serene.stellarutils.entities.ElementId;
+import sh.serene.stellarutils.entities.PropertyValue;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
 

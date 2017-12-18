@@ -1,6 +1,6 @@
 package sh.serene.stellarutils.exceptions;
 
-import sh.serene.stellarutils.model.epgm.ElementId;
+import sh.serene.stellarutils.entities.ElementId;
 
 /**
  * Used by Graph Collection Builder. Is thrown when an element ID is referenced that does not exist in the lookup table.

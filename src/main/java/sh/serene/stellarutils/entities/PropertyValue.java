@@ -1,0 +1,140 @@
+package sh.serene.stellarutils.entities;
+
+import java.io.*;
+import java.util.Arrays;
+
+/**
+ * Container for property value
+ *
+ */
+public class PropertyValue implements Serializable {
+
+    /**
+     * Raw bytes
+     */
+    private byte[] bytes;
+
+    /**
+     * Default constructor
+     */
+    public PropertyValue() {
+        this.bytes = null;
+    }
+
+    /**
+     * Create PropertyValue from raw bytes
+     * @param bytes
+     */
+    public PropertyValue(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    /**
+     * Create PropertyValue from an object
+     *
+     * @param object
+     * @throws IOException
+     */
+    private PropertyValue(Object object) throws IOException {
+        if (object == null) {
+            this.bytes = null;
+        } else {
+            serialize(object);
+        }
+    }
+
+
+    /**
+     * Create PropertyValue from an object. Returns null if object could not be serialized into a byte array
+     *
+     * @param value         Object to transform into PropertyValue
+     * @return              PropertyValue
+     */
+    public static PropertyValue create(Object value) {
+        try {
+            return new PropertyValue(value);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Value stored in PropertyValue
+     *
+     * @return      stored object
+     */
+    public Object value() {
+        if (this.bytes == null) {
+            return null;
+        }
+        try {
+            return deserialize();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Value stored in PropertyValue
+     *
+     * @param type      type for casting the returned object
+     * @param <T>
+     * @return          stored object
+     */
+    public <T> T value(Class<T> type) {
+        if (this.bytes == null) {
+            return null;
+        }
+        try {
+            return type.cast(deserialize());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Serialize the object to byte array
+     *
+     * @param obj
+     * @throws IOException
+     */
+    private void serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        this.bytes = out.toByteArray();
+    }
+
+    /**
+     * Deserialize object from byte array
+     *
+     * @return stored object
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private Object deserialize() throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(this.bytes);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
+
+    public byte[] getBytes() {
+        return this.bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+
+    @Override
+    public String toString() {
+        return this.value().toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof PropertyValue) && Arrays.equals(this.bytes, ((PropertyValue) obj).getBytes());
+    }
+
+}

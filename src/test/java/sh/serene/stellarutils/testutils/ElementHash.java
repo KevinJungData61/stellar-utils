@@ -1,9 +1,9 @@
 package sh.serene.stellarutils.testutils;
 
 import org.apache.spark.api.java.function.MapFunction;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
-import sh.serene.stellarutils.model.epgm.Element;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.entities.VertexCollection;
+import sh.serene.stellarutils.entities.Element;
 
 /**
  * Helper class to hash an element to an integer

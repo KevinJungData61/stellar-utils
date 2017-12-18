@@ -1,9 +1,9 @@
 package sh.serene.stellarutils.io;
 
-import sh.serene.stellarutils.model.epgm.GraphCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 
 public interface DataSink {
 
-    boolean writeGraphCollection(GraphCollection gc);
+    boolean writeGraphCollection(SparkGraphCollection gc);
 
 }

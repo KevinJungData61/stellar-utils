@@ -3,8 +3,8 @@ package sh.serene.stellarutils.io.parquet;
 import org.apache.spark.sql.Row;
 import scala.Tuple2;
 import scala.collection.Iterator;
-import sh.serene.stellarutils.model.epgm.ElementId;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.ElementId;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,9 +3,9 @@ package sh.serene.stellarutils.io.gdf;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Encoders;
 import sh.serene.stellarutils.io.DataSink;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.entities.VertexCollection;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,12 +24,12 @@ public class GDFDataSink implements DataSink {
         this.outputPath = outputPath;
     }
 
-    public boolean writeGraphCollection(GraphCollection graphCollection) {
+    public boolean writeGraphCollection(SparkGraphCollection sparkGraphCollection) {
 
         try {
             FileWriter writer = new FileWriter(outputPath);
             writer.write("nodedef>name VARCHAR,label VARCHAR,type VARCHAR\n");
-            List<String> vertices = graphCollection
+            List<String> vertices = sparkGraphCollection
                     .getVertices()
                     .map((MapFunction<VertexCollection,String>) vertex -> (
                             vertex.getId().toString() + "," +
@@ -41,7 +41,7 @@ public class GDFDataSink implements DataSink {
                 writer.write(v);
             }
             writer.write("edgedef>node1 VARCHAR,node2 VARCHAR,directed BOOLEAN,label VARCHAR,type VARCHAR\n");
-            List<String> edges = graphCollection
+            List<String> edges = sparkGraphCollection
                     .getEdges()
                     .map((MapFunction<EdgeCollection,String>) edge -> (
                             edge.getSrc().toString() + "," +

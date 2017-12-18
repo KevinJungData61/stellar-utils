@@ -1,8 +1,8 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.ElementId;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.entities.ElementId;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;

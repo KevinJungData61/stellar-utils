@@ -1,9 +1,9 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Row;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.util.List;
 import java.util.Map;

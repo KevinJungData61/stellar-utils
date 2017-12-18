@@ -1,7 +1,7 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.GraphHead;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.GraphHead;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.io.Serializable;
 import java.util.HashMap;

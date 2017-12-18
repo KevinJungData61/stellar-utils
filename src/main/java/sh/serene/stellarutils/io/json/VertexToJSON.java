@@ -1,6 +1,6 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.VertexCollection;
+import sh.serene.stellarutils.entities.VertexCollection;
 import org.apache.spark.api.java.function.MapFunction;
 
 /**

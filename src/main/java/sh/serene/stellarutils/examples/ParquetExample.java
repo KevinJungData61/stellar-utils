@@ -3,13 +3,13 @@ package sh.serene.stellarutils.examples;
 import sh.serene.stellarutils.io.json.JSONDataSource;
 import sh.serene.stellarutils.io.parquet.ParquetDataSink;
 import sh.serene.stellarutils.io.parquet.ParquetDataSource;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.entities.VertexCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,14 +29,14 @@ public class ParquetExample {
                 .getOrCreate();
 
         JSONDataSource dataSource = new JSONDataSource("small-yelp-hin.epgm/", spark);
-        GraphCollection gc = dataSource.getGraphCollection();
+        SparkGraphCollection gc = dataSource.getGraphCollection();
         gc.getEdges().show();
         gc.getGraphHeads().show();
 
         ParquetDataSink parquetDataSink = new ParquetDataSink("small-yelp-hin.parquet/");
         parquetDataSink.writeGraphCollection(gc);
 
-        GraphCollection gcRe = (new ParquetDataSource("small-yelp-hin.parquet/", spark)).getGraphCollection();
+        SparkGraphCollection gcRe = (new ParquetDataSource("small-yelp-hin.parquet/", spark)).getGraphCollection();
         gcRe.getEdges().show(20);
         gcRe.getVertices().show(20);
         gcRe.getGraphHeads().show();

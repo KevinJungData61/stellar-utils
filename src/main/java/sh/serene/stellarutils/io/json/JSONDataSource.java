@@ -1,10 +1,10 @@
 package sh.serene.stellarutils.io.json;
 
 import sh.serene.stellarutils.io.DataSource;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
-import sh.serene.stellarutils.model.epgm.GraphHead;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.entities.GraphHead;
+import sh.serene.stellarutils.entities.VertexCollection;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -57,10 +57,10 @@ public class JSONDataSource implements DataSource {
      * @return  graph collection
      */
     @Override
-    public GraphCollection getGraphCollection() {
+    public SparkGraphCollection getGraphCollection() {
         Dataset<VertexCollection> vertexDataset = spark.read().json(this.vertexPath).map(new JSONToVertex(), Encoders.bean(VertexCollection.class));
         Dataset<EdgeCollection> edgeDataset = spark.read().json(this.edgePath).map(new JSONToEdge(), Encoders.bean(EdgeCollection.class));
         Dataset<GraphHead> graphHeadDataset = spark.read().json(this.graphHeadPath).map(new JSONToGraphHead(), Encoders.bean(GraphHead.class));
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 }

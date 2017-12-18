@@ -5,9 +5,9 @@ import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
 import sh.serene.stellarutils.testutils.GraphCollectionFactory;
 import sh.serene.stellarutils.testutils.GraphCompare;
-import sh.serene.stellarutils.model.epgm.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,25 +38,25 @@ public class JSONDataTest {
 
     @Test
     public void testSingleGraphNoAttrNoLabel() {
-        GraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
+        SparkGraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
         jsonDataSink.writeGraphCollection(gc);
-        GraphCollection gcRead = jsonDataSource.getGraphCollection();
+        SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphWithAttrAndLabel() throws Exception {
-        GraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
+        SparkGraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
         jsonDataSink.writeGraphCollection(gc);
-        GraphCollection gcRead = jsonDataSource.getGraphCollection();
+        SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 
     @Test
     public void testSingleGraphThousandVertices() throws Exception {
-        GraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
+        SparkGraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
         jsonDataSink.writeGraphCollection(gc);
-        GraphCollection gcRead = jsonDataSource.getGraphCollection();
+        SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
     }
 

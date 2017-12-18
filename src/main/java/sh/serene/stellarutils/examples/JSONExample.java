@@ -3,9 +3,9 @@ package sh.serene.stellarutils.examples;
 import sh.serene.stellarutils.io.gdf.GDFDataSink;
 import sh.serene.stellarutils.io.json.JSONDataSink;
 import sh.serene.stellarutils.io.json.JSONDataSource;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.entities.VertexCollection;
 import org.apache.spark.api.java.function.*;
 import org.apache.spark.sql.*;
 import scala.Tuple2;
@@ -27,7 +27,7 @@ public class JSONExample
                 .getOrCreate();
 
         JSONDataSource dataSource = new JSONDataSource("small-yelp-hin.epgm/", spark);
-        GraphCollection gc = dataSource.getGraphCollection();
+        SparkGraphCollection gc = dataSource.getGraphCollection();
 
         gc.getVertices().show(20);
         gc.getEdges().show(20);

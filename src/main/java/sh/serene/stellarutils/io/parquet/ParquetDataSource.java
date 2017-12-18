@@ -1,10 +1,10 @@
 package sh.serene.stellarutils.io.parquet;
 
 import sh.serene.stellarutils.io.DataSource;
-import sh.serene.stellarutils.model.epgm.EdgeCollection;
-import sh.serene.stellarutils.model.epgm.GraphCollection;
-import sh.serene.stellarutils.model.epgm.GraphHead;
-import sh.serene.stellarutils.model.epgm.VertexCollection;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.entities.GraphHead;
+import sh.serene.stellarutils.entities.VertexCollection;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
@@ -59,7 +59,7 @@ public class ParquetDataSource implements DataSource {
      * @return  Graph collection
      */
     @Override
-    public GraphCollection getGraphCollection() {
+    public SparkGraphCollection getGraphCollection() {
         Dataset<GraphHead> graphHeadDataset = spark
                 .read()
                 .parquet(this.graphHeadPath)
@@ -72,6 +72,6 @@ public class ParquetDataSource implements DataSource {
                 .read()
                 .parquet(this.edgePath)
                 .map(new ParquetToEdge(), Encoders.bean(EdgeCollection.class));
-        return GraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
+        return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 }

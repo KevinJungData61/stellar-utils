@@ -1,6 +1,6 @@
 package sh.serene.stellarutils.io.json;
 
-import sh.serene.stellarutils.model.epgm.GraphHead;
+import sh.serene.stellarutils.entities.GraphHead;
 import org.apache.spark.api.java.function.MapFunction;
 
 /**

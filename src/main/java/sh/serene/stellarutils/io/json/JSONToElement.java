@@ -2,7 +2,7 @@ package sh.serene.stellarutils.io.json;
 
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
-import sh.serene.stellarutils.model.epgm.PropertyValue;
+import sh.serene.stellarutils.entities.PropertyValue;
 
 import java.util.HashMap;
 import java.util.List;
