@@ -10,7 +10,7 @@ public interface StellarGraphCollection {
      *
      * @return  graph collection writer
      */
-    StellarWriter write(String path);
+    StellarWriter write();
 
     /**
      * Get graph at index

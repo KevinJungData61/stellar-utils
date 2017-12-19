@@ -13,14 +13,19 @@ import java.io.IOException;
 public class SparkReader implements StellarReader {
 
     private final SparkSession sparkSession;
-    private final String path;
+    private final String fileFormat;
 
-    public SparkReader(SparkSession sparkSession, String path) {
+    public SparkReader(SparkSession sparkSession) {
         if (sparkSession == null) {
             throw new NullPointerException("Spark Session was null");
         }
         this.sparkSession = sparkSession;
-        this.path = path;
+        this.fileFormat = "json";
+    }
+
+    private SparkReader(SparkSession sparkSession, String fileFormat) {
+        this.sparkSession = sparkSession;
+        this.fileFormat = fileFormat;
     }
 
     /**
@@ -28,7 +33,7 @@ public class SparkReader implements StellarReader {
      *
      * @return  spark graph collection
      */
-    public SparkGraphCollection parquet() {
+    public SparkGraphCollection parquet(String path) {
         DataSource parquetDataSource = new ParquetDataSource(path, this.sparkSession);
         return parquetDataSource.getGraphCollection();
     }
@@ -38,24 +43,35 @@ public class SparkReader implements StellarReader {
      *
      * @return  spark graph collection
      */
-    public SparkGraphCollection json() {
+    public SparkGraphCollection json(String path) {
         DataSource jsonDataSource = new JSONDataSource(path, this.sparkSession);
         return jsonDataSource.getGraphCollection();
     }
 
     /**
-     * Read graph collection from given path
+     * Set file format. Supported formats may vary depending on implementation
      *
      * @param fileFormat file format
+     * @return reader object
+     */
+    @Override
+    public StellarReader format(String fileFormat) {
+        return new SparkReader(this.sparkSession, fileFormat);
+    }
+
+    /**
+     * Read graph collection from given path
+     *
+     * @param path  input path
      * @return graph collection
      */
     @Override
-    public StellarGraphCollection format(String fileFormat) throws IOException {
+    public StellarGraphCollection getGraphCollection(String path) throws IOException {
         switch (fileFormat.toLowerCase()) {
             case "json":
-                return this.json();
+                return this.json(path);
             case "parquet":
-                return this.parquet();
+                return this.parquet(path);
             default:
                 throw new IOException("Invalid file format: " + fileFormat);
         }

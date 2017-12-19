@@ -250,8 +250,8 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @param sparkSession  spark session
      * @return              graph collection reader
      */
-    public static SparkReader read(SparkSession sparkSession, String path) {
-        return new SparkReader(sparkSession, path);
+    public static SparkReader read(SparkSession sparkSession) {
+        return new SparkReader(sparkSession);
     }
 
     /**
@@ -260,8 +260,8 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return  graph collection writer
      */
     @Override
-    public StellarWriter write(String path) {
-        return new SparkWriter(this, path);
+    public StellarWriter write() {
+        return new SparkWriter(this);
     }
 
     /**

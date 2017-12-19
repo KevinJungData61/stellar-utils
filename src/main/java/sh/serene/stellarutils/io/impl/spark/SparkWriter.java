@@ -18,16 +18,21 @@ public class SparkWriter implements StellarWriter {
      * Graph collection to write
      */
     private final SparkGraphCollection sparkGraphCollection;
-    private final String path;
+    private final String fileFormat;
 
     /**
      * Constructor
      *
      * @param sparkGraphCollection
      */
-    public SparkWriter(SparkGraphCollection sparkGraphCollection, String path) {
+    public SparkWriter(SparkGraphCollection sparkGraphCollection) {
         this.sparkGraphCollection = sparkGraphCollection;
-        this.path = path;
+        this.fileFormat = "json";
+    }
+
+    private SparkWriter(SparkGraphCollection sparkGraphCollection, String fileFormat) {
+        this.sparkGraphCollection = sparkGraphCollection;
+        this.fileFormat = fileFormat;
     }
 
     /**
@@ -35,7 +40,8 @@ public class SparkWriter implements StellarWriter {
      *
      * @return      success
      */
-    public boolean parquet() {
+    @Override
+    public boolean parquet(String path) {
         ParquetDataSink parquetDataSink = new ParquetDataSink(path);
         return parquetDataSink.writeGraphCollection(sparkGraphCollection);
     }
@@ -45,7 +51,8 @@ public class SparkWriter implements StellarWriter {
      *
      * @return      success
      */
-    public boolean json() {
+    @Override
+    public boolean json(String path) {
         JSONDataSink jsonDataSink = new JSONDataSink(path);
         return jsonDataSink.writeGraphCollection(sparkGraphCollection);
     }
@@ -55,26 +62,37 @@ public class SparkWriter implements StellarWriter {
      *
      * @return      success
      */
-    public boolean gdf() {
+    public boolean gdf(String path) {
         GDFDataSink gdfDataSink = new GDFDataSink(path);
         return gdfDataSink.writeGraphCollection(sparkGraphCollection);
     }
 
     /**
-     * Write graph collection to given path.
+     * Set file format. Supported file formats may vary depending on implementation.
      *
      * @param fileFormat file format
+     * @return writer object
+     */
+    @Override
+    public StellarWriter format(String fileFormat) {
+        return new SparkWriter(this.sparkGraphCollection, fileFormat);
+    }
+
+    /**
+     * Write graph collection to given path.
+     *
+     * @param path  output path
      * @return success
      */
     @Override
-    public boolean format(String fileFormat) throws IOException {
-        switch (fileFormat) {
+    public boolean save(String path) throws IOException {
+        switch (fileFormat.toLowerCase()) {
             case "json":
-                return this.json();
+                return this.json(path);
             case "parquet":
-                return this.parquet();
+                return this.parquet(path);
             case "gdf":
-                return this.gdf();
+                return this.gdf(path);
             default:
                 throw new IOException("Invalid file format: " + fileFormat);
         }

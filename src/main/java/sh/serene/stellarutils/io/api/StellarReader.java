@@ -11,11 +11,35 @@ import java.io.IOException;
 public interface StellarReader {
 
     /**
-     * File format. Supported formats may vary depending on implementation
+     * Set file format. Supported formats may vary depending on implementation
      *
      * @param fileFormat    file format
      * @return              reader object
      */
-    StellarGraphCollection format(String fileFormat) throws IOException;
+    StellarReader format(String fileFormat);
+
+    /**
+     * Read graph collection from path.
+     *
+     * @param path  input path
+     * @return      graph collection
+     */
+    StellarGraphCollection getGraphCollection(String path) throws IOException;
+
+    /**
+     * Read graph collection from path in json format. This takes precedence over any previous file format setting
+     *
+     * @param path  input path
+     * @return      graph collection
+     */
+    StellarGraphCollection json(String path);
+
+    /**
+     * Read graph colleciton from path in parquet format. This takes precedence over any previous file format setting
+     *
+     * @param path  input path
+     * @return      graph collection
+     */
+    StellarGraphCollection parquet(String path);
 
 }

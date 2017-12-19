@@ -11,21 +11,57 @@ import java.io.IOException;
  */
 public class BasicReader implements StellarReader {
 
-    private final String path;
+    private final String fileFormat;
 
-    public BasicReader(String path) {
-        this.path = path;
+    public BasicReader() {
+        this.fileFormat = "json";
+    }
+
+    private BasicReader(String fileFormat) {
+        this.fileFormat = fileFormat;
     }
 
     /**
-     * Read from particular file format. Supported formats may vary depending on implementation
+     * Set file format. Supported formats may vary depending on implementation
      *
      * @param fileFormat file format
      * @return reader object
      */
     @Override
-    public StellarGraphCollection format(String fileFormat) throws IOException {
+    public StellarReader format(String fileFormat) {
+        return new BasicReader(fileFormat);
+    }
+
+    /**
+     * Read graph collection from path.
+     *
+     * @param path input path
+     * @return graph collection
+     */
+    @Override
+    public StellarGraphCollection getGraphCollection(String path) throws IOException {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
+    /**
+     * Read graph collection from path in json format. This takes precedence over any previous file format setting
+     *
+     * @param path input path
+     * @return graph collection
+     */
+    @Override
+    public StellarGraphCollection json(String path) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    /**
+     * Read graph colleciton from path in parquet format. This takes precedence over any previous file format setting
+     *
+     * @param path input path
+     * @return graph collection
+     */
+    @Override
+    public StellarGraphCollection parquet(String path) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
 }

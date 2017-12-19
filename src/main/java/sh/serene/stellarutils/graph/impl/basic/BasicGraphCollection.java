@@ -13,8 +13,8 @@ public class BasicGraphCollection implements StellarGraphCollection {
      * @return graph collection writer
      */
     @Override
-    public StellarWriter write(String path) {
-        return new BasicWriter(this, path);
+    public StellarWriter write() {
+        return new BasicWriter(this);
     }
 
     /**
