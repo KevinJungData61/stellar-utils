@@ -1,10 +1,10 @@
 package sh.serene.stellarutils.examples;
 
-import sh.serene.stellarutils.io.gdf.GDFDataSink;
-import sh.serene.stellarutils.io.json.JSONDataSink;
-import sh.serene.stellarutils.io.json.JSONDataSource;
+import sh.serene.stellarutils.io.impl.spark.gdf.GDFDataSink;
+import sh.serene.stellarutils.io.impl.spark.json.JSONDataSink;
+import sh.serene.stellarutils.io.impl.spark.json.JSONDataSource;
 import sh.serene.stellarutils.entities.EdgeCollection;
-import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 import sh.serene.stellarutils.entities.VertexCollection;
 import org.apache.spark.api.java.function.*;
 import org.apache.spark.sql.*;

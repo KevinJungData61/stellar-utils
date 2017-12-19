@@ -3,7 +3,7 @@ package sh.serene.stellarutils.testutils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import sh.serene.stellarutils.entities.Element;
-import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 
 public class GraphCompare {
 

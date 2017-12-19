@@ -4,7 +4,7 @@ import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
 import scala.Tuple2;
 import sh.serene.stellarutils.entities.ElementId;
-import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 
 /**
  * Example reading from json data source and displaying edge list
