@@ -294,8 +294,11 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      */
     @Override
     public StellarGraphCollection union(StellarGraph graph) {
-        //TODO
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (graph instanceof SparkGraph) {
+            return ((SparkGraph) graph).intoCollection(this);
+        } else {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
     }
 
     /**

@@ -220,6 +220,28 @@ public class SparkGraph implements StellarGraph, Serializable {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
+    /**
+     * Union a set of vertices into current graph
+     *
+     * @param vertices vertices
+     * @return new graph
+     */
+    @Override
+    public StellarGraph unionVertices(StellarGraphMemory<Vertex> vertices) {
+        return new SparkGraph(createGraphHead(), this.vertices.union(vertices.asDataset()), this.edges);
+    }
+
+    /**
+     * Union a set of edges into current graph
+     *
+     * @param edges edges
+     * @return new graph
+     */
+    @Override
+    public StellarGraph unionEdges(StellarGraphMemory<Edge> edges) {
+        return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edges.asDataset()));
+    }
+
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof SparkGraph) && ((SparkGraph) obj).getGraphId().equals(this.getGraphId());

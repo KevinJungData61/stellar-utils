@@ -39,6 +39,22 @@ public interface StellarGraph {
     StellarGraph union(StellarGraph other);
 
     /**
+     * Union a set of vertices into current graph
+     *
+     * @param vertices  vertices
+     * @return          new graph
+     */
+    StellarGraph unionVertices(StellarGraphMemory<Vertex> vertices);
+
+    /**
+     * Union a set of edges into current graph
+     *
+     * @param edges edges
+     * @return      new graph
+     */
+    StellarGraph unionEdges(StellarGraphMemory<Edge> edges);
+
+    /**
      * Get edge list
      *
      * @return  edge list
