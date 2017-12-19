@@ -1,11 +1,11 @@
 package sh.serene.stellarutils.examples;
 
-import sh.serene.stellarutils.io.json.JSONDataSource;
-import sh.serene.stellarutils.io.parquet.ParquetDataSink;
-import sh.serene.stellarutils.io.parquet.ParquetDataSource;
+import sh.serene.stellarutils.io.impl.spark.json.JSONDataSource;
+import sh.serene.stellarutils.io.impl.spark.parquet.ParquetDataSink;
+import sh.serene.stellarutils.io.impl.spark.parquet.ParquetDataSource;
 import sh.serene.stellarutils.entities.EdgeCollection;
 import sh.serene.stellarutils.entities.VertexCollection;
-import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;

@@ -1,6 +1,6 @@
 package sh.serene.stellarutils.io;
 
-import sh.serene.stellarutils.graph.spark.SparkGraphCollection;
+import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 
 public interface DataSink {
 

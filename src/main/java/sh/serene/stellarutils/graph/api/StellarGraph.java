@@ -1,6 +1,8 @@
 package sh.serene.stellarutils.graph.api;
 
+import scala.Tuple2;
 import sh.serene.stellarutils.entities.Edge;
+import sh.serene.stellarutils.entities.ElementId;
 import sh.serene.stellarutils.entities.GraphHead;
 import sh.serene.stellarutils.entities.Vertex;
 
@@ -35,4 +37,27 @@ public interface StellarGraph {
      * @return          union of graphs
      */
     StellarGraph union(StellarGraph other);
+
+    /**
+     * Union a set of vertices into current graph
+     *
+     * @param vertices  vertices
+     * @return          new graph
+     */
+    StellarGraph unionVertices(StellarGraphMemory<Vertex> vertices);
+
+    /**
+     * Union a set of edges into current graph
+     *
+     * @param edges edges
+     * @return      new graph
+     */
+    StellarGraph unionEdges(StellarGraphMemory<Edge> edges);
+
+    /**
+     * Get edge list
+     *
+     * @return  edge list
+     */
+    StellarGraphMemory<Tuple2<ElementId,ElementId>> getEdgeList();
 }
