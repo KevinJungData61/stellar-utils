@@ -50,7 +50,7 @@ public class SparkWriterTest {
     @Test
     public void parquet() throws Exception {
         SparkGraphCollection sparkGraphCollection = GraphCollectionFactory.createSingleGraphNVertices(spark, nVertices);
-        sparkGraphCollection.write().parquet(testPathParquet);
+        sparkGraphCollection.write(testPathParquet).format("parquet");
         ParquetDataSource parquetDataSource = new ParquetDataSource(testPathParquet, spark);
         assertTrue(GraphCompare.compareGraphCollections(parquetDataSource.getGraphCollection(), sparkGraphCollection));
     }
@@ -58,7 +58,7 @@ public class SparkWriterTest {
     @Test
     public void json() throws Exception {
         SparkGraphCollection sparkGraphCollection = GraphCollectionFactory.createSingleGraphNVertices(spark, nVertices);
-        sparkGraphCollection.write().json(testPathJson);
+        sparkGraphCollection.write(testPathJson).format("json");
         JSONDataSource jsonDataSource = new JSONDataSource(testPathJson, spark);
         assertTrue(GraphCompare.compareGraphCollections(jsonDataSource.getGraphCollection(), sparkGraphCollection));
     }

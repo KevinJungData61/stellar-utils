@@ -1,7 +1,7 @@
 package sh.serene.stellarutils.graph.api;
 
 import sh.serene.stellarutils.entities.ElementId;
-import sh.serene.stellarutils.io.impl.spark.SparkWriter;
+import sh.serene.stellarutils.io.api.StellarWriter;
 
 public interface StellarGraphCollection {
 
@@ -10,7 +10,7 @@ public interface StellarGraphCollection {
      *
      * @return  graph collection writer
      */
-    SparkWriter write();
+    StellarWriter write(String path);
 
     /**
      * Get graph at index

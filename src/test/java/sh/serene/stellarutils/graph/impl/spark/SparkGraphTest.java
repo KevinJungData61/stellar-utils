@@ -142,7 +142,7 @@ public class SparkGraphTest {
     public void getEdgeList() throws Exception {
         SparkGraph graph = SparkGraph.fromCollection(sparkGraphCollection, graphId);
         Dataset<Edge> edges = graph.getEdges().asDataset();
-        Dataset<Tuple2<ElementId,ElementId>> edgeList = graph.getEdgeList();
+        Dataset<Tuple2<ElementId,ElementId>> edgeList = graph.getEdgeList().asDataset();
 
         assertEquals(edges.count(), edgeList.count());
 

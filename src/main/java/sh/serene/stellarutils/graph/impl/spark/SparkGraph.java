@@ -338,10 +338,10 @@ public class SparkGraph implements StellarGraph, Serializable {
      *
      * @return  edge list
      */
-    public Dataset<Tuple2<ElementId,ElementId>> getEdgeList() {
-        return this.edges.map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
+    public StellarGraphMemory<Tuple2<ElementId,ElementId>> getEdgeList() {
+        return new SparkGraphMemory<>(this.edges.map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
                 new Tuple2<>(edge.getSrc(), edge.getDst())
-                ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class)));
+                ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class))));
     }
 
     /**
@@ -352,7 +352,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return                  edge list as index pairs
      */
     public Dataset<Tuple2<Long,Long>> getIndexPairList(Dataset<Tuple2<ElementId,Long>> vertexToIndex) {
-        Dataset<Tuple2<ElementId,ElementId>> edgeList = getEdgeList();
+        Dataset<Tuple2<ElementId,ElementId>> edgeList = getEdgeList().asDataset();
         Dataset<Tuple2<Long,ElementId>> srcesIndexed = edgeList
                 .joinWith(
                         vertexToIndex,

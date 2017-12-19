@@ -8,6 +8,7 @@ import scala.Tuple2;
 import sh.serene.stellarutils.entities.*;
 import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphCollection;
+import sh.serene.stellarutils.io.api.StellarWriter;
 import sh.serene.stellarutils.io.impl.spark.SparkReader;
 import sh.serene.stellarutils.io.impl.spark.SparkWriter;
 
@@ -249,8 +250,8 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @param sparkSession  spark session
      * @return              graph collection reader
      */
-    public static SparkReader read(SparkSession sparkSession) {
-        return new SparkReader(sparkSession);
+    public static SparkReader read(SparkSession sparkSession, String path) {
+        return new SparkReader(sparkSession, path);
     }
 
     /**
@@ -259,8 +260,8 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return  graph collection writer
      */
     @Override
-    public SparkWriter write() {
-        return new SparkWriter(this);
+    public StellarWriter write(String path) {
+        return new SparkWriter(this, path);
     }
 
     /**
@@ -270,7 +271,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return          graph
      */
     @Override
-    public SparkGraph get(int index) {
+    public StellarGraph get(int index) {
         return SparkGraph.fromCollection(this, this.graphHeads.toJavaRDD().take(index+1).get(index).getId());
     }
 
@@ -281,7 +282,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return          graph
      */
     @Override
-    public SparkGraph get(ElementId graphId) {
+    public StellarGraph get(ElementId graphId) {
         return SparkGraph.fromCollection(this, graphId);
     }
 

@@ -22,10 +22,10 @@ public class EdgeListExample {
                 .getOrCreate();
 
         // read graph collection
-        SparkGraphCollection sparkGraphCollection = SparkGraphCollection.read(spark).json("small-yelp-hin.epgm");
+        SparkGraphCollection sparkGraphCollection = SparkGraphCollection.read(spark, "small-yelp-hin.epgm").json();
 
         // get edge list of first graph
-        Dataset<Tuple2<ElementId,ElementId>> edgeList = sparkGraphCollection.get(0).getEdgeList();
+        Dataset<Tuple2<ElementId,ElementId>> edgeList = sparkGraphCollection.get(0).getEdgeList().asDataset();
 
         // show
         edgeList.show();
