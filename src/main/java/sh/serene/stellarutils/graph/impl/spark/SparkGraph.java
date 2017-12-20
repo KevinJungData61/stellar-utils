@@ -9,8 +9,10 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import scala.Tuple2;
 import sh.serene.stellarutils.entities.*;
+import sh.serene.stellarutils.graph.api.StellarEdgeMemory;
 import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphMemory;
+import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -240,6 +242,16 @@ public class SparkGraph implements StellarGraph, Serializable {
     @Override
     public StellarGraph unionEdges(StellarGraphMemory<Edge> edges) {
         return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edges.asDataset()));
+    }
+
+    @Override
+    public StellarGraph union(StellarEdgeMemory edgeMemory) {
+        return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edgeMemory.asDataset()));
+    }
+
+    @Override
+    public StellarGraph union(StellarVertexMemory vertexMemory) {
+        return new SparkGraph(createGraphHead(), this.vertices.union(vertexMemory.asDataset()), this.edges);
     }
 
     @Override

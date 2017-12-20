@@ -42,6 +42,8 @@ public class Edge implements Element, Serializable, Cloneable {
             throw new NullPointerException("Source ID was null");
         } else if (dst == null) {
             throw new NullPointerException("Target ID was null");
+        } else if (label == null || label.isEmpty()) {
+            throw new NullPointerException("Label was null");
         } else if (version == null) {
             throw new NullPointerException("Version was null");
         }
@@ -49,7 +51,7 @@ public class Edge implements Element, Serializable, Cloneable {
         this.src = src;
         this.dst = dst;
         this.properties = (properties == null) ? new HashMap<>() : properties;
-        this.label = (label == null) ? "" : label;
+        this.label = label;
         this.version = version;
     }
 
@@ -134,6 +136,18 @@ public class Edge implements Element, Serializable, Cloneable {
             final ElementId version
     ) {
         return new Edge(ElementId.create(), src, dst, properties, label, version);
+    }
+
+    /**
+     * Creates an edge based on the given parameters. A unique ID and version ID are generated.
+     *
+     * @param src       source identifier
+     * @param dst       destination identifier
+     * @param label     edge label
+     * @return          new edge
+     */
+    public static Edge create(final ElementId src, final ElementId dst, final String label) {
+        return new Edge(ElementId.create(), src, dst, null, label, ElementId.create());
     }
 
     /**

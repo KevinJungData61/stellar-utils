@@ -54,6 +54,10 @@ public interface StellarGraph {
      */
     StellarGraph unionEdges(StellarGraphMemory<Edge> edges);
 
+    StellarGraph union(StellarVertexMemory vertexMemory);
+
+    StellarGraph union(StellarEdgeMemory edgeMemory);
+
     /**
      * Get edge list
      *

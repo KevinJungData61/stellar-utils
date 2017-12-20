@@ -51,9 +51,11 @@ public class ERExample {
          * ER
          */
 
-        // add a new edge
+        // add a few new edges (v0 -> v1), (v0 -> v2), (v0 -> v3)
         List<Edge> edgesNew = new ArrayList<>();
-        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(1).getId(),null, "new edge", ElementId.create()));
+        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(1).getId(), "new edge"));
+        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(2).getId(), "new edge"));
+        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(3).getId(), "new edge"));
         return edgesNew;
     }
 
@@ -82,7 +84,7 @@ public class ERExample {
         /*
          * add new edges to original graph
          */
-        StellarGraph graphNew = graph.unionEdges(beFactory.createMemory(edgesNew, Edge.class));
+        StellarGraph graphNew = graph.union(beFactory.createEdgeMemory(edgesNew));
 
         /*
          * write final graph collection
