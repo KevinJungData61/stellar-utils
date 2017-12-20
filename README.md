@@ -2,20 +2,59 @@
 
 Utility tools for the Stellar project. This library provides a common interface for the different modules to read/write graphs represented in the EPGM format. It can currently be imported from the maven repository to read/write to/from JSON and Parquet files. 
 
-### Build
+## Build
 - To run the unit tests: `mvn test`
 - To build the jars: `mvn package`
 
-### Add stellar-utils as a dependency in Maven
+## Add stellar-utils as a dependency in Maven
+Current latest version under development:
 ```xml
 <dependencies>
     <dependency>
         <groupId>sh.serene</groupId>
         <artifactId>stellar-utils</artifactId>
-        <version>1.0</version>
+        <version>0.2.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
+
+## Reference
+### StellarBackEndFactory
+- Currently implemented with `SparkBackEndFactory` which is instantiated with a spark session
+- Used to create `StellarGraphMemory` and `StellarReader` objects
+### StellarReader
+- Used to read EPGM
+### StellarGraphCollection
+- EPGM graph collection in memory
+### StellarGraph
+- A single graph with supported graph operations
+### StellarGraphMemory, StellarEdgeMemory, StellarVertexMemory
+- Wrapper containing a collection of graph elements
+- Currently only implemented with a spark back end
+
+## Basic usage
+### Reading a graph from json with given `path` and `graphId`
+```java
+StellarBackEndFactory backEndFactory = new SparkBackEndFactory(sparkSession);
+StellarGraphCollection graphCollection = backEndFactory.reader().format("json").getGraphCollection(path);
+StellarGraph graph = graphCollection.get(graphId);
+```
+### Getting a list of vertices/edges from `graph`
+```java
+List<Vertex> vertices = graph.getVertices().asList();
+List<Edge> edges = graph.getEdges().asList();
+```
+### Adding a list of edges `newEdges` to `graph`
+```java
+StellarGraph graphNew = graph.union(backEndFactory.createEdgeMemory(newEdges));
+```
+### merging `graph` into `graphCollection` and writing the result in json
+```java
+graphCollection.union(graph).write().format("json").save(path);
+```
+
+## Other examples
+Examples can be found [here](src/main/java/sh/serene/stellarutils/examples)
 
 ## License
 
