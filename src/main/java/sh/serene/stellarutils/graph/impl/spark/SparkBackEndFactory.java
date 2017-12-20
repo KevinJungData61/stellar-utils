@@ -3,17 +3,21 @@ package sh.serene.stellarutils.graph.impl.spark;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
-import sh.serene.stellarutils.graph.api.StellarGraphMemFactory;
+import sh.serene.stellarutils.graph.api.StellarBackEndFactory;
 import sh.serene.stellarutils.graph.api.StellarGraphMemory;
+import sh.serene.stellarutils.io.api.StellarReader;
+import sh.serene.stellarutils.io.impl.spark.SparkReader;
 
 import java.util.List;
 
-public class SparkGraphMemFactory implements StellarGraphMemFactory {
+public class SparkBackEndFactory implements StellarBackEndFactory {
 
     private final SparkSession sparkSession;
+    private final SparkReader reader;
 
-    public SparkGraphMemFactory(SparkSession sparkSession) {
+    public SparkBackEndFactory(SparkSession sparkSession) {
         this.sparkSession = sparkSession;
+        this.reader = new SparkReader(sparkSession);
     }
 
     /**
@@ -24,7 +28,7 @@ public class SparkGraphMemFactory implements StellarGraphMemFactory {
      * @return graph memory
      */
     @Override
-    public <T> StellarGraphMemory<T> create(List<T> elements, Class<T> type) {
+    public <T> StellarGraphMemory<T> createMemory(List<T> elements, Class<T> type) {
         return new SparkGraphMemory<>(sparkSession.createDataset(elements, Encoders.bean(type)));
     }
 
@@ -36,7 +40,17 @@ public class SparkGraphMemFactory implements StellarGraphMemFactory {
      * @return graph memory
      */
     @Override
-    public <T> StellarGraphMemory<T> create(Dataset<T> elements, Class<T> type) {
+    public <T> StellarGraphMemory<T> createMemory(Dataset<T> elements, Class<T> type) {
         return new SparkGraphMemory<>(elements);
+    }
+
+    /**
+     * Get reader object
+     *
+     * @return reader object
+     */
+    @Override
+    public StellarReader reader() {
+        return this.reader;
     }
 }

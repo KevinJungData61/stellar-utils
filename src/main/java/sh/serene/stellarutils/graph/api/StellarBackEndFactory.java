@@ -1,10 +1,11 @@
 package sh.serene.stellarutils.graph.api;
 
 import org.apache.spark.sql.Dataset;
+import sh.serene.stellarutils.io.api.StellarReader;
 
 import java.util.List;
 
-public interface StellarGraphMemFactory {
+public interface StellarBackEndFactory {
 
     /**
      * Create memory from list
@@ -13,7 +14,7 @@ public interface StellarGraphMemFactory {
      * @param type      element type
      * @return          graph memory
      */
-    <T> StellarGraphMemory<T> create(List<T> elements, Class<T> type);
+    <T> StellarGraphMemory<T> createMemory(List<T> elements, Class<T> type);
 
     /**
      * Create memory from dataset
@@ -22,5 +23,13 @@ public interface StellarGraphMemFactory {
      * @param type      element type
      * @return          graph memory
      */
-    <T> StellarGraphMemory<T> create(Dataset<T> elements, Class<T> type);
+    <T> StellarGraphMemory<T> createMemory(Dataset<T> elements, Class<T> type);
+
+    /**
+     * Get reader object
+     *
+     * @return  reader object
+     */
+    StellarReader reader();
+
 }

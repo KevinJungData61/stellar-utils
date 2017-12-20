@@ -253,8 +253,9 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return  graph head
      */
     private Dataset<GraphHead> createGraphHead() {
+        GraphHead graphHeadNew = this.getGraphHead().copy();
         return this.getGraphHeads().map(
-                (MapFunction<GraphHead,GraphHead>) GraphHead::copy,
+                (MapFunction<GraphHead,GraphHead>) g -> graphHeadNew,
                 Encoders.bean(GraphHead.class)
         );
     }
