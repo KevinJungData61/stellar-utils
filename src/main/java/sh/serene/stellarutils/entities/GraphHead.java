@@ -72,7 +72,7 @@ public class GraphHead implements Element, Serializable, Cloneable {
      */
     public GraphHead copy() {
         ElementId graphId = ElementId.create();
-        return new GraphHead(graphId, this.properties, this.label);
+        return new GraphHead(graphId, new HashMap<>(this.properties), this.label);
     }
 
     @Override

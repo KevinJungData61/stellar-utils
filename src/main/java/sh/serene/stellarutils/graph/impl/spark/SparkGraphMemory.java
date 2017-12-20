@@ -36,4 +36,5 @@ public class SparkGraphMemory<T> implements StellarGraphMemory<T> {
     public Dataset<T> asDataset() {
         return this.dataset;
     }
+
 }

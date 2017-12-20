@@ -19,4 +19,5 @@ public interface StellarGraphMemory<T> {
      * @return  spark dataset
      */
     Dataset<T> asDataset();
+
 }
