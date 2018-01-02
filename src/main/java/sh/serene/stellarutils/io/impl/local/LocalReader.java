@@ -1,4 +1,4 @@
-package sh.serene.stellarutils.io.impl.basic;
+package sh.serene.stellarutils.io.impl.local;
 
 import sh.serene.stellarutils.graph.api.StellarGraphCollection;
 import sh.serene.stellarutils.io.api.StellarReader;
@@ -9,15 +9,15 @@ import java.io.IOException;
  * Basic Graph Collection Reader
  *
  */
-public class BasicReader implements StellarReader {
+public class LocalReader implements StellarReader {
 
     private final String fileFormat;
 
-    public BasicReader() {
+    public LocalReader() {
         this.fileFormat = "json";
     }
 
-    private BasicReader(String fileFormat) {
+    private LocalReader(String fileFormat) {
         this.fileFormat = fileFormat;
     }
 
@@ -29,7 +29,7 @@ public class BasicReader implements StellarReader {
      */
     @Override
     public StellarReader format(String fileFormat) {
-        return new BasicReader(fileFormat);
+        return new LocalReader(fileFormat);
     }
 
     /**

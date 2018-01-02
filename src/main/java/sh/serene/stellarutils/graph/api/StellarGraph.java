@@ -30,6 +30,8 @@ public interface StellarGraph {
      */
     StellarGraphMemory<Edge> getEdges();
 
+    StellarGraphCollection toCollection();
+
     /**
      * Union two stellar graphs
      *

@@ -260,7 +260,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return  graph collection writer
      */
     @Override
-    public StellarWriter write() {
+    public SparkWriter write() {
         return new SparkWriter(this);
     }
 
@@ -271,7 +271,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return          graph
      */
     @Override
-    public StellarGraph get(int index) {
+    public SparkGraph get(int index) {
         return SparkGraph.fromCollection(this, this.graphHeads.toJavaRDD().take(index+1).get(index).getId());
     }
 
@@ -282,7 +282,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return          graph
      */
     @Override
-    public StellarGraph get(ElementId graphId) {
+    public SparkGraph get(ElementId graphId) {
         return SparkGraph.fromCollection(this, graphId);
     }
 
@@ -293,7 +293,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return new graph collection
      */
     @Override
-    public StellarGraphCollection union(StellarGraph graph) {
+    public SparkGraphCollection union(StellarGraph graph) {
         if (graph instanceof SparkGraph) {
             return ((SparkGraph) graph).intoCollection(this);
         } else {
@@ -308,7 +308,7 @@ public class SparkGraphCollection implements StellarGraphCollection, Serializabl
      * @return new graph collection
      */
     @Override
-    public StellarGraphCollection union(StellarGraphCollection other) {
+    public SparkGraphCollection union(StellarGraphCollection other) {
         //TODO
         throw new UnsupportedOperationException("Not implemented yet");
     }

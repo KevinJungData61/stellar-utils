@@ -1,21 +1,21 @@
-package sh.serene.stellarutils.io.impl.basic;
+package sh.serene.stellarutils.io.impl.local;
 
-import sh.serene.stellarutils.graph.impl.basic.BasicGraphCollection;
+import sh.serene.stellarutils.graph.impl.local.LocalGraphCollection;
 import sh.serene.stellarutils.io.api.StellarWriter;
 
 import java.io.IOException;
 
-public class BasicWriter implements StellarWriter {
+public class LocalWriter implements StellarWriter {
 
-    private final BasicGraphCollection graphCollection;
+    private final LocalGraphCollection graphCollection;
     private final String fileFormat;
 
-    public BasicWriter(BasicGraphCollection graphCollection) {
+    public LocalWriter(LocalGraphCollection graphCollection) {
         this.graphCollection = graphCollection;
         this.fileFormat = "json";
     }
 
-    private BasicWriter(BasicGraphCollection graphCollection, String fileFormat) {
+    private LocalWriter(LocalGraphCollection graphCollection, String fileFormat) {
         this.graphCollection = graphCollection;
         this.fileFormat = fileFormat;
     }
@@ -28,7 +28,7 @@ public class BasicWriter implements StellarWriter {
      */
     @Override
     public StellarWriter format(String fileFormat) {
-        return new BasicWriter(this.graphCollection, fileFormat);
+        return new LocalWriter(this.graphCollection, fileFormat);
     }
 
     /**

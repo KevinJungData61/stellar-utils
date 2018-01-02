@@ -71,7 +71,7 @@ public class VertexCollection implements Element, Serializable, Cloneable {
      * @param properties    vertex properties
      * @param label         vertex label
      * @param graphs        graphs that vertex is contained in
-     * @returns             new vertex
+     * @return              new vertex
      */
     public static VertexCollection create(
             final ElementId id,

@@ -69,7 +69,7 @@ public class Vertex implements Element, Serializable, Cloneable {
      * @param properties    vertex properties
      * @param label         vertex label
      * @param version       id of first graph this version of the vertex was contained in
-     * @returns             new vertex
+     * @return              new vertex
      */
     public static Vertex create(
             final ElementId id,
