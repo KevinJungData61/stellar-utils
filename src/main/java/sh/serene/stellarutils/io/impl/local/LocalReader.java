@@ -1,9 +1,21 @@
 package sh.serene.stellarutils.io.impl.local;
 
+import org.json.simple.parser.JSONParser;
+import sh.serene.stellarutils.entities.EdgeCollection;
+import sh.serene.stellarutils.entities.GraphHead;
+import sh.serene.stellarutils.entities.VertexCollection;
 import sh.serene.stellarutils.graph.api.StellarGraphCollection;
+import sh.serene.stellarutils.graph.impl.local.LocalGraphCollection;
 import sh.serene.stellarutils.io.api.StellarReader;
+import sh.serene.stellarutils.io.impl.local.json.JSONToLocal;
+import sh.serene.stellarutils.io.impl.spark.json.JSONConstants;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Basic Graph Collection Reader
@@ -40,7 +52,14 @@ public class LocalReader implements StellarReader {
      */
     @Override
     public StellarGraphCollection getGraphCollection(String path) throws IOException {
-        throw new UnsupportedOperationException("not yet implemented");
+        switch (this.fileFormat.toLowerCase()) {
+            case "json":
+                return json(path);
+            case "parquet":
+                return parquet(path);
+            default:
+                throw new IOException("Invalid file format: " + fileFormat);
+        }
     }
 
     /**
@@ -51,7 +70,27 @@ public class LocalReader implements StellarReader {
      */
     @Override
     public StellarGraphCollection json(String path) {
-        throw new UnsupportedOperationException("not yet implemented");
+        if (path.charAt(path.length() - 1) != '/') {
+            path += '/';
+        }
+        try {
+            List<VertexCollection> vertexCollectionList = Files
+                    .lines(Paths.get(path + JSONConstants.VERTICES_FILE))
+                    .map(JSONToLocal.toVertexCollection())
+                    .collect(Collectors.toList());
+            List<EdgeCollection> edgeCollectionList = Files
+                    .lines(Paths.get(path + JSONConstants.EDGES_FILE))
+                    .map(JSONToLocal.toEdgeCollection())
+                    .collect(Collectors.toList());
+            List<GraphHead> graphHeadList = Files
+                    .lines(Paths.get(path + JSONConstants.GRAPHS_FILE))
+                    .map(JSONToLocal.toGraphHead())
+                    .collect(Collectors.toList());
+            return new LocalGraphCollection(graphHeadList, vertexCollectionList, edgeCollectionList);
+        } catch (IOException e) {
+            //TODO
+            return null;
+        }
     }
 
     /**
