@@ -175,6 +175,10 @@ public class TestGraphUtil {
         return new ArrayList<>(this.graphIdMap.values());
     }
 
+    public Map<String,ElementId> getGraphIdMap() {
+        return new HashMap<>(this.graphIdMap);
+    }
+
     public Map<String,PropertyValue> getGraphProperties(ElementId graphId) {
         return this.graphPropertiesMap.get(graphId);
     }
@@ -203,6 +207,10 @@ public class TestGraphUtil {
         return vertexVersionMap.get(id);
     }
 
+    public List<ElementId> getVertexGraphs(ElementId id) {
+        return new ArrayList<>(vertexGraphsMap.get(id));
+    }
+
     public ElementId getEdgeSrc(ElementId id) {
         return edgeSrcMap.get(id);
     }
@@ -221,6 +229,10 @@ public class TestGraphUtil {
 
     public ElementId getEdgeVersion(ElementId id) {
         return edgeVersionMap.get(id);
+    }
+
+    public List<ElementId> getEdgeGraphs(ElementId id) {
+        return new ArrayList<>(edgeGraphsMap.get(id));
     }
 
     private static class PropertiesBuilder {

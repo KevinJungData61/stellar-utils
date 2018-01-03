@@ -140,15 +140,12 @@ public class LocalGraphCollection implements StellarGraphCollection {
      * @param id2   element ID 2
      * @return      byte array
      */
-    private byte[] concatenateIds(ElementId id1, ElementId id2) {
-        byte[] bytes = new byte[id1.getBytes().length + id2.getBytes().length];
-        System.arraycopy(id1.getBytes(), 0, bytes, 0, id1.getBytes().length);
-        System.arraycopy(id2.getBytes(), 0, bytes, id1.getBytes().length, id2.getBytes().length);
-        return bytes;
+    private String concatenateIds(ElementId id1, ElementId id2) {
+        return id1.toString() + id2.toString();
     }
 
-    private <T extends Element> Map<byte[],T> buildElemMap(List<T> elems) {
-        Map<byte[],T> map = new HashMap<>(elems.size());
+    private <T extends Element> Map<String,T> buildElemMap(List<T> elems) {
+        Map<String,T> map = new HashMap<>(elems.size());
         for (T e : elems) {
             map.put(concatenateIds(e.getId(), e.version()), e);
         }
@@ -163,12 +160,12 @@ public class LocalGraphCollection implements StellarGraphCollection {
      */
     public List<VertexCollection> joinVertexCollections(List<VertexCollection> vOther) {
 
-        Map<byte[],VertexCollection> v1 = buildElemMap(this.vertices);
-        Map<byte[],VertexCollection> v2 = buildElemMap(vOther);
+        Map<String,VertexCollection> v1 = buildElemMap(this.vertices);
+        Map<String,VertexCollection> v2 = buildElemMap(vOther);
         List<VertexCollection> verticesJoined = new ArrayList<>();
 
-        for (Map.Entry<byte[],VertexCollection> entry : v1.entrySet()) {
-            byte[] key = entry.getKey();
+        for (Map.Entry<String,VertexCollection> entry : v1.entrySet()) {
+            String key = entry.getKey();
             VertexCollection v = entry.getValue();
             if (v2.containsKey(key)) {
                 List<ElementId> graphs = new ArrayList<>(v.getGraphs());
@@ -188,7 +185,7 @@ public class LocalGraphCollection implements StellarGraphCollection {
                 verticesJoined.add(v);
             }
         }
-        for (Map.Entry<byte[],VertexCollection> entry : v2.entrySet()) {
+        for (Map.Entry<String,VertexCollection> entry : v2.entrySet()) {
             verticesJoined.add(entry.getValue());
         }
 
@@ -203,12 +200,12 @@ public class LocalGraphCollection implements StellarGraphCollection {
      */
     public List<EdgeCollection> joinEdgeCollections(List<EdgeCollection> eOther) {
 
-        Map<byte[],EdgeCollection> e1 = buildElemMap(this.edges);
-        Map<byte[],EdgeCollection> e2 = buildElemMap(eOther);
+        Map<String,EdgeCollection> e1 = buildElemMap(this.edges);
+        Map<String,EdgeCollection> e2 = buildElemMap(eOther);
         List<EdgeCollection> edgesJoined = new ArrayList<>();
 
-        for (Map.Entry<byte[],EdgeCollection> entry : e1.entrySet()) {
-            byte[] key = entry.getKey();
+        for (Map.Entry<String,EdgeCollection> entry : e1.entrySet()) {
+            String key = entry.getKey();
             EdgeCollection e = entry.getValue();
             if (e2.containsKey(key)) {
                 List<ElementId> graphs = new ArrayList<>(e.getGraphs());
@@ -230,7 +227,7 @@ public class LocalGraphCollection implements StellarGraphCollection {
                 edgesJoined.add(e);
             }
         }
-        for (Map.Entry<byte[],EdgeCollection> entry : e2.entrySet()) {
+        for (Map.Entry<String,EdgeCollection> entry : e2.entrySet()) {
             edgesJoined.add(entry.getValue());
         }
 
