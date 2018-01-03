@@ -34,7 +34,7 @@ public class SparkGraphTest {
                 .master("local")
                 .getOrCreate();
         size = 1000;
-        sparkGraphCollection = GraphCollectionFactory.createSingleGraphNVertices(spark, size);
+        sparkGraphCollection = GraphCollectionFactory.createSparkSingleGraphNVertices(spark, size);
         graphId = sparkGraphCollection.getGraphHeads().first().getId();
     }
 

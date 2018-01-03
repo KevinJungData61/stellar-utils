@@ -4,6 +4,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 import sh.serene.stellarutils.entities.*;
+import sh.serene.stellarutils.entities.Properties;
+import sh.serene.stellarutils.graph.impl.local.LocalGraphCollection;
 import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 
 import java.util.*;
@@ -19,7 +21,7 @@ public class GraphCollectionFactory {
         return properties;
     }
 
-    public static SparkGraphCollection createWithNoAttrNoLabels(SparkSession spark) {
+    public static SparkGraphCollection createSparkWithNoAttrNoLabels(SparkSession spark) {
         List<ElementId> graphids = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphids.get(0), new HashMap<>(), "small_example"
@@ -49,7 +51,7 @@ public class GraphCollectionFactory {
         return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
-    public static SparkGraphCollection createWithPrimAttr(SparkSession spark) {
+    public static SparkGraphCollection createSparkWithPrimAttr(SparkSession spark) {
         List<ElementId> graphids = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphids.get(0), new HashMap<>(), "small_example"
@@ -82,7 +84,7 @@ public class GraphCollectionFactory {
         return SparkGraphCollection.fromDatasets(graphHeadDataset, vertexDataset, edgeDataset);
     }
 
-    public static SparkGraphCollection createSingleGraphNVertices(SparkSession spark, int n) {
+    public static SparkGraphCollection createSparkSingleGraphNVertices(SparkSession spark, int n) {
         List<ElementId> graphIds = Arrays.asList(ElementId.create());
         List<GraphHead> graphs = Arrays.asList(GraphHead.create(
                 graphIds.get(0), new HashMap<>(), Integer.toString(n) + "_vertices"

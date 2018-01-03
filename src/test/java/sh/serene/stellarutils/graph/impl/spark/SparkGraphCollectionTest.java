@@ -10,7 +10,6 @@ import sh.serene.stellarutils.entities.EdgeCollection;
 import sh.serene.stellarutils.entities.ElementId;
 import sh.serene.stellarutils.entities.GraphHead;
 import sh.serene.stellarutils.entities.VertexCollection;
-import sh.serene.stellarutils.graph.impl.spark.SparkGraphCollection;
 import sh.serene.stellarutils.testutils.GraphCollectionFactory;
 
 import java.util.*;
@@ -31,7 +30,7 @@ public class SparkGraphCollectionTest {
                 .master("local")
                 .getOrCreate();
         size = 1000;
-        sparkGraphCollection = GraphCollectionFactory.createSingleGraphNVertices(spark, size);
+        sparkGraphCollection = GraphCollectionFactory.createSparkSingleGraphNVertices(spark, size);
     }
 
     @Test

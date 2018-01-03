@@ -38,7 +38,7 @@ public class JSONDataTest {
 
     @Test
     public void testSingleGraphNoAttrNoLabel() {
-        SparkGraphCollection gc = GraphCollectionFactory.createWithNoAttrNoLabels(spark);
+        SparkGraphCollection gc = GraphCollectionFactory.createSparkWithNoAttrNoLabels(spark);
         jsonDataSink.writeGraphCollection(gc);
         SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
@@ -46,7 +46,7 @@ public class JSONDataTest {
 
     @Test
     public void testSingleGraphWithAttrAndLabel() throws Exception {
-        SparkGraphCollection gc = GraphCollectionFactory.createWithPrimAttr(spark);
+        SparkGraphCollection gc = GraphCollectionFactory.createSparkWithPrimAttr(spark);
         jsonDataSink.writeGraphCollection(gc);
         SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));
@@ -54,7 +54,7 @@ public class JSONDataTest {
 
     @Test
     public void testSingleGraphThousandVertices() throws Exception {
-        SparkGraphCollection gc = GraphCollectionFactory.createSingleGraphNVertices(spark, 1000);
+        SparkGraphCollection gc = GraphCollectionFactory.createSparkSingleGraphNVertices(spark, 1000);
         jsonDataSink.writeGraphCollection(gc);
         SparkGraphCollection gcRead = jsonDataSource.getGraphCollection();
         assertTrue(GraphCompare.compareGraphCollections(gc, gcRead));

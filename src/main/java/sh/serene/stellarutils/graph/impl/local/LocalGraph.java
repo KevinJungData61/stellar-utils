@@ -115,8 +115,8 @@ public class LocalGraph implements StellarGraph {
      * @return vertices
      */
     @Override
-    public StellarGraphMemory<Vertex> getVertices() {
-        return null;
+    public LocalGraphMemory<Vertex> getVertices() {
+        return new LocalGraphMemory<>(this.vertices);
     }
 
     /**
@@ -125,8 +125,8 @@ public class LocalGraph implements StellarGraph {
      * @return edges
      */
     @Override
-    public StellarGraphMemory<Edge> getEdges() {
-        return null;
+    public LocalGraphMemory<Edge> getEdges() {
+        return new LocalGraphMemory<>(this.edges);
     }
 
     /**

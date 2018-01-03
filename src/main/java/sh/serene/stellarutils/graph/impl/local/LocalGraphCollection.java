@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * EPGM Graph Collection implemented with lists
+ */
 public class LocalGraphCollection implements StellarGraphCollection {
 
     List<GraphHead> graphHeads;
