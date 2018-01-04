@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import sh.serene.stellarutils.entities.*;
 import sh.serene.stellarutils.graph.impl.local.LocalGraphCollection;
 import sh.serene.stellarutils.io.api.StellarWriter;
+import sh.serene.stellarutils.io.impl.local.json.LocalToJSON;
 import sh.serene.stellarutils.io.impl.spark.json.JSONConstants;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LocalWriter implements StellarWriter {
 
@@ -72,73 +74,26 @@ public class LocalWriter implements StellarWriter {
         if (path.charAt(path.length() - 1) != '/') {
             path += '/';
         }
-        StringBuilder sbGraphHeads = new StringBuilder();
-        for (GraphHead g : graphCollection.getGraphHeads()) {
-            JSONObject json = new JSONObject();
-            JSONObject props = new JSONObject();
-            for (Map.Entry<String,PropertyValue> entry : g.getProperties().entrySet()) {
-                props.put(entry.getKey(), entry.getValue().value());
-            }
-            JSONObject meta = new JSONObject();
-            meta.put(JSONConstants.LABEL, g.getLabel());
-            json.put(JSONConstants.IDENTIFIER, g.getId().toString());
-            json.put(JSONConstants.PROPERTIES, props);
-            json.put(JSONConstants.META, meta);
-            sbGraphHeads.append(json.toString() + "\n");
-        }
-
-        StringBuilder sbVertexCollections = new StringBuilder();
-        for (VertexCollection v : graphCollection.getVertices()) {
-            JSONObject json = new JSONObject();
-            JSONObject props = new JSONObject();
-            for (Map.Entry<String,PropertyValue> entry : v.getProperties().entrySet()) {
-                props.put(entry.getKey(), entry.getValue().value());
-            }
-            JSONArray graphs = new JSONArray();
-            for (ElementId graphId : v.getGraphs()) {
-                graphs.add(graphId.toString());
-            }
-            JSONObject meta = new JSONObject();
-            meta.put(JSONConstants.LABEL, v.getLabel());
-            meta.put(JSONConstants.GRAPHS, graphs);
-            json.put(JSONConstants.IDENTIFIER, v.getId().toString());
-            json.put(JSONConstants.PROPERTIES, props);
-            json.put(JSONConstants.META, meta);
-            sbVertexCollections.append(json.toString() + "\n");
-        }
-
-        StringBuilder sbEdgeCollections = new StringBuilder();
-        for (EdgeCollection e : graphCollection.getEdges()) {
-            JSONObject json = new JSONObject();
-            JSONObject props = new JSONObject();
-            for (Map.Entry<String,PropertyValue> entry : e.getProperties().entrySet()) {
-                props.put(entry.getKey(), entry.getValue().value());
-            }
-            JSONArray graphs = new JSONArray();
-            for (ElementId graphId : e.getGraphs()) {
-                graphs.add(graphId.toString());
-            }
-            JSONObject meta = new JSONObject();
-            meta.put(JSONConstants.LABEL, e.getLabel());
-            meta.put(JSONConstants.GRAPHS, graphs);
-            json.put(JSONConstants.IDENTIFIER, e.getId().toString());
-            json.put(JSONConstants.SOURCE, e.getSrc().toString());
-            json.put(JSONConstants.TARGET, e.getDst().toString());
-            json.put(JSONConstants.PROPERTIES, props);
-            json.put(JSONConstants.META, meta);
-            sbEdgeCollections.append(json.toString() + "\n");
-        }
+        String jsonGraphHeads = graphCollection.getGraphHeads().stream()
+                .map(LocalToJSON.fromGraphHead())
+                .collect(Collectors.joining("\n")).trim();
+        String jsonVertexCollections = graphCollection.getVertices().stream()
+                .map(LocalToJSON.fromVertexCollection())
+                .collect(Collectors.joining("\n")).trim();
+        String jsonEdgeCollections = graphCollection.getEdges().stream()
+                .map(LocalToJSON.fromEdgeCollection())
+                .collect(Collectors.joining("\n")).trim();
 
         try {
             new File(path).mkdirs();
             FileWriter graphHeadFile = new FileWriter(path + JSONConstants.GRAPHS_FILE);
-            graphHeadFile.write(sbGraphHeads.toString().trim());
+            graphHeadFile.write(jsonGraphHeads);
             graphHeadFile.flush();
             FileWriter vertexFile = new FileWriter(path + JSONConstants.VERTICES_FILE);
-            vertexFile.write(sbVertexCollections.toString().trim());
+            vertexFile.write(jsonVertexCollections);
             vertexFile.flush();
             FileWriter edgeFile = new FileWriter(path + JSONConstants.EDGES_FILE);
-            edgeFile.write(sbEdgeCollections.toString().trim());
+            edgeFile.write(jsonEdgeCollections);
             edgeFile.flush();
             return true;
         } catch (IOException e) {
