@@ -58,7 +58,7 @@ public class LocalReader implements StellarReader {
             case "parquet":
                 return parquet(path);
             default:
-                throw new IOException("Invalid file format: " + fileFormat);
+                throw new UnsupportedOperationException("Invalid file format: " + fileFormat);
         }
     }
 
@@ -89,6 +89,7 @@ public class LocalReader implements StellarReader {
             return new LocalGraphCollection(graphHeadList, vertexCollectionList, edgeCollectionList);
         } catch (IOException e) {
             //TODO
+            e.printStackTrace();
             return null;
         }
     }

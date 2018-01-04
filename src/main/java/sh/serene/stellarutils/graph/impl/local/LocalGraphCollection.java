@@ -39,6 +39,18 @@ public class LocalGraphCollection implements StellarGraphCollection {
         return new LocalWriter(this);
     }
 
+    public List<GraphHead> getGraphHeads() {
+        return new ArrayList<>(graphHeads);
+    }
+
+    public List<VertexCollection> getVertices() {
+        return new ArrayList<>(vertices);
+    }
+
+    public List<EdgeCollection> getEdges() {
+        return new ArrayList<>(edges);
+    }
+
     /**
      * Get graph at index
      *
