@@ -77,16 +77,16 @@ public class TestGraphUtil {
         this.graphHeadList = Arrays.asList(
                 GraphHead.create(graphIdMap.get(G_EMPTY), null, G_EMPTY),
                 GraphHead.create(graphIdMap.get(G_BASE_LINE),
-                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514948851)).build(),
+                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514948851L)).build(),
                         G_BASE_LINE),
                 GraphHead.create(graphIdMap.get(G_NEW_INFO),
-                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build(),
+                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build(),
                         G_NEW_INFO),
                 GraphHead.create(graphIdMap.get(G_PRE_ER),
-                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build(),
+                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build(),
                         G_PRE_ER),
                 GraphHead.create(graphIdMap.get(G_POST_ER),
-                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build(),
+                        PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build(),
                         G_POST_ER));
 
         // vertices
@@ -277,19 +277,19 @@ public class TestGraphUtil {
         );
         map.put(
                 ids.get(G_BASE_LINE),
-                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514948851)).build()
+                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514948851L)).build()
         );
         map.put(
                 ids.get(G_NEW_INFO),
-                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build()
+                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build()
         );
         map.put(
                 ids.get(G_PRE_ER),
-                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build()
+                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build()
         );
         map.put(
                 ids.get(G_POST_ER),
-                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851)).build()
+                PropertiesBuilder.create().with("timestamp", PropertyValue.create(1514958851L)).build()
         );
         return map;
     }
@@ -602,13 +602,13 @@ public class TestGraphUtil {
         map.put(
                 ids.get(E_FRODO_REVIEW_KFC),
                 PropertiesBuilder.create()
-                        .with("stars", PropertyValue.create(3))
+                        .with("stars", PropertyValue.create(3L))
                         .build()
         );
         map.put(
                 ids.get(E_SAM_REVIEW_KFC),
                 PropertiesBuilder.create()
-                        .with("stars", PropertyValue.create(5))
+                        .with("stars", PropertyValue.create(5L))
                         .build()
         );
         map.put(
@@ -634,7 +634,7 @@ public class TestGraphUtil {
         map.put(
                 ids.get(E_SAM2_REVIEW_MCD),
                 PropertiesBuilder.create()
-                        .with("stars", PropertyValue.create(4))
+                        .with("stars", PropertyValue.create(4L))
                         .build()
         );
         map.put(
