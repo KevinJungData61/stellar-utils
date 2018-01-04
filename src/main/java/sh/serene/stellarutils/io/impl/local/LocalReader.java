@@ -40,7 +40,7 @@ public class LocalReader implements StellarReader {
      * @return reader object
      */
     @Override
-    public StellarReader format(String fileFormat) {
+    public LocalReader format(String fileFormat) {
         return new LocalReader(fileFormat);
     }
 
@@ -51,7 +51,7 @@ public class LocalReader implements StellarReader {
      * @return graph collection
      */
     @Override
-    public StellarGraphCollection getGraphCollection(String path) throws IOException {
+    public LocalGraphCollection getGraphCollection(String path) throws IOException {
         switch (this.fileFormat.toLowerCase()) {
             case "json":
                 return json(path);
@@ -69,7 +69,7 @@ public class LocalReader implements StellarReader {
      * @return graph collection
      */
     @Override
-    public StellarGraphCollection json(String path) {
+    public LocalGraphCollection json(String path) {
         if (path.charAt(path.length() - 1) != '/') {
             path += '/';
         }
@@ -100,7 +100,7 @@ public class LocalReader implements StellarReader {
      * @return graph collection
      */
     @Override
-    public StellarGraphCollection parquet(String path) {
+    public LocalGraphCollection parquet(String path) {
         throw new UnsupportedOperationException("not yet implemented");
     }
 }
