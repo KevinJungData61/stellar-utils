@@ -8,10 +8,18 @@ import sh.serene.stellarutils.graph.api.StellarEdgeMemory;
 import sh.serene.stellarutils.graph.api.StellarGraphMemory;
 import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 import sh.serene.stellarutils.io.api.StellarReader;
+import sh.serene.stellarutils.io.impl.local.LocalReader;
 
 import java.util.List;
 
 public class LocalBackEndFactory implements StellarBackEndFactory {
+
+    LocalReader reader;
+
+    public LocalBackEndFactory() {
+        this.reader = new LocalReader();
+    }
+
     /**
      * Create memory from list
      *
@@ -20,8 +28,8 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      * @return graph memory
      */
     @Override
-    public <T> StellarGraphMemory<T> createMemory(List<T> elements, Class<T> type) {
-        return null;
+    public <T> LocalGraphMemory<T> createMemory(List<T> elements, Class<T> type) {
+        return new LocalGraphMemory<>(elements);
     }
 
     /**
@@ -32,8 +40,8 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      * @return graph memory
      */
     @Override
-    public <T> StellarGraphMemory<T> createMemory(Dataset<T> elements, Class<T> type) {
-        return null;
+    public <T> LocalGraphMemory<T> createMemory(Dataset<T> elements, Class<T> type) {
+        return new LocalGraphMemory<>(elements.collectAsList());
     }
 
     /**
@@ -44,7 +52,7 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      */
     @Override
     public StellarVertexMemory createVertexMemory(List<Vertex> vertices) {
-        return null;
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -55,7 +63,7 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      */
     @Override
     public StellarVertexMemory createVertexMemory(Dataset<Vertex> vertices) {
-        return null;
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -66,7 +74,7 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      */
     @Override
     public StellarEdgeMemory createEdgeMemory(List<Edge> edges) {
-        return null;
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -77,7 +85,7 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      */
     @Override
     public StellarEdgeMemory createEdgeMemory(Dataset<Edge> edges) {
-        return null;
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -86,7 +94,7 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
      * @return reader object
      */
     @Override
-    public StellarReader reader() {
-        return null;
+    public LocalReader reader() {
+        return this.reader;
     }
 }
