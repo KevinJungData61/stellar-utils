@@ -20,4 +20,10 @@ public interface StellarGraphMemory<T> {
      */
     Dataset<T> asDataset();
 
+    /**
+     * number of elements
+     *
+     * @return  size
+     */
+    long size();
 }

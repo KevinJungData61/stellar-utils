@@ -33,4 +33,14 @@ public class LocalGraphMemory<T> implements StellarGraphMemory<T> {
     public Dataset<T> asDataset() {
         throw new UnsupportedOperationException("not yet implemented");
     }
+
+    /**
+     * number of elements
+     *
+     * @return size
+     */
+    @Override
+    public long size() {
+        return list.size();
+    }
 }

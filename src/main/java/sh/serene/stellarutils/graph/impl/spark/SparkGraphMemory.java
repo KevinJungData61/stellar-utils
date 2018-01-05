@@ -37,4 +37,14 @@ public class SparkGraphMemory<T> implements StellarGraphMemory<T> {
         return this.dataset;
     }
 
+    /**
+     * number of elements
+     *
+     * @return size
+     */
+    @Override
+    public long size() {
+        return dataset.count();
+    }
+
 }
