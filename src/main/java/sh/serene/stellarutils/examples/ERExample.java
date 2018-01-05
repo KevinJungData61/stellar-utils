@@ -10,6 +10,7 @@ import sh.serene.stellarutils.entities.Vertex;
 import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphCollection;
 import sh.serene.stellarutils.graph.api.StellarBackEndFactory;
+import sh.serene.stellarutils.graph.impl.local.LocalBackEndFactory;
 import sh.serene.stellarutils.graph.impl.spark.SparkBackEndFactory;
 
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class ERExample {
         /*
          * add new edges to original graph
          */
-        StellarGraph graphNew = graph.union(beFactory.createEdgeMemory(edgesNew));
+        StellarGraph graphNew = graph.unionEdges(beFactory.createMemory(edgesNew, Edge.class));
 
         /*
          * write final graph collection
@@ -97,17 +98,31 @@ public class ERExample {
         /*
          * config
          */
+        // with spark backend
         SparkSession sparkSession = SparkSession.builder().appName("test").master("local").getOrCreate();
         StellarBackEndFactory beFactory = new SparkBackEndFactory(sparkSession); //, new SparkHdfsReader(session));
         String fileFormat = "json";
         String fileInput = "small-yelp-hin.epgm";
-        String fileOutput = "small-yelp-hin-ER.epgm";
-
+        String fileOutput = "small-yelp-hin-ER-spark.epgm";
+        long start = System.nanoTime();
         try {
             execute(beFactory, fileFormat, fileInput, fileOutput);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.printf("took %,d ns%n", System.nanoTime() - start);
+
+        // with local backend
+        StellarBackEndFactory localBeFactory = new LocalBackEndFactory();
+        String fileOutputLocal = "small-yelp-hin-ER-local.epgm";
+        start = System.nanoTime();
+        try {
+            execute(localBeFactory, fileFormat, fileInput, fileOutputLocal);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.printf("took %,d ns%n", System.nanoTime() - start);
+
 
     }
 
