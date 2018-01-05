@@ -9,7 +9,9 @@ import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LocalGraph implements StellarGraph {
 
@@ -136,8 +138,8 @@ public class LocalGraph implements StellarGraph {
      * @return union of graphs
      */
     @Override
-    public StellarGraph union(StellarGraph other) {
-        return null;
+    public LocalGraph union(StellarGraph other) {
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -147,8 +149,18 @@ public class LocalGraph implements StellarGraph {
      * @return new graph
      */
     @Override
-    public StellarGraph unionVertices(StellarGraphMemory<Vertex> vertices) {
-        return null;
+    public LocalGraph unionVertices(StellarGraphMemory<Vertex> vertices) {
+        List<Vertex> verticesNew = new ArrayList<>(this.vertices);
+        verticesNew.addAll(vertices.asList());
+        return new LocalGraph(
+                GraphHead.create(
+                        ElementId.create(),
+                        new HashMap<>(this.graphHead.getProperties()),
+                        this.graphHead.getLabel()
+                ),
+                verticesNew,
+                new ArrayList<>(this.edges)
+        );
     }
 
     /**
@@ -158,18 +170,30 @@ public class LocalGraph implements StellarGraph {
      * @return new graph
      */
     @Override
-    public StellarGraph unionEdges(StellarGraphMemory<Edge> edges) {
-        return null;
+    public LocalGraph unionEdges(StellarGraphMemory<Edge> edges) {
+        List<Edge> edgesNew = new ArrayList<>(this.edges);
+        edgesNew.addAll(edges.asList());
+        return new LocalGraph(
+                GraphHead.create(
+                        ElementId.create(),
+                        new HashMap<>(this.graphHead.getProperties()),
+                        this.graphHead.getLabel()
+                ),
+                new ArrayList<>(this.vertices),
+                edgesNew
+        );
     }
 
     @Override
     public StellarGraph union(StellarVertexMemory vertexMemory) {
-        return null;
+        //TODO
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     @Override
     public StellarGraph union(StellarEdgeMemory edgeMemory) {
-        return null;
+        //TODO
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -178,7 +202,11 @@ public class LocalGraph implements StellarGraph {
      * @return edge list
      */
     @Override
-    public StellarGraphMemory<Tuple2<ElementId, ElementId>> getEdgeList() {
-        return null;
+    public LocalGraphMemory<Tuple2<ElementId, ElementId>> getEdgeList() {
+        return new LocalGraphMemory<>(
+                this.edges.stream()
+                        .map(edge -> new Tuple2<>(edge.getSrc(), edge.getDst()))
+                        .collect(Collectors.toList())
+        );
     }
 }
