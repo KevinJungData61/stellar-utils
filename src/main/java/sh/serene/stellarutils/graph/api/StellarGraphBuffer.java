@@ -14,24 +14,24 @@ public interface StellarGraphBuffer {
     /**
      * Add a vertex to the graph buffer
      *
+     * @param name          unique vertex name
      * @param label         vertex label
      * @param properties    vertex properties
      * @return              vertex id
      */
-    ElementId addVertex(String label, Map<String,PropertyValue> properties);
+    ElementId addVertex(String name, String label, Map<String,PropertyValue> properties);
 
     /**
      * Add an edge to the graph buffer
      *
-     * @param label         edge label
+     * @param name          unique edge name
      * @param src           edge source
      * @param dst           edge destination
+     * @param label         edge label
      * @param properties    edge properties
      * @return              edge id
-     * @throws InvalidIdException
      */
-    ElementId addEdge(String label, ElementId src, ElementId dst, Map<String,PropertyValue> properties)
-            throws InvalidIdException;
+    ElementId addEdge(String name, String src, String dst, String label, Map<String,PropertyValue> properties);
 
     /**
      * Get graph

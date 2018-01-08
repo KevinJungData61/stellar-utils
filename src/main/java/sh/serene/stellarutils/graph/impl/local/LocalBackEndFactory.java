@@ -2,15 +2,14 @@ package sh.serene.stellarutils.graph.impl.local;
 
 import org.apache.spark.sql.Dataset;
 import sh.serene.stellarutils.entities.Edge;
+import sh.serene.stellarutils.entities.PropertyValue;
 import sh.serene.stellarutils.entities.Vertex;
-import sh.serene.stellarutils.graph.api.StellarBackEndFactory;
-import sh.serene.stellarutils.graph.api.StellarEdgeMemory;
-import sh.serene.stellarutils.graph.api.StellarGraphMemory;
-import sh.serene.stellarutils.graph.api.StellarVertexMemory;
+import sh.serene.stellarutils.graph.api.*;
 import sh.serene.stellarutils.io.api.StellarReader;
 import sh.serene.stellarutils.io.impl.local.LocalReader;
 
 import java.util.List;
+import java.util.Map;
 
 public class LocalBackEndFactory implements StellarBackEndFactory {
 
@@ -96,5 +95,17 @@ public class LocalBackEndFactory implements StellarBackEndFactory {
     @Override
     public LocalReader reader() {
         return this.reader;
+    }
+
+    /**
+     * Get graph buffer
+     *
+     * @param label      graph label
+     * @param properties graph properties
+     * @return graph buffer
+     */
+    @Override
+    public LocalGraphBuffer createGraph(String label, Map<String, PropertyValue> properties) {
+        return new LocalGraphBuffer(label, properties);
     }
 }

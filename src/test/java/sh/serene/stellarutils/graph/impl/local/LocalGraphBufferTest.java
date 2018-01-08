@@ -29,9 +29,9 @@ public class LocalGraphBufferTest {
     public void testSimpleGraph() {
         String label = "simple graph";
         StellarGraphBuffer graphBuffer = new LocalGraphBuffer(label, null);
-        ElementId vid1 = graphBuffer.addVertex("vertex", null);
-        ElementId vid2 = graphBuffer.addVertex("vertex", null);
-        ElementId eid3 = graphBuffer.addEdge("edge", vid1, vid2, null);
+        ElementId vid1 = graphBuffer.addVertex("v1","vertex", null);
+        ElementId vid2 = graphBuffer.addVertex("v2","vertex", null);
+        ElementId eid3 = graphBuffer.addEdge("e1", "v1", "v2", "edge",null);
         StellarGraph graph = graphBuffer.toGraph();
         assertEquals(label, graph.getGraphHead().getLabel());
         assertEquals(2L, graph.getVertices().size());
@@ -53,7 +53,7 @@ public class LocalGraphBufferTest {
     @Test(expected = InvalidIdException.class)
     public void testInvalidEdge() {
         StellarGraphBuffer graphBuffer = new LocalGraphBuffer("invalid", null);
-        graphBuffer.addEdge("edge", ElementId.create(), ElementId.create(), null);
+        graphBuffer.addEdge("e", "inv", "alid", "edge", null);
     }
 
 }

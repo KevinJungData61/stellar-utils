@@ -4,15 +4,14 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 import sh.serene.stellarutils.entities.Edge;
+import sh.serene.stellarutils.entities.PropertyValue;
 import sh.serene.stellarutils.entities.Vertex;
-import sh.serene.stellarutils.graph.api.StellarBackEndFactory;
-import sh.serene.stellarutils.graph.api.StellarEdgeMemory;
-import sh.serene.stellarutils.graph.api.StellarGraphMemory;
-import sh.serene.stellarutils.graph.api.StellarVertexMemory;
+import sh.serene.stellarutils.graph.api.*;
 import sh.serene.stellarutils.io.api.StellarReader;
 import sh.serene.stellarutils.io.impl.spark.SparkReader;
 
 import java.util.List;
+import java.util.Map;
 
 public class SparkBackEndFactory implements StellarBackEndFactory {
 
@@ -100,5 +99,17 @@ public class SparkBackEndFactory implements StellarBackEndFactory {
     @Override
     public StellarReader reader() {
         return this.reader;
+    }
+
+    /**
+     * Get graph buffer
+     *
+     * @param label      graph label
+     * @param properties graph properties
+     * @return graph buffer
+     */
+    @Override
+    public StellarGraphBuffer createGraph(String label, Map<String, PropertyValue> properties) {
+        throw new UnsupportedOperationException("not yet implemented");
     }
 }
