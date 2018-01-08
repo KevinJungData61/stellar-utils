@@ -39,18 +39,8 @@ public class LocalGraphTest {
             GraphHead gh = g.getGraphHead();
             assertEquals(gh.getProperties(), util.getGraphProperties(graphId));
             assertEquals(gh.getLabel(), util.getGraphLabel(graphId));
-            for (Vertex v : g.getVertices().asList()) {
-                assertEquals(v.getProperties(), util.getVertexProperties(v.getId()));
-                assertEquals(v.getLabel(), util.getVertexLabel(v.getId()));
-                assertEquals(v.getVersion(), util.getVertexVersion(v.getId()));
-            }
-            for (Edge e : g.getEdges().asList()) {
-                assertEquals(e.getSrc(), util.getEdgeSrc(e.getId()));
-                assertEquals(e.getDst(), util.getEdgeDst(e.getId()));
-                assertEquals(e.getProperties(), util.getEdgeProperties(e.getId()));
-                assertEquals(e.getLabel(), util.getEdgeLabel(e.getId()));
-                assertEquals(e.getVersion(), util.getEdgeVersion(e.getId()));
-            }
+            g.getVertices().asList().forEach(this::testVertex);
+            g.getEdges().asList().forEach(this::testEdge);
         }
     }
 
@@ -95,19 +85,11 @@ public class LocalGraphTest {
 
         LocalGraph gBaseline2 = gEmpty2.unionVertices(gBaseline.getVertices());
         assertEquals(util.getVertexCount(graphIds.get(G_BASE_LINE)), gBaseline2.getVertices().asList().size());
-        for (Vertex v : gBaseline2.getVertices().asList()) {
-            assertEquals(util.getVertexProperties(v.getId()), v.getProperties());
-            assertEquals(util.getVertexLabel(v.getId()), v.getLabel());
-            assertEquals(util.getVertexVersion(v.getId()), v.getVersion());
-        }
+        gBaseline2.getVertices().asList().forEach(this::testVertex);
 
         LocalGraph gPreEr2 = gBaseline2.unionVertices(gNewInfo.getVertices());
         assertEquals(util.getVertexCount(graphIds.get(G_PRE_ER)), gPreEr2.getVertices().asList().size());
-        for (Vertex v : gPreEr2.getVertices().asList()) {
-            assertEquals(util.getVertexProperties(v.getId()), v.getProperties());
-            assertEquals(util.getVertexLabel(v.getId()), v.getLabel());
-            assertEquals(util.getVertexVersion(v.getId()), v.getVersion());
-        }
+        gPreEr2.getVertices().asList().forEach(this::testVertex);
     }
 
     @Test
@@ -121,23 +103,11 @@ public class LocalGraphTest {
 
         LocalGraph gBaseline2 = gEmpty2.unionEdges(gBaseline.getEdges());
         assertEquals(util.getEdgeCount(graphIds.get(G_BASE_LINE)), gBaseline2.getEdges().asList().size());
-        for (Edge e : gBaseline2.getEdges().asList()) {
-            assertEquals(util.getEdgeSrc(e.getId()), e.getSrc());
-            assertEquals(util.getEdgeDst(e.getId()), e.getDst());
-            assertEquals(util.getEdgeProperties(e.getId()), e.getProperties());
-            assertEquals(util.getEdgeLabel(e.getId()), e.getLabel());
-            assertEquals(util.getEdgeVersion(e.getId()), e.getVersion());
-        }
+        gBaseline2.getEdges().asList().forEach(this::testEdge);
 
         LocalGraph gPreEr2 = gBaseline2.unionEdges(gNewInfo.getEdges());
         assertEquals(util.getEdgeCount(graphIds.get(G_PRE_ER)), gPreEr2.getEdges().asList().size());
-        for (Edge e : gPreEr2.getEdges().asList()) {
-            assertEquals(util.getEdgeSrc(e.getId()), e.getSrc());
-            assertEquals(util.getEdgeDst(e.getId()), e.getDst());
-            assertEquals(util.getEdgeProperties(e.getId()), e.getProperties());
-            assertEquals(util.getEdgeLabel(e.getId()), e.getLabel());
-            assertEquals(util.getEdgeVersion(e.getId()), e.getVersion());
-        }
+        gPreEr2.getEdges().asList().forEach(this::testEdge);
     }
 
     @Test
@@ -157,6 +127,40 @@ public class LocalGraphTest {
             ElementId dst = util.getEdgeDst(id);
             assertTrue(edgelist.get(src).contains(dst));
         }
+    }
+
+    @Test
+    public void testUnion() throws Exception {
+        LocalGraph gEmpty = gc.get(graphIds.get(G_EMPTY));
+        LocalGraph gBaseline = gc.get(graphIds.get(G_BASE_LINE));
+        LocalGraph gNewInfo = gc.get(graphIds.get(G_NEW_INFO));
+
+        LocalGraph gBaseline2 = gEmpty.union(gBaseline);
+        assertEquals(util.getVertexCount(graphIds.get(G_BASE_LINE)), gBaseline2.getVertices().asList().size());
+        assertEquals(util.getEdgeCount(graphIds.get(G_BASE_LINE)), gBaseline2.getEdges().asList().size());
+        gBaseline2.getVertices().asList().forEach(this::testVertex);
+        gBaseline2.getEdges().asList().forEach(this::testEdge);
+
+        LocalGraph gPreEr = gBaseline.union(gNewInfo);
+        assertEquals(util.getVertexCount(graphIds.get(G_PRE_ER)), gPreEr.getVertices().asList().size());
+        assertEquals(util.getEdgeCount(graphIds.get(G_PRE_ER)), gPreEr.getEdges().asList().size());
+        gPreEr.getVertices().asList().forEach(this::testVertex);
+        gPreEr.getEdges().asList().forEach(this::testEdge);
+
+    }
+
+    private void testVertex(Vertex v) {
+        assertEquals(util.getVertexLabel(v.getId()), v.getLabel());
+        assertEquals(util.getVertexProperties(v.getId()), v.getProperties());
+        assertEquals(util.getVertexVersion(v.getId()), v.getVersion());
+    }
+
+    private void testEdge(Edge e) {
+        assertEquals(util.getEdgeSrc(e.getId()), e.getSrc());
+        assertEquals(util.getEdgeDst(e.getId()), e.getDst());
+        assertEquals(util.getEdgeLabel(e.getId()), e.getLabel());
+        assertEquals(util.getEdgeProperties(e.getId()), e.getProperties());
+        assertEquals(util.getEdgeVersion(e.getId()), e.getVersion());
     }
 
 }

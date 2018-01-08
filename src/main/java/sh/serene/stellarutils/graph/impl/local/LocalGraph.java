@@ -7,11 +7,10 @@ import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphMemory;
 import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LocalGraph implements StellarGraph {
 
@@ -132,14 +131,29 @@ public class LocalGraph implements StellarGraph {
     }
 
     /**
-     * Union two stellar graphs
+     * Union two stellar graphs. A new empty graph head is created for the new graph.
      *
      * @param other other graph
-     * @return union of graphs
+     * @return graph containing vertices and edges of both graphs
      */
     @Override
     public LocalGraph union(StellarGraph other) {
-        throw new UnsupportedOperationException("not yet implemented");
+        if (other instanceof LocalGraph) {
+            GraphHead graphHeadNew = GraphHead.create(ElementId.create(), null, "");
+            List<Vertex> verticesUnioned = new ArrayList<>(
+                    Stream.concat(this.vertices.stream(), ((LocalGraph) other).vertices.stream())
+                            .collect(Collectors.toMap(Vertex::getVersionedId, Function.identity(), (v1, v2) -> v1))
+                            .values()
+            );
+            List<Edge> edgesUnioned = new ArrayList<>(
+                    Stream.concat(this.edges.stream(), ((LocalGraph) other).edges.stream())
+                            .collect(Collectors.toMap(Edge::getVersionedId, Function.identity(), (e1, e2) -> e1))
+                            .values()
+            );
+            return new LocalGraph(graphHeadNew, verticesUnioned, edgesUnioned);
+        } else {
+            throw new UnsupportedOperationException("not yet implemented");
+        }
     }
 
     /**

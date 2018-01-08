@@ -289,6 +289,10 @@ public class Edge implements Element, Serializable, Cloneable {
         return this.version;
     }
 
+    public String getVersionedId() {
+        return this.id.toString() + this.version.toString();
+    }
+
     public ElementId getVersion() {
         return version();
     }

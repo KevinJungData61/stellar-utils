@@ -196,7 +196,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return  vertices
      */
     @Override
-    public StellarGraphMemory<Vertex> getVertices() {
+    public SparkGraphMemory<Vertex> getVertices() {
         return new SparkGraphMemory<>(this.vertices);
     }
 
@@ -206,7 +206,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return  edges
      */
     @Override
-    public StellarGraphMemory<Edge> getEdges() {
+    public SparkGraphMemory<Edge> getEdges() {
         return new SparkGraphMemory<>(this.edges);
     }
 
@@ -217,7 +217,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return          union of graphs
      */
     @Override
-    public StellarGraph union(StellarGraph other) {
+    public SparkGraph union(StellarGraph other) {
         //TODO
         throw new UnsupportedOperationException("Not implemented yet");
     }
@@ -229,7 +229,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return new graph
      */
     @Override
-    public StellarGraph unionVertices(StellarGraphMemory<Vertex> vertices) {
+    public SparkGraph unionVertices(StellarGraphMemory<Vertex> vertices) {
         return new SparkGraph(createGraphHead(), this.vertices.union(vertices.asDataset()), this.edges);
     }
 
@@ -240,17 +240,17 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @return new graph
      */
     @Override
-    public StellarGraph unionEdges(StellarGraphMemory<Edge> edges) {
+    public SparkGraph unionEdges(StellarGraphMemory<Edge> edges) {
         return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edges.asDataset()));
     }
 
     @Override
-    public StellarGraph union(StellarEdgeMemory edgeMemory) {
+    public SparkGraph union(StellarEdgeMemory edgeMemory) {
         return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edgeMemory.asDataset()));
     }
 
     @Override
-    public StellarGraph union(StellarVertexMemory vertexMemory) {
+    public SparkGraph union(StellarVertexMemory vertexMemory) {
         return new SparkGraph(createGraphHead(), this.vertices.union(vertexMemory.asDataset()), this.edges);
     }
 
@@ -279,7 +279,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @param edges     new edges to add
      * @return          new graph
      */
-    public SparkGraph addEdges(Dataset<Edge> edges) {
+    public SparkGraph unionEdges(Dataset<Edge> edges) {
         return new SparkGraph(createGraphHead(), this.vertices, this.edges.union(edges));
     }
 
@@ -290,7 +290,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      * @param vertices      new vertices to add
      * @return              new graph
      */
-    public SparkGraph addVertices(Dataset<Vertex> vertices) {
+    public SparkGraph unionVertices(Dataset<Vertex> vertices) {
         return new SparkGraph(createGraphHead(), this.vertices.union(vertices), this.edges);
     }
 
@@ -373,7 +373,7 @@ public class SparkGraph implements StellarGraph, Serializable {
      *
      * @return  edge list
      */
-    public StellarGraphMemory<Tuple2<ElementId,ElementId>> getEdgeList() {
+    public SparkGraphMemory<Tuple2<ElementId,ElementId>> getEdgeList() {
         return new SparkGraphMemory<>(this.edges.map((MapFunction<Edge,Tuple2<ElementId,ElementId>>) edge -> (
                 new Tuple2<>(edge.getSrc(), edge.getDst())
                 ), Encoders.tuple(Encoders.bean(ElementId.class), Encoders.bean(ElementId.class))));

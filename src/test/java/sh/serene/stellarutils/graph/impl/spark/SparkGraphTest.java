@@ -76,7 +76,7 @@ public class SparkGraphTest {
         Dataset<Edge> edgesNew = getNewEdges(n);
         SparkGraph graphNew = SparkGraph
                 .fromCollection(sparkGraphCollection, graphId)
-                .addEdges(edgesNew);
+                .unionEdges(edgesNew);
         SparkGraphCollection sparkGraphCollectionNew = graphNew.intoCollection(sparkGraphCollection);
 
         assertEquals(size - 1 + n, graphNew.getEdges().asDataset().count());
@@ -91,7 +91,7 @@ public class SparkGraphTest {
         Dataset<Vertex> verticesNew = getNewVertices(n);
         SparkGraph graphNew = SparkGraph
                 .fromCollection(sparkGraphCollection, graphId)
-                .addVertices(verticesNew);
+                .unionVertices(verticesNew);
         SparkGraphCollection sparkGraphCollectionNew = graphNew.intoCollection(sparkGraphCollection);
 
         assertEquals(size + n, graphNew.getVertices().asDataset().count());
