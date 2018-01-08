@@ -17,6 +17,7 @@ import java.util.List;
  *
  * @param <T>   Element type
  */
+@Deprecated
 class GraphElementsBuilder<T extends Element> implements Serializable {
 
     private SparkSession sparkSession;

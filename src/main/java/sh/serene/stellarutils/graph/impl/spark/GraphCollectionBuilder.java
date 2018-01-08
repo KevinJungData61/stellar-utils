@@ -12,6 +12,7 @@ import java.util.Map;
  * Graph Collection Builder
  *
  */
+@Deprecated
 public class GraphCollectionBuilder implements Serializable {
 
     /**
