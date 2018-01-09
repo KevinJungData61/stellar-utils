@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LocalWriter implements StellarWriter {
@@ -121,22 +122,51 @@ public class LocalWriter implements StellarWriter {
      */
     @Override
     public boolean gdf(String path) {
+
+        List<String> vertexProps = graphCollection.getVertices().stream().flatMap(
+                v -> v.getProperties().keySet().stream()
+            ).distinct().collect(Collectors.toList());
+        List<String> edgeProps = graphCollection.getEdges().stream().flatMap(
+                e -> e.getProperties().keySet().stream()
+            ).distinct().collect(Collectors.toList());
+
         try {
             FileWriter writer = new FileWriter(path);
-            writer.write("nodedef>name VARCHAR,label VARCHAR,type VARCHAR\n");
+
+            // vertices header
+            writer.write(String.format(
+                    "nodedef>name VARCHAR,label VARCHAR,type VARCHAR%s%n",
+                    vertexProps.stream().map(s -> "," + s + " VARCHAR").collect(Collectors.joining(""))
+            ));
+
+            // vertices
             writer.write(
                     graphCollection.getVertices().stream()
-                        .map(v -> String.format("%s,%s,%s%n", v.getId().toString(), v.getLabel(), v.getLabel()))
-                        .collect(Collectors.joining(""))
+                        .map(v -> String.format(
+                                "%s,%s,%s%s%n",
+                                v.getId().toString(), v.getLabel(), v.getLabel(),
+                                vertexProps.stream().map(
+                                        key -> "," + v.getProperties().getOrDefault(key, PropertyValue.create("")).toString()
+                                ).collect(Collectors.joining(""))
+                        )).collect(Collectors.joining(""))
             );
-            writer.write("edgedef>node1 VARCHAR,node2 VARCHAR,directed BOOLEAN,label VARCHAR,type VARCHAR\n");
+
+            // edges header
+            writer.write(String.format(
+                    "edgedef>node1 VARCHAR,node2 VARCHAR,directed BOOLEAN,label VARCHAR,type VARCHAR%s%n",
+                    edgeProps.stream().map(s -> "," + s + " VARCHAR").collect(Collectors.joining(""))
+            ));
+
+            // edges
             writer.write(
                     graphCollection.getEdges().stream()
                             .map(e -> String.format(
-                                    "%s,%s,true,%s,%s%n",
-                                    e.getSrc().toString(), e.getDst().toString(), e.getLabel(), e.getLabel()
-                            ))
-                            .collect(Collectors.joining(""))
+                                    "%s,%s,true,%s,%s%s%n",
+                                    e.getSrc().toString(), e.getDst().toString(), e.getLabel(), e.getLabel(),
+                                    edgeProps.stream().map(
+                                            key -> "," + e.getProperties().getOrDefault(key, PropertyValue.create("")).toString()
+                                    ).collect(Collectors.joining(""))
+                            )).collect(Collectors.joining(""))
             );
             writer.close();
             return true;
