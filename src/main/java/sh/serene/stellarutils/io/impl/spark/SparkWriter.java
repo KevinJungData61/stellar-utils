@@ -62,6 +62,7 @@ public class SparkWriter implements StellarWriter {
      *
      * @return      success
      */
+    @Override
     public boolean gdf(String path) {
         GDFDataSink gdfDataSink = new GDFDataSink(path);
         return gdfDataSink.writeGraphCollection(sparkGraphCollection);

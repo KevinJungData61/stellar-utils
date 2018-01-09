@@ -40,4 +40,12 @@ public interface StellarWriter {
      */
     boolean parquet(String path);
 
+    /**
+     * Save graph collection to path in gdf format. This takes precedence over any previous file format setting.
+     *
+     * @param path  output path
+     * @return      success
+     */
+    boolean gdf(String path);
+
 }

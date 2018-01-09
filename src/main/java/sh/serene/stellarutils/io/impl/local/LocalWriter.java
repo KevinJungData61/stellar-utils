@@ -112,4 +112,37 @@ public class LocalWriter implements StellarWriter {
     public boolean parquet(String path) {
         throw new UnsupportedOperationException("not yet implemented");
     }
+
+    /**
+     * Save graph collection to path in gdf format. This takes precedence over any previous file format setting.
+     *
+     * @param path output path
+     * @return success
+     */
+    @Override
+    public boolean gdf(String path) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.write("nodedef>name VARCHAR,label VARCHAR,type VARCHAR\n");
+            writer.write(
+                    graphCollection.getVertices().stream()
+                        .map(v -> String.format("%s,%s,%s%n", v.getId().toString(), v.getLabel(), v.getLabel()))
+                        .collect(Collectors.joining(""))
+            );
+            writer.write("edgedef>node1 VARCHAR,node2 VARCHAR,directed BOOLEAN,label VARCHAR,type VARCHAR\n");
+            writer.write(
+                    graphCollection.getEdges().stream()
+                            .map(e -> String.format(
+                                    "%s,%s,true,%s,%s%n",
+                                    e.getSrc().toString(), e.getDst().toString(), e.getLabel(), e.getLabel()
+                            ))
+                            .collect(Collectors.joining(""))
+            );
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

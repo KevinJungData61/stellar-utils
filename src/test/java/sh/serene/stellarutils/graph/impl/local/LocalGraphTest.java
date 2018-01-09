@@ -147,6 +147,12 @@ public class LocalGraphTest {
         gPreEr.getVertices().asList().forEach(this::testVertex);
         gPreEr.getEdges().asList().forEach(this::testEdge);
 
+        LocalGraph gPreEr2 = gBaseline.union(gPreEr);
+        assertEquals(util.getVertexCount(graphIds.get(G_PRE_ER)), gPreEr2.getVertices().asList().size());
+        assertEquals(util.getEdgeCount(graphIds.get(G_PRE_ER)), gPreEr2.getEdges().asList().size());
+        gPreEr2.getVertices().asList().forEach(this::testVertex);
+        gPreEr2.getEdges().asList().forEach(this::testEdge);
+
     }
 
     private void testVertex(Vertex v) {

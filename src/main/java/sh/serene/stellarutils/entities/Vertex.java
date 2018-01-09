@@ -141,7 +141,7 @@ public class Vertex implements Element, Serializable, Cloneable {
 
     @Override
     public Map<String,PropertyValue> getProperties() {
-        return this.properties;
+        return new HashMap<>(this.properties);
     }
 
     @Override
@@ -179,10 +179,6 @@ public class Vertex implements Element, Serializable, Cloneable {
     @Override
     public ElementId version() {
         return this.version;
-    }
-
-    public String getVersionedId() {
-        return this.id.toString() + this.version.toString();
     }
 
     public ElementId getVersion() {

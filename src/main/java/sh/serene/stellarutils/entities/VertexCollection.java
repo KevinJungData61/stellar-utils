@@ -128,7 +128,7 @@ public class VertexCollection implements Element, Serializable, Cloneable {
 
     @Override
     public Map<String,PropertyValue> getProperties() {
-        return this.properties;
+        return new HashMap<>(this.properties);
     }
 
     @Override

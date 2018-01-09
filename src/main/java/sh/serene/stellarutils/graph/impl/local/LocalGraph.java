@@ -2,12 +2,16 @@ package sh.serene.stellarutils.graph.impl.local;
 
 import scala.Tuple2;
 import sh.serene.stellarutils.entities.*;
+import sh.serene.stellarutils.functions.EdgeMergeFunction;
+import sh.serene.stellarutils.functions.PropertiesMergeFunction;
+import sh.serene.stellarutils.functions.VertexMergeFunction;
 import sh.serene.stellarutils.graph.api.StellarEdgeMemory;
 import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphMemory;
 import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -138,16 +142,35 @@ public class LocalGraph implements StellarGraph {
      */
     @Override
     public LocalGraph union(StellarGraph other) {
+        return union(other, (v1, v2) -> v1.getProperties(), (e1, e2) -> e1.getProperties());
+    }
+
+    public LocalGraph union(StellarGraph other, PropertiesMergeFunction propsMergeFunc) {
+        return union(other, propsMergeFunc, propsMergeFunc);
+    }
+
+    public LocalGraph union(
+            StellarGraph other,
+            PropertiesMergeFunction vertexPropsMergeFunc,
+            PropertiesMergeFunction edgePropsMergeFunc
+    ) {
         if (other instanceof LocalGraph) {
-            GraphHead graphHeadNew = GraphHead.create(ElementId.create(), null, "");
+            ElementId graphId = ElementId.create();
+            GraphHead graphHeadNew = GraphHead.create(graphId, null, "");
             List<Vertex> verticesUnioned = new ArrayList<>(
                     Stream.concat(this.vertices.stream(), ((LocalGraph) other).vertices.stream())
-                            .collect(Collectors.toMap(Vertex::getVersionedId, Function.identity(), (v1, v2) -> v1))
+                            .collect(Collectors.toMap(
+                                    Vertex::getId,
+                                    Function.identity(),
+                                    new VertexMergeFunction(graphId, vertexPropsMergeFunc)))
                             .values()
             );
             List<Edge> edgesUnioned = new ArrayList<>(
                     Stream.concat(this.edges.stream(), ((LocalGraph) other).edges.stream())
-                            .collect(Collectors.toMap(Edge::getVersionedId, Function.identity(), (e1, e2) -> e1))
+                            .collect(Collectors.toMap(
+                                    Edge::getId,
+                                    Function.identity(),
+                                    new EdgeMergeFunction(graphId, edgePropsMergeFunc)))
                             .values()
             );
             return new LocalGraph(graphHeadNew, verticesUnioned, edgesUnioned);
