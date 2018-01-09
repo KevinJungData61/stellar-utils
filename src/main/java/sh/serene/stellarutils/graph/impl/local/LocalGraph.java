@@ -142,7 +142,7 @@ public class LocalGraph implements StellarGraph {
      */
     @Override
     public LocalGraph union(StellarGraph other) {
-        return union(other, (v1, v2) -> v1.getProperties(), (e1, e2) -> e1.getProperties());
+        return union(other, (e1, e2) -> e1.getProperties());
     }
 
     public LocalGraph union(StellarGraph other, PropertiesMergeFunction propsMergeFunc) {
