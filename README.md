@@ -2,10 +2,6 @@
 
 Utility tools for the Stellar project. This library provides a common interface for the different modules to read/write graphs represented in the EPGM format. It can currently be imported from the maven repository to read/write to/from JSON and Parquet files. 
 
-## Build
-- To run the unit tests: `mvn test`
-- To build the jars: `mvn package`
-
 ## Add stellar-utils as a dependency in Maven
 Current latest version under development:
 ```xml
@@ -20,22 +16,21 @@ Current latest version under development:
 
 ## Reference
 ### StellarBackEndFactory
-- Currently implemented with `SparkBackEndFactory` which is instantiated with a spark session
+- Currently implemented with `LocalBackEndFactory` and `SparkBackEndFactory` (requires a SparkSession).
 - Used to create `StellarGraphMemory` and `StellarReader` objects
 ### StellarReader
-- Used to read EPGM
+- Used to read EPGM from file
 ### StellarGraphCollection
-- EPGM graph collection in memory
+- EPGM graph collection
 ### StellarGraph
 - A single graph with supported graph operations
-### StellarGraphMemory, StellarEdgeMemory, StellarVertexMemory
-- Wrapper containing a collection of graph elements
-- Currently only implemented with a spark back end
+### StellarGraphMemory
+- A collection of graph elements
 
 ## Basic usage
 ### Reading a graph from json with given `path` and `graphId`
 ```java
-StellarBackEndFactory backEndFactory = new SparkBackEndFactory(sparkSession);
+StellarBackEndFactory backEndFactory = new LocalBackEndFactory(sparkSession);
 StellarGraphCollection graphCollection = backEndFactory.reader().format("json").getGraphCollection(path);
 StellarGraph graph = graphCollection.get(graphId);
 ```
@@ -46,11 +41,11 @@ List<Edge> edges = graph.getEdges().asList();
 ```
 ### Adding a list of edges `newEdges` to `graph`
 ```java
-StellarGraph graphNew = graph.union(backEndFactory.createEdgeMemory(newEdges));
+StellarGraph graphNew = graph.unionEdges(backEndFactory.createMemory(newEdges));
 ```
-### merging `graph` into `graphCollection` and writing the result in json
+### merging `graphNew` into `graphCollection` and writing the result in json
 ```java
-graphCollection.union(graph).write().format("json").save(path);
+graphCollection.union(graphNew).write().format("json").save(path);
 ```
 
 ## Other examples
