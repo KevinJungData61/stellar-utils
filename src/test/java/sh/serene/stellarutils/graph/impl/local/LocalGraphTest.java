@@ -3,6 +3,7 @@ package sh.serene.stellarutils.graph.impl.local;
 import org.junit.Before;
 import org.junit.Test;
 import sh.serene.stellarutils.entities.*;
+import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.testutils.TestGraphUtil;
 
 import java.util.*;
@@ -153,6 +154,41 @@ public class LocalGraphTest {
         gPreEr2.getVertices().asList().forEach(this::testVertex);
         gPreEr2.getEdges().asList().forEach(this::testEdge);
 
+    }
+
+    @Test
+    public void testConnectedComponents() throws Exception {
+        LocalGraph gPreEr = gc.get(graphIds.get(G_PRE_ER));
+        List<StellarGraph> graphs = gPreEr.getConnectedComponents();
+        int n_baseline = 0;
+        int n_newinfo = 0;
+        assertEquals(2, graphs.size());
+        for (StellarGraph g : graphs) {
+            if (g.getVertices().asList().size() == util.getVertexCount(graphIds.get(G_BASE_LINE))) {
+                // BASELINE
+                assertEquals(util.getEdgeCount(graphIds.get(G_BASE_LINE)), g.getEdges().asList().size());
+                n_baseline++;
+            } else if (g.getVertices().asList().size() == util.getVertexCount(graphIds.get(G_NEW_INFO))) {
+                // NEW INFO
+                assertEquals(util.getEdgeCount(graphIds.get(G_NEW_INFO)), g.getEdges().asList().size());
+                n_newinfo++;
+            } else {
+                fail();
+            }
+            g.getVertices().asList().forEach(this::testVertex);
+            g.getEdges().asList().forEach(this::testEdge);
+        }
+        assertTrue((n_baseline == 1) && (n_newinfo == 1));
+
+        LocalGraph gPostEr = gc.get(graphIds.get(G_POST_ER));
+        List<StellarGraph> graphsPost = gPostEr.getConnectedComponents();
+        assertEquals(1, graphsPost.size());
+        for (StellarGraph g : graphsPost) {
+            assertEquals(util.getVertexCount(graphIds.get(G_POST_ER)), g.getVertices().asList().size());
+            assertEquals(util.getEdgeCount(graphIds.get(G_POST_ER)), g.getEdges().asList().size());
+            g.getVertices().asList().forEach(this::testVertex);
+            g.getEdges().asList().forEach(this::testEdge);
+        }
     }
 
     private void testVertex(Vertex v) {

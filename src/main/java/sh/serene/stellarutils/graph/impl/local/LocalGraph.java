@@ -246,4 +246,69 @@ public class LocalGraph implements StellarGraph {
                         .collect(Collectors.toList())
         );
     }
+
+    public Map<ElementId,List<Edge>> getSrcIndexedEdges() {
+        Map<ElementId,List<Edge>> indexedEdges = this.vertices.stream()
+                .collect(Collectors.toMap(Vertex::getId, v -> new ArrayList<>()));
+        this.edges.forEach(e -> indexedEdges.get(e.getSrc()).add(e));
+        return indexedEdges;
+    }
+
+    public Map<ElementId,List<Edge>> getDstIndexedEdges() {
+        Map<ElementId,List<Edge>> indexedEdges = this.vertices.stream()
+                .collect(Collectors.toMap(Vertex::getId, v -> new ArrayList<>()));
+        this.edges.forEach(e -> indexedEdges.get(e.getDst()).add(e));
+        return indexedEdges;
+    }
+
+    public List<StellarGraph> getConnectedComponents() {
+        Map<ElementId,List<Edge>> srcIndexedEdges = getSrcIndexedEdges();
+        Map<ElementId,List<Edge>> dstIndexedEdges = getDstIndexedEdges();
+        Map<ElementId,Vertex> indexedVertices = this.vertices.stream().collect(Collectors.toMap(Vertex::getId, Function.identity()));
+        Set<ElementId> vertexIds = this.vertices.stream().map(Vertex::getId).collect(Collectors.toSet());
+        Set<ElementId> visited = new HashSet<>();
+        List<StellarGraph> connectedComponents = new ArrayList<>();
+        while (!vertexIds.isEmpty()) {
+
+            Set<Vertex> connectedVertices = new HashSet<>();
+            Set<Edge> connectedEdges = new HashSet<>();
+
+            ElementId id = vertexIds.iterator().next();
+            vertexIds.remove(id);
+            visited.add(id);
+            connectedVertices.add(indexedVertices.get(id));
+
+            List<ElementId> connected = new ArrayList<>();
+            connected.addAll(srcIndexedEdges.get(id).stream().map(Edge::getDst).collect(Collectors.toList()));
+            connected.addAll(dstIndexedEdges.get(id).stream().map(Edge::getSrc).collect(Collectors.toList()));
+            connectedEdges.addAll(srcIndexedEdges.get(id));
+            connectedEdges.addAll(dstIndexedEdges.get(id));
+
+            while (!connected.isEmpty()) {
+                id = connected.remove(0);
+                if (visited.contains(id)) {
+                    continue;
+                }
+                vertexIds.remove(id);
+                visited.add(id);
+                connectedVertices.add(indexedVertices.get(id));
+
+                connectedEdges.addAll(srcIndexedEdges.get(id));
+                connectedEdges.addAll(dstIndexedEdges.get(id));
+                srcIndexedEdges.get(id).stream().map(Edge::getDst).filter(e -> !visited.contains(e)).forEach(connected::add);
+                dstIndexedEdges.get(id).stream().map(Edge::getSrc).filter(e -> !visited.contains(e)).forEach(connected::add);
+            }
+
+            connectedComponents.add(
+                    new LocalGraph(
+                            GraphHead.create(ElementId.create(), this.graphHead.getProperties(), this.graphHead.getLabel()),
+                            new ArrayList<>(connectedVertices),
+                            new ArrayList<>(connectedEdges)
+                    )
+            );
+
+        }
+
+        return connectedComponents;
+    }
 }

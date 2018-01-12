@@ -380,6 +380,16 @@ public class SparkGraph implements StellarGraph, Serializable {
     }
 
     /**
+     * Get a list of weakly connected components
+     *
+     * @return list of graphs
+     */
+    @Override
+    public List<StellarGraph> getConnectedComponents() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    /**
      * Get edge list as a dataset of tuples (src,dst) where src and dst are vertex indices defined by a given dataset
      * vertexToIndex.
      *

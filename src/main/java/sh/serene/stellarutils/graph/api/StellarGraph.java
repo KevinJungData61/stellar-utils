@@ -6,6 +6,8 @@ import sh.serene.stellarutils.entities.ElementId;
 import sh.serene.stellarutils.entities.GraphHead;
 import sh.serene.stellarutils.entities.Vertex;
 
+import java.util.List;
+
 
 public interface StellarGraph {
 
@@ -66,4 +68,11 @@ public interface StellarGraph {
      * @return  edge list
      */
     StellarGraphMemory<Tuple2<ElementId,ElementId>> getEdgeList();
+
+    /**
+     * Get a list of weakly connected components
+     *
+     * @return  list of graphs
+     */
+    List<StellarGraph> getConnectedComponents();
 }
