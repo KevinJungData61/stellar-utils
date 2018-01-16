@@ -1,71 +1,99 @@
 package sh.serene.stellarutils.examples;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.apache.spark.sql.SparkSession;
-import sh.serene.stellarutils.entities.Edge;
-import sh.serene.stellarutils.entities.ElementId;
-import sh.serene.stellarutils.entities.PropertyValue;
-import sh.serene.stellarutils.entities.Vertex;
+import sh.serene.stellarutils.entities.*;
 import sh.serene.stellarutils.graph.api.StellarGraph;
 import sh.serene.stellarutils.graph.api.StellarGraphCollection;
 import sh.serene.stellarutils.graph.api.StellarBackEndFactory;
 import sh.serene.stellarutils.graph.impl.local.LocalBackEndFactory;
-import sh.serene.stellarutils.graph.impl.spark.SparkBackEndFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ERExample {
+
     /**
-     * example method - print a list of vertices
-     * @param vertices
+     * helper class to contain ER Row info
      */
-    public static void printVertices(List<Vertex> vertices) {
-        // print all vertices as (id: label, properties)
-        for (Vertex v : vertices) {
-            ElementId id = v.getId();
-            String label = v.getLabel();
-            Map<String,PropertyValue> properties = v.getProperties();
-            System.out.println(String.format("%s: %s, %s", id.toString(), label, properties.toString()));
+    private static class ERKey {
+        public final String name;
+        public final List<String> wrote;
+        public final String worksFor;
+
+        public ERKey(String name, List<String> wrote, String worksFor) {
+            this.name = name;
+            this.wrote = new ArrayList<>(wrote);
+            this.worksFor = worksFor;
+        }
+
+        public int hashCode() {
+            return Objects.hash(name, wrote, worksFor);
+        }
+
+        public boolean equals(Object other) {
+            if (other instanceof ERKey) {
+                ERKey otherk = (ERKey) other;
+                return (Objects.equals(this.name, otherk.name) &&
+                        Objects.equals(this.wrote, otherk.wrote) &&
+                        Objects.equals(this.worksFor, otherk.worksFor)
+                );
+            } else {
+                return false;
+            }
         }
     }
 
     /**
-     * example method - index edges by their source node id
-     * @param edges
-     * @return
+     * Creates new edges for duplicate entities
+     *
+     * @param tuples        adjacency tuples
+     * @param tuple2Key     map function AdjacencyTuple -> ERKey
+     * @return              list of new edges
      */
-    public static Multimap<ElementId,Edge> indexEdgesBySource(List<Edge> edges) {
-        Multimap<ElementId,Edge> indexedEdges = ArrayListMultimap.create();
-        for (Edge e : edges) {
-            ElementId src = e.getSrc();
-            indexedEdges.put(src, e);
-        }
-        return indexedEdges;
-    }
+    private static List<Edge> runEntityResolution(List<AdjacencyTuple> tuples, Function<AdjacencyTuple,ERKey> tuple2Key) {
 
-    private static List<Edge> runEntityResolution(List<Vertex> vertices, List<Edge> edges) {
-        /*
-         * ER
-         */
-
-        // add a few new edges (v0 -> v1), (v0 -> v2), (v0 -> v3)
         List<Edge> edgesNew = new ArrayList<>();
-        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(1).getId(), "new edge"));
-        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(2).getId(), "new edge"));
-        edgesNew.add(Edge.create(vertices.get(0).getId(), vertices.get(3).getId(), "new edge"));
+
+        // group by ER key to group duplicates
+        Map<ERKey,List<AdjacencyTuple>> resolved = tuples.stream().collect(Collectors.groupingBy(tuple2Key));
+
+        // for all pairs of duplicates, add edges between them
+        resolved.forEach((key, dups) -> {
+            if (dups.size() > 1) {
+                for (int i = 0; i < dups.size(); i++) {
+                    for (int j = i+1; j < dups.size(); j++) {
+                        ElementId id1 = dups.get(i).source.getId();
+                        ElementId id2 = dups.get(j).source.getId();
+                        edgesNew.add(Edge.create(id1, id2, "duplicateOf"));
+                        edgesNew.add(Edge.create(id2, id1, "duplicateOf"));
+                    }
+                }
+            }
+        });
+
         return edgesNew;
     }
 
-
+    /**
+     * Reads from input file, performs ER, writes to output file
+     *
+     * @param beFactory         backend factory
+     * @param fileFormat        input/output file format
+     * @param fileInput         input file path
+     * @param fileOutput        output file path
+     * @param vertexPredicate   vertex predicate to create ER rows with
+     * @param tuple2Key         map function AdjacencyTuple -> ERKey
+     * @throws IOException
+     */
     private static void execute(
             StellarBackEndFactory beFactory,
             String fileFormat,
             String fileInput,
-            String fileOutput
+            String fileOutput,
+            Predicate<Vertex> vertexPredicate,
+            Function<AdjacencyTuple,ERKey> tuple2Key
     ) throws IOException {
         /*
          * read graph collection
@@ -78,17 +106,14 @@ public class ERExample {
         StellarGraph graph = graphCollection.get(0);
 
         /*
-         * split into connected components
+         * get rows to perform ER with, where each row has the information of a user node + its neighbours
          */
-        List<StellarGraph> connectedComponents = graph.getConnectedComponents();
+        List<AdjacencyTuple> tuples = graph.getAdjacencyTuples(vertexPredicate);
 
         /*
          * run ER to get new edges
          */
-        List<Edge> edgesNew = new ArrayList<>();
-        for (StellarGraph g : connectedComponents) {
-            edgesNew.addAll(runEntityResolution(g.getVertices().asList(), g.getEdges().asList()));
-        }
+        List<Edge> edgesNew = runEntityResolution(tuples, tuple2Key);
 
         /*
          * add new edges to original graph
@@ -101,40 +126,58 @@ public class ERExample {
         graphCollection.union(graphNew).write().json(fileOutput);
     }
 
+    /**
+     * run me
+     *
+     * @param args
+     */
     public static void main( String[] args ) {
 
         /*
-         * config
-         */
-        // with spark backend
+         create local backend
+          */
+        StellarBackEndFactory localBeFactory = new LocalBackEndFactory(); // new SparkBackEndFactory(sparkSession);
+
         /*
-        SparkSession sparkSession = SparkSession.builder().appName("test").master("local").getOrCreate();
-        StellarBackEndFactory beFactory = new SparkBackEndFactory(sparkSession); //, new SparkHdfsReader(session));
+         file format / paths
+          */
         String fileFormat = "json";
-        String fileInput = "small-yelp-hin.epgm";
-        String fileOutput = "small-yelp-hin-ER-spark.epgm";
-        long start = System.nanoTime();
+        String fileInput = "papers.epgm";
+        String fileOutputLocal = "papers-ER.epgm";
+
+        /*
+         ER config
+
+         mocked for a graph containing data that resembles:
+              (ResearchGroup {name}) <--[worksFor]-- (Author {name}) <--[writtenBy]-- (Paper {title})
+         to be turned into rows for each author containing:
+              { name: String, wrote: [String], worksFor: String }
+          */
+
+        // type of vertices to be used as "rows" that are being resolved with ER
+        Predicate<Vertex> vertexPredicate = v -> v.getLabel().equals("Author");
+
+        // map function to transform tuple to ER key to group by
+        Function<AdjacencyTuple,ERKey> tuple2Key = tuple -> {
+            List<String> worksFor = tuple.outbound.entrySet().stream()
+                    .filter(entry -> entry.getKey().getLabel().equals("worksFor"))
+                    .map(entry -> entry.getValue().getPropertyValue("name", String.class))
+                    .collect(Collectors.toList());
+            return new ERKey(
+                    tuple.source.getPropertyValue("name", String.class),
+                    tuple.inbound.entrySet().stream()
+                            .filter(entry -> entry.getKey().getLabel().equals("writtenBy"))
+                            .map(entry -> entry.getValue().getPropertyValue("title", String.class))
+                            .collect(Collectors.toList()),
+                    (worksFor.size() == 1) ? worksFor.get(0) : ""
+            );
+        };
+
         try {
-            execute(beFactory, fileFormat, fileInput, fileOutput);
+            execute(localBeFactory, fileFormat, fileInput, fileOutputLocal, vertexPredicate, tuple2Key);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.printf("took %,d ns%n", System.nanoTime() - start);
-        */
-
-        // with local backend
-        StellarBackEndFactory localBeFactory = new LocalBackEndFactory();
-        String fileFormat = "json";
-        String fileInput = "small-yelp-hin.epgm";
-        String fileOutputLocal = "small-yelp-hin-ER-local.epgm";
-        long start = System.nanoTime();
-        try {
-            execute(localBeFactory, fileFormat, fileInput, fileOutputLocal);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.printf("took %,d ns%n", System.nanoTime() - start);
-
 
     }
 
