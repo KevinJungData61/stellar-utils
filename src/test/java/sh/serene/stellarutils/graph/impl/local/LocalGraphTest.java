@@ -191,6 +191,27 @@ public class LocalGraphTest {
         }
     }
 
+    @Test
+    public void testAdjacencyTuples() throws Exception {
+        LocalGraph gPreEr = gc.get(graphIds.get(G_PRE_ER));
+        List<AdjacencyTuple> people = gPreEr.getAdjacencyTuples(v -> v.getLabel().equals("Person"));
+        for (AdjacencyTuple tuple : people) {
+            System.out.println(tuple.source.getPropertyValue("name", String.class));
+            tuple.inbound.forEach((e, v) ->
+                    System.out.printf(
+                            "<-- [%s] -- %s%n",
+                            e.getLabel(),
+                            v.getProperties().getOrDefault("name", PropertyValue.create("unknown")))
+            );
+            tuple.outbound.forEach((e, v) ->
+                    System.out.printf(
+                            "-- [%s] --> %s%n",
+                            e.getLabel(),
+                            v.getProperties().getOrDefault("name", PropertyValue.create("unknown")))
+            );
+        }
+    }
+
     private void testVertex(Vertex v) {
         assertEquals(util.getVertexLabel(v.getId()), v.getLabel());
         assertEquals(util.getVertexProperties(v.getId()), v.getProperties());

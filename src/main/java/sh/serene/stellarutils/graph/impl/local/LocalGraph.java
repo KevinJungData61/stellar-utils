@@ -13,6 +13,7 @@ import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -261,6 +262,12 @@ public class LocalGraph implements StellarGraph {
         return indexedEdges;
     }
 
+    /**
+     * Get a list of weakly connected components
+     *
+     * @return  list of graphs
+     */
+    @Override
     public List<StellarGraph> getConnectedComponents() {
         Map<ElementId,List<Edge>> srcIndexedEdges = getSrcIndexedEdges();
         Map<ElementId,List<Edge>> dstIndexedEdges = getDstIndexedEdges();
@@ -310,5 +317,28 @@ public class LocalGraph implements StellarGraph {
         }
 
         return connectedComponents;
+    }
+
+    /**
+     * Get a list of tuples containing vertices and their neighbours
+     *
+     * @param vertexPredicate
+     * @return list of adjacency tuples containing (souce, inbound, outbound)
+     */
+    @Override
+    public List<AdjacencyTuple> getAdjacencyTuples(Predicate<Vertex> vertexPredicate) {
+        Map<ElementId,List<Edge>> srcIndexedEdges = getSrcIndexedEdges();
+        Map<ElementId,List<Edge>> dstIndexedEdges = getDstIndexedEdges();
+        Map<ElementId,Vertex> indexedVertices = this.vertices.stream().collect(Collectors.toMap(Vertex::getId, Function.identity()));
+        return this.vertices.stream()
+                .filter(vertexPredicate)
+                .map(vertex -> {
+                    Map<Edge,Vertex> outbound = srcIndexedEdges.get(vertex.getId()).stream()
+                            .collect(Collectors.toMap(Function.identity(), e -> indexedVertices.get(e.getDst())));
+                    Map<Edge,Vertex> inbound = dstIndexedEdges.get(vertex.getId()).stream()
+                            .collect(Collectors.toMap(Function.identity(), e -> indexedVertices.get(e.getSrc())));
+                    return new AdjacencyTuple(vertex, inbound, outbound);
+                })
+                .collect(Collectors.toList());
     }
 }

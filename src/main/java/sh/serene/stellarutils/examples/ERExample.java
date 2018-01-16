@@ -78,9 +78,17 @@ public class ERExample {
         StellarGraph graph = graphCollection.get(0);
 
         /*
+         * split into connected components
+         */
+        List<StellarGraph> connectedComponents = graph.getConnectedComponents();
+
+        /*
          * run ER to get new edges
          */
-        List<Edge> edgesNew = runEntityResolution(graph.getVertices().asList(), graph.getEdges().asList());
+        List<Edge> edgesNew = new ArrayList<>();
+        for (StellarGraph g : connectedComponents) {
+            edgesNew.addAll(runEntityResolution(g.getVertices().asList(), g.getEdges().asList()));
+        }
 
         /*
          * add new edges to original graph
@@ -99,6 +107,7 @@ public class ERExample {
          * config
          */
         // with spark backend
+        /*
         SparkSession sparkSession = SparkSession.builder().appName("test").master("local").getOrCreate();
         StellarBackEndFactory beFactory = new SparkBackEndFactory(sparkSession); //, new SparkHdfsReader(session));
         String fileFormat = "json";
@@ -111,11 +120,14 @@ public class ERExample {
             e.printStackTrace();
         }
         System.out.printf("took %,d ns%n", System.nanoTime() - start);
+        */
 
         // with local backend
         StellarBackEndFactory localBeFactory = new LocalBackEndFactory();
+        String fileFormat = "json";
+        String fileInput = "small-yelp-hin.epgm";
         String fileOutputLocal = "small-yelp-hin-ER-local.epgm";
-        start = System.nanoTime();
+        long start = System.nanoTime();
         try {
             execute(localBeFactory, fileFormat, fileInput, fileOutputLocal);
         } catch (IOException e) {

@@ -1,12 +1,10 @@
 package sh.serene.stellarutils.graph.api;
 
 import scala.Tuple2;
-import sh.serene.stellarutils.entities.Edge;
-import sh.serene.stellarutils.entities.ElementId;
-import sh.serene.stellarutils.entities.GraphHead;
-import sh.serene.stellarutils.entities.Vertex;
+import sh.serene.stellarutils.entities.*;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public interface StellarGraph {
@@ -75,4 +73,11 @@ public interface StellarGraph {
      * @return  list of graphs
      */
     List<StellarGraph> getConnectedComponents();
+
+    /**
+     * Get a list of tuples containing vertices and their neighbours
+     *
+     * @return  list of adjacency tuples containing (souce, inbound, outbound)
+     */
+    List<AdjacencyTuple> getAdjacencyTuples(Predicate<Vertex> vertexPredicate);
 }

@@ -16,6 +16,7 @@ import sh.serene.stellarutils.graph.api.StellarVertexMemory;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Property Graph - a single graph extracted from an EPGM Graph Collection
@@ -386,6 +387,17 @@ public class SparkGraph implements StellarGraph, Serializable {
      */
     @Override
     public List<StellarGraph> getConnectedComponents() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    /**
+     * Get a list of tuples containing vertices and their neighbours
+     *
+     * @param vertexPredicate
+     * @return list of adjacency tuples containing (souce, inbound, outbound)
+     */
+    @Override
+    public List<AdjacencyTuple> getAdjacencyTuples(Predicate<Vertex> vertexPredicate) {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
