@@ -1,5 +1,7 @@
 package sh.serene.stellarutils.graph.impl.spark;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.mllib.linalg.distributed.CoordinateMatrix;
 import org.apache.spark.mllib.linalg.distributed.IndexedRow;
@@ -28,6 +30,7 @@ public class SparkGraphTest {
 
     @Before
     public void setUp() throws Exception {
+        LogManager.getLogger("org").setLevel(Level.ERROR);
         spark = SparkSession
                 .builder()
                 .appName("Stellar Utils Property Graph Test")

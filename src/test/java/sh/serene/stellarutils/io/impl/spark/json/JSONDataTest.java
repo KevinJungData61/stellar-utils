@@ -1,6 +1,8 @@
 package sh.serene.stellarutils.io.impl.spark.json;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +33,7 @@ public class JSONDataTest {
 
     @Before
     public void setUp() {
+        LogManager.getLogger("org").setLevel(Level.ERROR);
         spark = SparkSession.builder().appName("JSON Data Test").master("local").getOrCreate();
         jsonDataSink = new JSONDataSink(testPath);
         jsonDataSource = new JSONDataSource(testPath, spark);

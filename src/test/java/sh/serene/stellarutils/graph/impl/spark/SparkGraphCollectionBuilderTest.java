@@ -1,5 +1,7 @@
 package sh.serene.stellarutils.graph.impl.spark;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,7 @@ public class SparkGraphCollectionBuilderTest implements Serializable {
 
     @Before
     public void setUp() throws Exception {
+        LogManager.getLogger("org").setLevel(Level.ERROR);
         builder = new GraphCollectionBuilder();
         properties = Properties.create();
         properties.add("string", "value");

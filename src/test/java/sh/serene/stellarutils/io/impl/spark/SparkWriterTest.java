@@ -1,6 +1,8 @@
 package sh.serene.stellarutils.io.impl.spark;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +31,7 @@ public class SparkWriterTest {
 
     @Before
     public void setUp() throws Exception {
+        LogManager.getLogger("org").setLevel(Level.ERROR);
         spark = SparkSession
                 .builder()
                 .appName("Stellar Utils Graph Collection Writer Test")

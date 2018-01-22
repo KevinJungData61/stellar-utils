@@ -1,5 +1,8 @@
 package sh.serene.stellarutils.graph.impl.spark;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -24,6 +27,7 @@ public class SparkGraphCollectionTest {
 
     @Before
     public void setUp() throws Exception {
+        LogManager.getLogger("org").setLevel(Level.ERROR);
         spark = SparkSession
                 .builder()
                 .appName("Stellar Utils Graph Collection Test")
