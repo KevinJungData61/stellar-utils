@@ -5,12 +5,7 @@ env:
   - secure: flWCKXNpAdlMr2p5RbCCn0qBN9HFL+/9ODgXBSm1MzSc83+enqHRyMogiYsJ/wISdN6U7uInPGJkDPPyIRYioQ52vA0Q5D+G5oZWmPvniBBDP9H1cbVFml2+ykZhYWpT/GECVtaW2jaaNj9nqrM6erXkuHmqRXQuRW8MJOIaf7X6d8kbP77dSc5yBotVKHJ/tVl9f7n2p3tHOCZQm25oo18t0hHXQwWG0f3K8xvCadeh7yrQ5w0ATxJeBg7Nbh4RQwIHGHBaWK0ixD+Xcg3yBxQqSL+1Vz31R90vscrFuPT3fD5fnG0N1R6lLZlh5nGF9kpbrWzkRwjOKrn46R2wiyq3Xy/wtg/ISzGavflfjdRoIsme7bieyTNIxIL39Xs0V0FHgkFr4891ylLApZsAOSvlOUhwXStwjeZLMwAknyLBQMSOL0TB3wFLvTRJ0SLrvFAqtVfHkyqJ9eWw+a+a7NovxwtmTTaAxIgU283iG3jhBqQ/Ss10vD32cZMbD+sWbPF4iSzjL7FoAbpsr4wuob0VDFNKESg+kr2eEkhkMKZI4ukDAw4wj8SUS4XFgqSE+kuOmmPQj1pLcAD26Pibk5NZ7zyKuborjqgI+9hoRJ8JoG2ra7v6yGTAKTriF1mNXfrLOaR8EySz9OuO3eeIyr0wYmm1gs4QC0gfED298OU=
   - secure: g3JIlzUeLfowO1VelzvpeVGK53BdT3eWghuyOv3CMHKeoat+lBt3YackwEP4YYinqHi+jg50au5SVLSGJC/TXw5OIuXwJU2KA2jXE5zG1qpgBdtHD74KEvrvUQs/mZmH8zeVgyZQ34/uBCUiEJ1NGbAw/KjJ6dJcjGAg1L6U6FWVSgV1dfoJPUtdooDzA1V+2XOu6B2hsxTTKPYpo+ZSZ+Pn7w34xjHZz+BCOzo6Mbnm2FZg3ycOdUH+he/zYn/PPZNsDJz6+eXiPw22POWWRpIAdHqCgKZE0igC50rx9oc0YWJnYZ0PPkCAPTR6LfRdcWkQ8LtmsPJGW3Ig7KuIGSt4GJQHSwUdFkwDzCUi22RHHiUJEwwxgNbFmrufhVE7pKC3B/Wx2jKYQSmb1kpK5ZuSw1CZDRNSOg6b0FsjUmvlR1sO+ZzVHyVstva+V+JWKl5PvsLYcvkto6Swwzs8beluf3XPQdan2jtTrXePhKCktcGtswSXCDh7roDOPHZrSbp4DVtuwHQA71v3UREmiZJ4zM4PrYQrhamLkxJ9Ia/Z0YZrTTgRqRlRWBlHfpoPJ+4E4cn2xRbsbSepnnRtPAKpjLXm4/S7po/H7fCxmRxMvdf0W2cWdGZH4AlbYc3s0hiRGEQzMF2rFzKAPGHYnvLDqhWIYk3f4ehwiL9llss=
 
-jobs:
-  include:
-  - stage: test
-    if: branch IN (master, devel) OR branch =~ ^version-
-    script: mvn test
-  - stage: publish
-    if: branch IN (master, devel) OR branch =~ ^version-
-    script: mvn deploy
+script: mvn deploy
+after_success:
+  - mvn clean test jacoco:report coveralls:report
 
