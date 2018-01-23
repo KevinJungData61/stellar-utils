@@ -48,50 +48,6 @@ public class SparkBackEndFactory implements StellarBackEndFactory {
     }
 
     /**
-     * Create vertex memory from list
-     *
-     * @param vertices vertex list
-     * @return vertex memory
-     */
-    @Override
-    public StellarVertexMemory createVertexMemory(List<Vertex> vertices) {
-        return new SparkVertexMemory(sparkSession.createDataset(vertices, Encoders.bean(Vertex.class)));
-    }
-
-    /**
-     * Create vertex memory from dataset
-     *
-     * @param vertices vertex dataset
-     * @return vertex memory
-     */
-    @Override
-    public StellarVertexMemory createVertexMemory(Dataset<Vertex> vertices) {
-        return new SparkVertexMemory(vertices);
-    }
-
-    /**
-     * Create edge memory from list
-     *
-     * @param edges edge list
-     * @return edge memory
-     */
-    @Override
-    public StellarEdgeMemory createEdgeMemory(List<Edge> edges) {
-        return new SparkEdgeMemory(sparkSession.createDataset(edges, Encoders.bean(Edge.class)));
-    }
-
-    /**
-     * Create edge memory from dataset
-     *
-     * @param edges edge dataset
-     * @return edge memory
-     */
-    @Override
-    public StellarEdgeMemory createEdgeMemory(Dataset<Edge> edges) {
-        return new SparkEdgeMemory(edges);
-    }
-
-    /**
      * Get reader object
      *
      * @return reader object

@@ -1,7 +1,5 @@
 package sh.serene.stellarutils.io.impl.local;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import sh.serene.stellarutils.entities.*;
 import sh.serene.stellarutils.graph.impl.local.LocalGraphCollection;
 import sh.serene.stellarutils.io.api.StellarWriter;
@@ -11,10 +9,8 @@ import sh.serene.stellarutils.io.impl.spark.json.JSONConstants;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class LocalWriter implements StellarWriter {
@@ -72,6 +68,7 @@ public class LocalWriter implements StellarWriter {
      */
     @Override
     public boolean json(String path) {
+        path = Objects.requireNonNull(path, "Given path was null");
         if (path.charAt(path.length() - 1) != '/') {
             path += '/';
         }

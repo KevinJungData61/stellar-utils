@@ -13,13 +13,13 @@ import static org.junit.Assert.*;
 
 public class LocalIOTest {
     @Test
-    public void json() throws Exception {
+    public void testJson() throws Exception {
         TestGraphUtil util = TestGraphUtil.getInstance();
         LocalGraphCollection graphCollectionWrite = new LocalGraphCollection(
                 util.getGraphHeadList(), util.getVertexCollectionList(), util.getEdgeCollectionList()
         );
-        graphCollectionWrite.write().json("./tmp.epgm");
-        LocalGraphCollection graphCollectionRead = (new LocalReader()).json("./tmp.epgm");
+        graphCollectionWrite.write().format("json").save("./tmp.epgm");
+        LocalGraphCollection graphCollectionRead = (new LocalReader()).format("json").getGraphCollection("./tmp.epgm");
         for (ElementId graphId : util.getGraphIdList()) {
             LocalGraph g = graphCollectionRead.get(graphId);
             assertEquals(g.getVertices().asList().size(), util.getVertexCount(graphId));
@@ -40,6 +40,43 @@ public class LocalIOTest {
                 assertEquals(e.getVersion(), util.getEdgeVersion(e.getId()));
             }
         }
+    }
+
+    @Test(expected=NullPointerException.class)
+    public void testNullPath() throws Exception {
+        TestGraphUtil util = TestGraphUtil.getInstance();
+        LocalGraphCollection graphCollection = new LocalGraphCollection(
+                util.getGraphHeadList(), util.getVertexCollectionList(), util.getEdgeCollectionList()
+        );
+        graphCollection.write().format("json").save(null);
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void testWriteParquet() throws Exception {
+        TestGraphUtil util = TestGraphUtil.getInstance();
+        LocalGraphCollection graphCollection = new LocalGraphCollection(
+                util.getGraphHeadList(), util.getVertexCollectionList(), util.getEdgeCollectionList()
+        );
+        graphCollection.write().format("parquet").save(null);
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void testWriteInvalidFormat() throws Exception {
+        TestGraphUtil util = TestGraphUtil.getInstance();
+        LocalGraphCollection graphCollection = new LocalGraphCollection(
+                util.getGraphHeadList(), util.getVertexCollectionList(), util.getEdgeCollectionList()
+        );
+        graphCollection.write().format("something").save(null);
+    }
+
+    /**
+     * Only tested for no-fail
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testWriteGdf() throws Exception {
+
     }
 
 }
