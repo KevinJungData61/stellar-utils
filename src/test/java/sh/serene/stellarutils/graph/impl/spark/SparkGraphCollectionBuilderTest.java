@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("deprecation")
 public class SparkGraphCollectionBuilderTest implements Serializable {
 
     private GraphCollectionBuilder builder;

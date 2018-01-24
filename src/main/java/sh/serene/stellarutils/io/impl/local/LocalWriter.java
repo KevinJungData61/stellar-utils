@@ -55,6 +55,8 @@ public class LocalWriter implements StellarWriter {
                 return json(path);
             case "parquet":
                 return parquet(path);
+            case "gdf":
+                return gdf(path);
             default:
                 throw new UnsupportedOperationException("unsupported file format: " + this.fileFormat);
         }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,6 +71,7 @@ public class LocalReader implements StellarReader {
      */
     @Override
     public LocalGraphCollection json(String path) {
+        path = Objects.requireNonNull(path);
         if (path.charAt(path.length() - 1) != '/') {
             path += '/';
         }

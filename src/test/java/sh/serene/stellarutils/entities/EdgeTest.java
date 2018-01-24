@@ -21,15 +21,26 @@ public class EdgeTest {
     private Map<String,PropertyValue> properties;
     private String label1 = "first";
     private String label2 = "second";
+    private final String STR_PROP = "string property";
+    private final String INT_PROP = "integer property";
+    private final String DBL_PROP = "double property";
+    private final String BOOL_PROP = "boolean property";
+
+    private <T> void assertPropEquals(Edge edge, String key, Class<T> type) {
+        assertEquals(properties.get(key), edge.getProperty(key));
+        assertEquals(properties.get(key).value(), edge.getPropertyValue(key));
+        assertEquals(properties.get(key).value(type), edge.getPropertyValue(key, type));
+    }
 
     @Before
     public void setUp() throws Exception {
         this.src = ElementId.create();
         this.dst = ElementId.create();
         this.properties = new HashMap<>();
-        this.properties.put("key1", PropertyValue.create("value1"));
-        this.properties.put("key2", PropertyValue.create(2));
-        this.properties.put("key3", PropertyValue.create(3.0));
+        this.properties.put(STR_PROP, PropertyValue.create("value1"));
+        this.properties.put(INT_PROP, PropertyValue.create(2));
+        this.properties.put(DBL_PROP, PropertyValue.create(3.0));
+        this.properties.put(BOOL_PROP, PropertyValue.create(true));
     }
 
     @Test
@@ -54,6 +65,10 @@ public class EdgeTest {
         assertEquals(id, edge.getId());
         assertEquals(src, edge.getSrc());
         assertEquals(dst, edge.getDst());
+        assertPropEquals(edge, STR_PROP, String.class);
+        assertPropEquals(edge, INT_PROP, Integer.class);
+        assertPropEquals(edge, DBL_PROP, Double.class);
+        assertPropEquals(edge, BOOL_PROP, Boolean.class);
         assertEquals(properties, edge.getProperties());
         assertEquals(label1, edge.getLabel());
         assertEquals(version, edge.version());
@@ -65,6 +80,10 @@ public class EdgeTest {
         Edge edge = Edge.create(src, dst, properties, label1, version);
         assertEquals(src, edge.getSrc());
         assertEquals(dst, edge.getDst());
+        assertPropEquals(edge, STR_PROP, String.class);
+        assertPropEquals(edge, INT_PROP, Integer.class);
+        assertPropEquals(edge, DBL_PROP, Double.class);
+        assertPropEquals(edge, BOOL_PROP, Boolean.class);
         assertEquals(properties, edge.getProperties());
         assertEquals(label1, edge.getLabel());
         assertEquals(version, edge.version());
@@ -78,6 +97,10 @@ public class EdgeTest {
         assertEquals(id, edge.getId().toString());
         assertEquals(src, edge.getSrc());
         assertEquals(dst, edge.getDst());
+        assertPropEquals(edge, STR_PROP, String.class);
+        assertPropEquals(edge, INT_PROP, Integer.class);
+        assertPropEquals(edge, DBL_PROP, Double.class);
+        assertPropEquals(edge, BOOL_PROP, Boolean.class);
         assertEquals(properties, edge.getProperties());
         assertEquals(label1, edge.getLabel());
         assertEquals(version, edge.getVersion().toString());
@@ -94,6 +117,30 @@ public class EdgeTest {
         assertEquals(edgeCollection.getProperties(), edge.getProperties());
         assertEquals(edgeCollection.getLabel(), edge.getLabel());
         assertEquals(edgeCollection.version(), edge.version());
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testCreateWithSetters() throws Exception {
+        Edge edge = new Edge();
+        ElementId id = ElementId.create();
+        ElementId version = ElementId.create();
+        edge.setId(id);
+        edge.setSrc(src);
+        edge.setDst(dst);
+        edge.setProperties(properties);
+        edge.setLabel(label1);
+        edge.setVersion(version);
+        assertEquals(id, edge.getId());
+        assertEquals(src, edge.getSrc());
+        assertEquals(dst, edge.getDst());
+        assertPropEquals(edge, STR_PROP, String.class);
+        assertPropEquals(edge, INT_PROP, Integer.class);
+        assertPropEquals(edge, DBL_PROP, Double.class);
+        assertPropEquals(edge, BOOL_PROP, Boolean.class);
+        assertEquals(properties, edge.getProperties());
+        assertEquals(label1, edge.getLabel());
+        assertEquals(version, edge.getVersion());
     }
 
     @Test

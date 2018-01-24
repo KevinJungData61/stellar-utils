@@ -16,13 +16,24 @@ public class VertexTest {
     private Map<String,PropertyValue> properties;
     private String label1 = "first";
     private String label2 = "second";
+    private final String STR_PROP = "string property";
+    private final String INT_PROP = "integer property";
+    private final String DBL_PROP = "double property";
+    private final String BOOL_PROP = "boolean property";
+
+    private <T> void assertPropEquals(Vertex vertex, String key, Class<T> type) {
+        assertEquals(properties.get(key), vertex.getProperty(key));
+        assertEquals(properties.get(key).value(), vertex.getPropertyValue(key));
+        assertEquals(properties.get(key).value(type), vertex.getPropertyValue(key, type));
+    }
 
     @Before
     public void setUp() throws Exception {
         this.properties = new HashMap<>();
-        this.properties.put("key1", PropertyValue.create("value1"));
-        this.properties.put("key2", PropertyValue.create(2));
-        this.properties.put("key3", PropertyValue.create(3.0));
+        this.properties.put(STR_PROP, PropertyValue.create("value1"));
+        this.properties.put(INT_PROP, PropertyValue.create(2));
+        this.properties.put(DBL_PROP, PropertyValue.create(3.0));
+        this.properties.put(BOOL_PROP, PropertyValue.create(true));
     }
 
     @Test
@@ -43,6 +54,10 @@ public class VertexTest {
         ElementId version = ElementId.create();
         Vertex vertex = Vertex.create(id, properties, label1, version);
         assertEquals(id, vertex.getId());
+        assertPropEquals(vertex, STR_PROP, String.class);
+        assertPropEquals(vertex, INT_PROP, Integer.class);
+        assertPropEquals(vertex, DBL_PROP, Double.class);
+        assertPropEquals(vertex, BOOL_PROP, Boolean.class);
         assertEquals(properties, vertex.getProperties());
         assertEquals(label1, vertex.getLabel());
         assertEquals(version, vertex.version());
@@ -52,6 +67,10 @@ public class VertexTest {
     public void create1() throws Exception {
         ElementId version = ElementId.create();
         Vertex vertex = Vertex.create(properties, label1, version);
+        assertPropEquals(vertex, STR_PROP, String.class);
+        assertPropEquals(vertex, INT_PROP, Integer.class);
+        assertPropEquals(vertex, DBL_PROP, Double.class);
+        assertPropEquals(vertex, BOOL_PROP, Boolean.class);
         assertEquals(properties, vertex.getProperties());
         assertEquals(label1, vertex.getLabel());
         assertEquals(version, vertex.version());
@@ -63,6 +82,10 @@ public class VertexTest {
         String version = ElementId.create().toString();
         Vertex vertex = Vertex.createFromStringIds(id, properties, label1, version);
         assertEquals(id, vertex.getId().toString());
+        assertPropEquals(vertex, STR_PROP, String.class);
+        assertPropEquals(vertex, INT_PROP, Integer.class);
+        assertPropEquals(vertex, DBL_PROP, Double.class);
+        assertPropEquals(vertex, BOOL_PROP, Boolean.class);
         assertEquals(properties, vertex.getProperties());
         assertEquals(label1, vertex.getLabel());
         assertEquals(version, vertex.getVersion().toString());
@@ -74,9 +97,33 @@ public class VertexTest {
         VertexCollection vertexCollection = VertexCollection.create(properties, label1, graphs);
         Vertex vertex = Vertex.createFromCollection(vertexCollection);
         assertEquals(vertexCollection.getId(), vertex.getId());
+        assertPropEquals(vertex, STR_PROP, String.class);
+        assertPropEquals(vertex, INT_PROP, Integer.class);
+        assertPropEquals(vertex, DBL_PROP, Double.class);
+        assertPropEquals(vertex, BOOL_PROP, Boolean.class);
         assertEquals(vertexCollection.getProperties(), vertex.getProperties());
         assertEquals(vertexCollection.getLabel(), vertex.getLabel());
         assertEquals(vertexCollection.version(), vertex.version());
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testCreateWithSetters() throws Exception {
+        Vertex vertex = new Vertex();
+        ElementId id = ElementId.create();
+        ElementId version = ElementId.create();
+        vertex.setId(id);
+        vertex.setProperties(properties);
+        vertex.setLabel(label1);
+        vertex.setVersion(version);
+        assertEquals(id, vertex.getId());
+        assertPropEquals(vertex, STR_PROP, String.class);
+        assertPropEquals(vertex, INT_PROP, Integer.class);
+        assertPropEquals(vertex, DBL_PROP, Double.class);
+        assertPropEquals(vertex, BOOL_PROP, Boolean.class);
+        assertEquals(properties, vertex.getProperties());
+        assertEquals(label1, vertex.getLabel());
+        assertEquals(version, vertex.getVersion());
     }
 
     @Test
